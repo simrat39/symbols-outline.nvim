@@ -31,7 +31,8 @@ D.state = {
     outline_items = {},
     linear_outline_items = {},
     outline_win = nil,
-    outline_buf = nil
+    outline_buf = nil,
+    code_win = nil,
 }
 
 local function wipe_state()
@@ -48,7 +49,7 @@ end
 function D.goto_location()
     local current_line = vim.api.nvim_win_get_cursor(D.state.outline_win)[1]
     local node = D.state.linear_outline_items[current_line]
-    vim.cmd("wincmd p")
+    vim.fn.win_gotoid(D.state.code_win)
     vim.fn.cursor(node.line + 1, node.character + 1)
 end
 
@@ -151,6 +152,7 @@ function D._refresh()
         vim.lsp.buf_request(0, "textDocument/documentSymbol", getParams(),
                             function(_, _, result)
 
+            D.state.code_win = vim.api.nvim_get_current_win()
             D.state.outline_items = parse(result)
             D.state.linear_outline_items = make_linear(parse(result))
 
@@ -165,6 +167,8 @@ function D._refresh()
 end
 
 local function handler(_, _, result)
+    D.state.code_win = vim.api.nvim_get_current_win()
+
     D.state.outline_buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_attach(D.state.outline_buf, false,
                             {on_detach = function(_, _) wipe_state() end})
