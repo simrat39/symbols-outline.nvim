@@ -89,9 +89,14 @@ end
 
 local function setup_highlights()
     -- markers
-    highlight_text(markers.middle, markers.middle, "Comment")
-    highlight_text(markers.horizontal, markers.horizontal, "Comment")
-    highlight_text(markers.bottom, markers.bottom, "Comment")
+    highlight_text("marker_middle", markers.middle, "Comment")
+    highlight_text("markers_horizontal", markers.horizontal, "Comment")
+    highlight_text("markers_bottom", markers.bottom, "Comment")
+
+    for _, value in ipairs(symbols.kinds) do
+      local symbol = symbols[value]
+      highlight_text(value, symbol.icon, symbol.hl)
+    end
 end
 
 local function write(outline_items, bufnr, winnr)
