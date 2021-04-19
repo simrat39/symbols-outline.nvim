@@ -31,40 +31,10 @@ D.state = {
 }
 
 function D.goto_location()
-    -- local focused_line_content = string.gsub(vim.fn.getline('.'), "%s+", "")
-
-    -- if focused_line_content == "" then return end
-
-    -- local function get_node_under_cursor(items)
-    --     local ret = nil
-    --     for _, value in ipairs(items) do
-    --         local formatted_str = string.gsub(value.icon .. value.name, "%s+",
-    --                                           "")
-    --         if focused_line_content == formatted_str then
-    --             ret = value
-    --             goto continue
-    --         end
-
-    --         if value.children ~= nil then
-    --             local child_ret = get_node_under_cursor(value.children)
-    --             if child_ret ~= nil then
-    --                 ret = child_ret
-    --                 goto continue
-    --             end
-    --         end
-    --     end
-    --     ::continue::
-    --     return ret
-    -- end
-
-    -- local node = get_node_under_cursor(D.state.outline_items)
-
-    -- if node ~= nil then
     local current_line = vim.api.nvim_win_get_cursor(D.state.outline_win)[1]
     local node = D.state.linear_outline_items[current_line]
     vim.cmd("wincmd p")
     vim.fn.cursor(node.line + 1, node.character + 1)
-    -- end
 end
 
 -- parses result into a neat table
@@ -96,7 +66,10 @@ local function make_linear(outline_items)
     for _, value in ipairs(outline_items) do
         table.insert(ret, value)
         if value.children ~= nil then
-            table.insert(ret, make_linear(value.children));
+            local inner = make_linear(value.children)
+            for _, value_inner in ipairs(inner) do
+                table.insert(ret, value_inner)
+            end
         end
     end
     return ret
@@ -104,10 +77,6 @@ end
 
 local function write(outline_items, bufnr, winnr)
     for _, value in ipairs(outline_items) do
-        -- if value.depth == 0 and index ~= 1 then
-        --     vim.api.nvim_buf_set_lines(bufnr, -2, -2, false, {""})
-        -- end
-
         vim.api.nvim_buf_set_lines(bufnr, -2, -2, false, {
             string.rep(" ", value.depth * 2) .. value.icon .. " " .. value.name
         })
@@ -137,7 +106,6 @@ local function handler(_, _, result)
 
     D.state.outline_items = parse(result)
     D.state.linear_outline_items = make_linear(parse(result))
-    print(#D.state.linear_outline_items)
 
     write(D.state.outline_items, D.state.outline_buf, D.state.outline_win)
     delete_last_line(D.state.outline_buf)
