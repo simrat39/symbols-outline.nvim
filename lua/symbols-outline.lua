@@ -30,12 +30,12 @@ D.state = {
     outline_buf = nil
 }
 
-local markers = {
-    bottom = "└",
-    middle = "├",
-    vertical = "│",
-    horizontal = "─"
-}
+-- local markers = {
+--     bottom = "└",
+--     middle = "├",
+--     vertical = "│",
+--     horizontal = "─"
+-- }
 
 function D.goto_location()
     local current_line = vim.api.nvim_win_get_cursor(D.state.outline_win)[1]
@@ -89,10 +89,11 @@ local function highlight_text(name, text, hl_group)
 end
 
 local function setup_highlights()
-    -- markers
-    highlight_text("marker_middle", markers.middle, "Comment")
-    highlight_text("markers_horizontal", markers.horizontal, "Comment")
-    highlight_text("markers_bottom", markers.bottom, "Comment")
+    -- -- markers
+    -- highlight_text("marker_middle", markers.middle, "Comment")
+    -- highlight_text("marker_vertical", markers.vertical, "Comment")
+    -- highlight_text("markers_horizontal", markers.horizontal, "Comment")
+    -- highlight_text("markers_bottom", markers.bottom, "Comment")
 
     for _, value in ipairs(symbols.kinds) do
         local symbol = symbols[value]
@@ -101,31 +102,14 @@ local function setup_highlights()
 end
 
 local function write(outline_items, bufnr, winnr)
-    for index, value in ipairs(outline_items) do
-        local line = "  "
-        local isLast = index == #outline_items
+    for _, value in ipairs(outline_items) do
+        local line = string.rep("  ", value.depth)
+        vim.api.nvim_buf_set_lines(bufnr, -2, -2, false, {
+            line .. value.icon .. " " .. value.name
+        })
 
-        if value.depth > 1 then
-            for i = 0, value.depth - 1, 1 do
-                if i == value.depth - 1 and not isLast then
-                    -- do nothing for now :)
-                    -- line = line .. markers.horizontal
-                elseif isLast and i % 2 == 0 then
-                    line = line .. markers.bottom
-                elseif i % 2 == 0 then
-                    line = line .. markers.middle
-                elseif i % 2 ~= 0 and not isLast then
-                    line = line .. markers.horizontal
-                end
-            end
-            line = line .. " "
-        end
-
-        vim.api.nvim_buf_set_lines(bufnr, -2, -2, false,
-                                   {line .. value.icon .. " " .. value.name})
         if value.detail ~= nil then
             local lines = vim.fn.line('$')
-            print(lines)
             vim.api.nvim_buf_set_virtual_text(bufnr, -1, lines - 2,
                                               {{value.detail, "Comment"}}, {})
         end
