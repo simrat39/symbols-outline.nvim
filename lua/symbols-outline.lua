@@ -13,7 +13,11 @@ end
 
 local function setupCommands()
     vim.cmd("command! " .. "SymbolsOutline " ..
-                ":lua require'rust-tools-debug'.R('symbols-outline').toggle_outline()")
+                ":lua require'symbols-outline'.R('symbols-outline').toggle_outline()")
+end
+
+local function setup_autocmd()
+    vim.cmd("autocmd InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost * :lua require('symbols-outline')._refresh()")
 end
 
 local function getParams()
@@ -134,6 +138,32 @@ local function disable_nums(winnr)
     vim.api.nvim_win_set_option(winnr, "number", false)
 end
 
+local function delete_all_lines(bufnr)
+    vim.api.nvim_buf_set_lines(bufnr, 0, -2, false, {})
+end
+
+local function clear_virt_text(bufnr)
+    vim.api.nvim_buf_clear_namespace(bufnr, -1, 0, -1)
+end
+
+function D._refresh()
+    if D.state.outline_buf ~= nil then
+        vim.lsp.buf_request(0, "textDocument/documentSymbol", getParams(),
+                            function(_, _, result)
+
+            D.state.outline_items = parse(result)
+            D.state.linear_outline_items = make_linear(parse(result))
+
+            clear_virt_text(D.state.outline_buf)
+            delete_all_lines(D.state.outline_buf)
+            write(D.state.outline_items, D.state.outline_buf,
+                  D.state.outline_win)
+            delete_last_line(D.state.outline_buf)
+            -- goto_first_line()
+        end)
+    end
+end
+
 local function handler(_, _, result)
     D.state.outline_buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_attach(D.state.outline_buf, false,
@@ -161,6 +191,9 @@ function D.toggle_outline()
     vim.lsp.buf_request(0, "textDocument/documentSymbol", getParams(), handler)
 end
 
-function D.setup() setupCommands() end
+function D.setup()
+    setupCommands()
+    setup_autocmd()
+end
 
 return D
