@@ -30,6 +30,10 @@ D.state = {
     outline_buf = nil
 }
 
+local function wipe_state()
+    D.state = {outline_items = {}, linear_outline_items = {}}
+end
+
 -- local markers = {
 --     bottom = "└",
 --     middle = "├",
@@ -104,9 +108,8 @@ end
 local function write(outline_items, bufnr, winnr)
     for _, value in ipairs(outline_items) do
         local line = string.rep("  ", value.depth)
-        vim.api.nvim_buf_set_lines(bufnr, -2, -2, false, {
-            line .. value.icon .. " " .. value.name
-        })
+        vim.api.nvim_buf_set_lines(bufnr, -2, -2, false,
+                                   {line .. value.icon .. " " .. value.name})
 
         if value.detail ~= nil then
             local lines = vim.fn.line('$')
@@ -133,6 +136,8 @@ end
 
 local function handler(_, _, result)
     D.state.outline_buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_attach(D.state.outline_buf, false,
+                            {on_detach = function(_, _) wipe_state() end})
 
     local current_win = vim.api.nvim_get_current_win()
     local current_win_width = vim.api.nvim_win_get_width(current_win)
