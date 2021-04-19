@@ -30,6 +30,13 @@ D.state = {
     outline_buf = nil
 }
 
+local markers = {
+    bottom = "└",
+    middle = "├",
+    vertical = "│",
+    horizontal = "─"
+}
+
 function D.goto_location()
     local current_line = vim.api.nvim_win_get_cursor(D.state.outline_win)[1]
     local node = D.state.linear_outline_items[current_line]
@@ -76,10 +83,28 @@ local function make_linear(outline_items)
 end
 
 local function write(outline_items, bufnr, winnr)
-    for _, value in ipairs(outline_items) do
-        vim.api.nvim_buf_set_lines(bufnr, -2, -2, false, {
-            string.rep(" ", value.depth * 2) .. value.icon .. " " .. value.name
-        })
+    for index, value in ipairs(outline_items) do
+        local line = "  "
+        local isLast = index == #outline_items
+
+        if value.depth > 1 then
+            for i = 0, value.depth - 1, 1 do
+                if i == value.depth - 1 and not isLast then
+                    -- do nothing for now :)
+                    -- line = line .. markers.horizontal
+                elseif isLast and i % 2 == 0 then
+                    line = line .. markers.bottom
+                elseif i % 2 == 0 then
+                    line = line .. markers.middle
+                elseif i % 2 ~= 0 and not isLast then
+                    line = line .. markers.horizontal
+                end
+            end
+            line = line .. " "
+        end
+
+        vim.api.nvim_buf_set_lines(bufnr, -2, -2, false,
+                                   {line .. value.icon .. " " .. value.name})
         vim.api.nvim_buf_set_keymap(bufnr, "n", "<Cr>",
                                     ":lua require('symbols-outline').goto_location()<Cr>",
                                     {})
