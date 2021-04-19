@@ -82,6 +82,18 @@ local function make_linear(outline_items)
     return ret
 end
 
+local function highlight_text(name, text, hl_group)
+   vim.cmd(string.format("syn match %s /%s/", name, text))
+   vim.cmd(string.format("hi def link %s %s", name ,hl_group))
+end
+
+local function setup_highlights()
+    -- markers
+    highlight_text(markers.middle, markers.middle, "Comment")
+    highlight_text(markers.horizontal, markers.horizontal, "Comment")
+    highlight_text(markers.bottom, markers.bottom, "Comment")
+end
+
 local function write(outline_items, bufnr, winnr)
     for index, value in ipairs(outline_items) do
         local line = "  "
@@ -133,6 +145,7 @@ local function handler(_, _, result)
     D.state.linear_outline_items = make_linear(parse(result))
 
     write(D.state.outline_items, D.state.outline_buf, D.state.outline_win)
+    setup_highlights()
     delete_last_line(D.state.outline_buf)
     goto_first_line()
 end
