@@ -143,6 +143,10 @@ end
 
 local function goto_first_line() vim.fn.cursor(1, 1) end
 
+local function disable_nums(winnr)
+    vim.api.nvim_win_set_option(winnr, "number", false)
+end
+
 local function handler(_, _, result)
     D.state.outline_buf = vim.api.nvim_create_buf(false, true)
 
@@ -157,6 +161,7 @@ local function handler(_, _, result)
     D.state.outline_items = parse(result)
     D.state.linear_outline_items = make_linear(parse(result))
 
+    disable_nums(D.state.outline_win)
     write(D.state.outline_items, D.state.outline_buf, D.state.outline_win)
     setup_highlights()
     delete_last_line(D.state.outline_buf)
