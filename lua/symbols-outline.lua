@@ -59,6 +59,7 @@ local function parse(result, depth)
             kind = value.kind,
             icon = symbols.icon_from_kind(value.kind),
             name = value.name,
+            detail = value.detail,
             line = value.selectionRange.start.line,
             character = value.selectionRange.start.character,
             children = children,
@@ -83,8 +84,8 @@ local function make_linear(outline_items)
 end
 
 local function highlight_text(name, text, hl_group)
-   vim.cmd(string.format("syn match %s /%s/", name, text))
-   vim.cmd(string.format("hi def link %s %s", name ,hl_group))
+    vim.cmd(string.format("syn match %s /%s/", name, text))
+    vim.cmd(string.format("hi def link %s %s", name, hl_group))
 end
 
 local function setup_highlights()
@@ -94,8 +95,8 @@ local function setup_highlights()
     highlight_text("markers_bottom", markers.bottom, "Comment")
 
     for _, value in ipairs(symbols.kinds) do
-      local symbol = symbols[value]
-      highlight_text(value, symbol.icon, symbol.hl)
+        local symbol = symbols[value]
+        highlight_text(value, symbol.icon, symbol.hl)
     end
 end
 
@@ -122,6 +123,13 @@ local function write(outline_items, bufnr, winnr)
 
         vim.api.nvim_buf_set_lines(bufnr, -2, -2, false,
                                    {line .. value.icon .. " " .. value.name})
+        if value.detail ~= nil then
+            local lines = vim.fn.line('$')
+            print(lines)
+            vim.api.nvim_buf_set_virtual_text(bufnr, -1, lines - 2,
+                                              {{value.detail, "Comment"}}, {})
+        end
+
         vim.api.nvim_buf_set_keymap(bufnr, "n", "<Cr>",
                                     ":lua require('symbols-outline').goto_location()<Cr>",
                                     {})
