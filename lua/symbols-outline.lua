@@ -21,8 +21,10 @@ end
 local function setup_autocmd()
     vim.cmd(
         "autocmd InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost * :lua require('symbols-outline')._refresh()")
-    vim.cmd(
-        "autocmd CursorHold * :lua require('symbols-outline')._highlight_current_item()")
+    if D.opts.highlight_hovered_item then
+        vim.cmd(
+            "autocmd CursorHold * :lua require('symbols-outline')._highlight_current_item()")
+    end
 end
 
 local function getParams()
@@ -113,7 +115,6 @@ local function make_linear(outline_items)
     return ret
 end
 
-
 local function get_lines(outline_items, bufnr, winnr, lines)
     lines = lines or {}
     for _, value in ipairs(outline_items) do
@@ -193,7 +194,8 @@ function D._highlight_current_item()
 
     local nodes = {}
     for index, value in ipairs(D.state.linear_outline_items) do
-        if value.line == hovered_line or (hovered_line > value.range_start and hovered_line < value.range_end) then
+        if value.line == hovered_line or
+            (hovered_line > value.range_start and hovered_line < value.range_end) then
             value.line_in_outline = index
             table.insert(nodes, value)
         end
@@ -217,40 +219,36 @@ local function setup_keymaps(bufnr)
                                 ":lua require('symbols-outline')._goto_location()<Cr>",
                                 {})
     -- close outline when escape is pressed
-    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Esc>",
-                                ":bw!<Cr>",
-                                {})
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Esc>", ":bw!<Cr>", {})
 end
 
 ----------------------------
 -- WINDOW AND BUFFER STUFF
 ----------------------------
 local function setup_buffer()
-        D.state.outline_buf = vim.api.nvim_create_buf(false, true)
-        vim.api.nvim_buf_attach(D.state.outline_buf, false,
-                                {on_detach = function(_, _) wipe_state() end})
-        vim.api.nvim_buf_set_option(D.state.outline_buf, "bufhidden", "delete")
+    D.state.outline_buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_attach(D.state.outline_buf, false,
+                            {on_detach = function(_, _) wipe_state() end})
+    vim.api.nvim_buf_set_option(D.state.outline_buf, "bufhidden", "delete")
 
-        local current_win = vim.api.nvim_get_current_win()
-        local current_win_width = vim.api.nvim_win_get_width(current_win)
+    local current_win = vim.api.nvim_get_current_win()
+    local current_win_width = vim.api.nvim_win_get_width(current_win)
 
-        vim.cmd("vsplit")
-        vim.cmd("vertical resize " .. math.ceil(current_win_width * 0.25))
-        D.state.outline_win = vim.api.nvim_get_current_win()
-        vim.api.nvim_win_set_buf(D.state.outline_win, D.state.outline_buf)
+    vim.cmd("vsplit")
+    vim.cmd("vertical resize " .. math.ceil(current_win_width * 0.25))
+    D.state.outline_win = vim.api.nvim_get_current_win()
+    vim.api.nvim_win_set_buf(D.state.outline_win, D.state.outline_buf)
 
-        setup_keymaps(D.state.outline_buf)
+    setup_keymaps(D.state.outline_buf)
 
-        vim.api.nvim_win_set_option(D.state.outline_win, "number", false)
-        vim.api.nvim_win_set_option(D.state.outline_win, "relativenumber", false)
-        vim.api.nvim_buf_set_name(D.state.outline_buf, "OUTLINE")
-        vim.api.nvim_buf_set_option(D.state.outline_buf, "modifiable", false)
+    vim.api.nvim_win_set_option(D.state.outline_win, "number", false)
+    vim.api.nvim_win_set_option(D.state.outline_win, "relativenumber", false)
+    vim.api.nvim_buf_set_name(D.state.outline_buf, "OUTLINE")
+    vim.api.nvim_buf_set_option(D.state.outline_buf, "modifiable", false)
 end
 
 local function handler(_, _, result)
-    if result == nil then
-       return
-    end
+    if result == nil then return end
     D.state.code_win = vim.api.nvim_get_current_win()
 
     if D.state.outline_buf == nil then
@@ -275,9 +273,15 @@ function D.toggle_outline()
     vim.lsp.buf_request(0, "textDocument/documentSymbol", getParams(), handler)
 end
 
-function D.setup()
+function D.setup(opts)
+    vim.tbl_deep_extend("force", D.opts, opts or {})
+
     setup_commands()
     setup_autocmd()
 end
+
+D.opts = {
+    highlight_hovered_item = true,
+}
 
 return D
