@@ -11,7 +11,7 @@ function D.R(name)
     return require(name)
 end
 
-local function setupCommands()
+local function setup_commands()
     vim.cmd("command! " .. "DSymbolsOutline " ..
                 ":lua require'symbols-outline'.R('symbols-outline').toggle_outline()")
     vim.cmd("command! " .. "SymbolsOutline " ..
@@ -44,20 +44,34 @@ local function wipe_state()
     D.state = {outline_items = {}, linear_outline_items = {}}
 end
 
+-------------------------
+-- UI STUFF
+-------------------------
 -- local markers = {
 --     bottom = "└",
 --     middle = "├",
 --     vertical = "│",
 --     horizontal = "─"
 -- }
+--
+local hovered_hl_ns = vim.api.nvim_create_namespace("hovered_item")
 
-function D.goto_location()
-    local current_line = vim.api.nvim_win_get_cursor(D.state.outline_win)[1]
-    local node = D.state.linear_outline_items[current_line]
-    vim.fn.win_gotoid(D.state.code_win)
-    vim.fn.cursor(node.line + 1, node.character + 1)
+local function highlight_text(name, text, hl_group)
+    vim.cmd(string.format("syn match %s /%s/", name, text))
+    vim.cmd(string.format("hi def link %s %s", name, hl_group))
 end
 
+local function setup_highlights()
+    for _, value in ipairs(symbols.kinds) do
+        local symbol = symbols[value]
+        highlight_text(value, symbol.icon, symbol.hl)
+    end
+    vim.cmd('hi FocusedSymbol guibg=#e50050')
+end
+
+----------------------------
+-- PARSING AND WRITING STUFF
+----------------------------
 -- parses result into a neat table
 local function parse(result, depth)
     local ret = {}
@@ -99,24 +113,6 @@ local function make_linear(outline_items)
     return ret
 end
 
-local function highlight_text(name, text, hl_group)
-    vim.cmd(string.format("syn match %s /%s/", name, text))
-    vim.cmd(string.format("hi def link %s %s", name, hl_group))
-end
-
-local function setup_highlights()
-    -- -- markers
-    -- highlight_text("marker_middle", markers.middle, "Comment")
-    -- highlight_text("marker_vertical", markers.vertical, "Comment")
-    -- highlight_text("markers_horizontal", markers.horizontal, "Comment")
-    -- highlight_text("markers_bottom", markers.bottom, "Comment")
-
-    for _, value in ipairs(symbols.kinds) do
-        local symbol = symbols[value]
-        highlight_text(value, symbol.icon, symbol.hl)
-    end
-    vim.cmd('hi FocusedSymbol guibg=#e50050')
-end
 
 local function get_lines(outline_items, bufnr, winnr, lines)
     lines = lines or {}
@@ -128,9 +124,6 @@ local function get_lines(outline_items, bufnr, winnr, lines)
             get_lines(value.children, bufnr, winnr, lines)
         end
     end
-    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Cr>",
-                                ":lua require('symbols-outline').goto_location()<Cr>",
-                                {})
     return lines
 end
 
@@ -147,7 +140,9 @@ local function get_details(outline_items, bufnr, winnr, lines)
 end
 
 local function write_outline(bufnr, lines)
+    vim.api.nvim_buf_set_option(bufnr, "modifiable", true)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+    vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
 end
 
 local function write_details(bufnr, lines)
@@ -155,10 +150,6 @@ local function write_details(bufnr, lines)
         vim.api.nvim_buf_set_virtual_text(bufnr, -1, index - 1,
                                           {{value, "Comment"}}, {})
     end
-end
-
-local function disable_nums(winnr)
-    vim.api.nvim_win_set_option(winnr, "number", false)
 end
 
 local function clear_virt_text(bufnr)
@@ -186,10 +177,14 @@ function D._refresh()
     end
 end
 
-local hovered_hl_ns = vim.api.nvim_create_namespace("hovered_item")
+function D._goto_location()
+    local current_line = vim.api.nvim_win_get_cursor(D.state.outline_win)[1]
+    local node = D.state.linear_outline_items[current_line]
+    vim.fn.win_gotoid(D.state.code_win)
+    vim.fn.cursor(node.line + 1, node.character + 1)
+end
 
 function D._highlight_current_item()
-
     if D.state.outline_buf == nil or vim.api.nvim_get_current_buf() ==
         D.state.outline_buf then return end
 
@@ -219,7 +214,7 @@ end
 local function setup_keymaps(bufnr)
     -- goto_location of symbol
     vim.api.nvim_buf_set_keymap(bufnr, "n", "<Cr>",
-                                ":lua require('symbols-outline').goto_location()<Cr>",
+                                ":lua require('symbols-outline')._goto_location()<Cr>",
                                 {})
     -- close outline when escape is pressed
     vim.api.nvim_buf_set_keymap(bufnr, "n", "<Esc>",
@@ -227,10 +222,10 @@ local function setup_keymaps(bufnr)
                                 {})
 end
 
-local function handler(_, _, result)
-    D.state.code_win = vim.api.nvim_get_current_win()
-
-    if D.state.outline_buf == nil then
+----------------------------
+-- WINDOW AND BUFFER STUFF
+----------------------------
+local function setup_buffer()
         D.state.outline_buf = vim.api.nvim_create_buf(false, true)
         vim.api.nvim_buf_attach(D.state.outline_buf, false,
                                 {on_detach = function(_, _) wipe_state() end})
@@ -244,10 +239,24 @@ local function handler(_, _, result)
         D.state.outline_win = vim.api.nvim_get_current_win()
         vim.api.nvim_win_set_buf(D.state.outline_win, D.state.outline_buf)
 
+        setup_keymaps(D.state.outline_buf)
+
+        vim.api.nvim_win_set_option(D.state.outline_win, "number", false)
+        vim.api.nvim_win_set_option(D.state.outline_win, "relativenumber", false)
+        vim.api.nvim_buf_set_name(D.state.outline_buf, "OUTLINE")
+        vim.api.nvim_buf_set_option(D.state.outline_buf, "modifiable", false)
+end
+
+local function handler(_, _, result)
+    if result == nil then
+       return
+    end
+    D.state.code_win = vim.api.nvim_get_current_win()
+
+    if D.state.outline_buf == nil then
+        setup_buffer()
         D.state.outline_items = parse(result)
         D.state.linear_outline_items = make_linear(parse(result))
-
-        disable_nums(D.state.outline_win)
 
         local lines = get_lines(D.state.outline_items, D.state.outline_buf,
                                 D.state.outline_win)
@@ -256,8 +265,6 @@ local function handler(_, _, result)
         local details = get_details(D.state.outline_items, D.state.outline_buf,
                                     D.state.outline_win)
         write_details(D.state.outline_buf, details)
-
-        setup_keymaps(D.state.outline_buf)
         setup_highlights()
     else
         vim.api.nvim_win_close(D.state.outline_win, true)
@@ -269,7 +276,7 @@ function D.toggle_outline()
 end
 
 function D.setup()
-    setupCommands()
+    setup_commands()
     setup_autocmd()
 end
 
