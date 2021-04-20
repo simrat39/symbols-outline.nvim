@@ -17,7 +17,10 @@ local function setupCommands()
 end
 
 local function setup_autocmd()
-    vim.cmd("autocmd InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost * :lua require('symbols-outline')._refresh()")
+    vim.cmd(
+        "autocmd InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost * :lua require('symbols-outline')._refresh()")
+    vim.cmd(
+        "autocmd BufEnter,TabEnter * :lua print('Bruh')")
 end
 
 local function getParams()
@@ -32,7 +35,7 @@ D.state = {
     linear_outline_items = {},
     outline_win = nil,
     outline_buf = nil,
-    code_win = nil,
+    code_win = nil
 }
 
 local function wipe_state()
@@ -110,37 +113,47 @@ local function setup_highlights()
     end
 end
 
-local function write(outline_items, bufnr, winnr)
+local function get_lines(outline_items, bufnr, winnr, lines)
+    lines = lines or {}
     for _, value in ipairs(outline_items) do
         local line = string.rep("  ", value.depth)
-        vim.api.nvim_buf_set_lines(bufnr, -2, -2, false,
-                                   {line .. value.icon .. " " .. value.name})
+        table.insert(lines, line .. value.icon .. " " .. value.name)
 
-        if value.detail ~= nil then
-            local lines = vim.fn.line('$')
-            vim.api.nvim_buf_set_virtual_text(bufnr, -1, lines - 2,
-                                              {{value.detail, "Comment"}}, {})
+        if value.children ~= nil then
+            get_lines(value.children, bufnr, winnr, lines)
         end
+    end
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Cr>",
+                                ":lua require('symbols-outline').goto_location()<Cr>",
+                                {})
+    return lines
+end
 
-        vim.api.nvim_buf_set_keymap(bufnr, "n", "<Cr>",
-                                    ":lua require('symbols-outline').goto_location()<Cr>",
-                                    {})
-        if value.children ~= nil then write(value.children, bufnr, winnr) end
+local function get_details(outline_items, bufnr, winnr, lines)
+    lines = lines or {}
+    for _, value in ipairs(outline_items) do
+        table.insert(lines, value.detail or "")
+
+        if value.children ~= nil then
+            get_details(value.children, bufnr, winnr, lines)
+        end
+    end
+    return lines
+end
+
+local function write_outline(bufnr, lines)
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+end
+
+local function write_details(bufnr, lines)
+    for index, value in ipairs(lines) do
+        vim.api.nvim_buf_set_virtual_text(bufnr, -1, index - 1,
+                                          {{value, "Comment"}}, {})
     end
 end
 
-local function delete_last_line(bufnr)
-    vim.api.nvim_buf_set_lines(bufnr, -2, -1, false, {})
-end
-
-local function goto_first_line() vim.fn.cursor(1, 1) end
-
 local function disable_nums(winnr)
     vim.api.nvim_win_set_option(winnr, "number", false)
-end
-
-local function delete_all_lines(bufnr)
-    vim.api.nvim_buf_set_lines(bufnr, 0, -2, false, {})
 end
 
 local function clear_virt_text(bufnr)
@@ -156,14 +169,22 @@ function D._refresh()
             D.state.outline_items = parse(result)
             D.state.linear_outline_items = make_linear(parse(result))
 
+            local lines = get_lines(D.state.outline_items, D.state.outline_buf,
+                                    D.state.outline_win)
+            write_outline(D.state.outline_buf, lines)
+
             clear_virt_text(D.state.outline_buf)
-            delete_all_lines(D.state.outline_buf)
-            write(D.state.outline_items, D.state.outline_buf,
-                  D.state.outline_win)
-            delete_last_line(D.state.outline_buf)
-            -- goto_first_line()
+            local details = get_details(D.state.outline_items,
+                                        D.state.outline_buf, D.state.outline_win)
+            write_details(D.state.outline_buf, details)
         end)
     end
+end
+
+local function set_onEnter_keymap(bufnr)
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Cr>",
+                                ":lua require('symbols-outline').goto_location()<Cr>",
+                                {})
 end
 
 local function handler(_, _, result)
@@ -185,10 +206,17 @@ local function handler(_, _, result)
     D.state.linear_outline_items = make_linear(parse(result))
 
     disable_nums(D.state.outline_win)
-    write(D.state.outline_items, D.state.outline_buf, D.state.outline_win)
+
+    local lines = get_lines(D.state.outline_items, D.state.outline_buf,
+                            D.state.outline_win)
+    write_outline(D.state.outline_buf, lines)
+
+    local details = get_details(D.state.outline_items, D.state.outline_buf,
+                                D.state.outline_win)
+    write_details(D.state.outline_buf, details)
+
+    set_onEnter_keymap(D.state.outline_buf)
     setup_highlights()
-    delete_last_line(D.state.outline_buf)
-    goto_first_line()
 end
 
 function D.toggle_outline()
