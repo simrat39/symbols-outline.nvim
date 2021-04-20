@@ -73,6 +73,8 @@ local function parse(result, depth)
             name = value.name,
             detail = value.detail,
             line = value.selectionRange.start.line,
+            range_start = value.range.start.line,
+            range_end = value.range["end"].line,
             character = value.selectionRange.start.character,
             children = children,
             depth = level
@@ -190,11 +192,11 @@ function D._highlight_current_item()
         D.state.outline_buf then return end
 
     local hovered_line = vim.api.nvim_win_get_cursor(
-                             vim.api.nvim_get_current_win())[1]
+                             vim.api.nvim_get_current_win())[1] - 1
 
     local nodes = {}
     for index, value in ipairs(D.state.linear_outline_items) do
-        if value.line == hovered_line - 1 then
+        if value.line == hovered_line or (hovered_line > value.range_start and hovered_line < value.range_end) then
             value.line_in_outline = index
             table.insert(nodes, value)
         end
