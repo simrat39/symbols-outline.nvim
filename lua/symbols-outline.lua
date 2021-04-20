@@ -20,7 +20,7 @@ local function setup_autocmd()
     vim.cmd(
         "autocmd InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost * :lua require('symbols-outline')._refresh()")
     vim.cmd(
-        "autocmd BufEnter,TabEnter * :lua print('Bruh')")
+        "autocmd CursorHold * :lua require('symbols-outline')._highlight_current_item()")
 end
 
 local function getParams()
@@ -111,6 +111,7 @@ local function setup_highlights()
         local symbol = symbols[value]
         highlight_text(value, symbol.icon, symbol.hl)
     end
+    vim.cmd('hi FocusedSymbol guibg=#e50050')
 end
 
 local function get_lines(outline_items, bufnr, winnr, lines)
@@ -178,6 +179,36 @@ function D._refresh()
                                         D.state.outline_buf, D.state.outline_win)
             write_details(D.state.outline_buf, details)
         end)
+    end
+end
+
+local hovered_hl_ns = vim.api.nvim_create_namespace("hovered_item")
+
+function D._highlight_current_item()
+    -- setup_highlights()
+    vim.api.nvim_buf_clear_namespace(D.state.outline_buf, hovered_hl_ns, 0, -1)
+
+    if D.state.outline_buf == nil or vim.api.nvim_get_current_buf() ==
+        D.state.outline_buf then return end
+
+    local hovered_line = vim.api.nvim_win_get_cursor(
+                             vim.api.nvim_get_current_win())[1]
+
+    local nodes = {}
+    for index, value in ipairs(D.state.linear_outline_items) do
+        if value.line == hovered_line - 1 then
+            value.line_in_outline = index
+            table.insert(nodes, value)
+        end
+    end
+
+    for _, value in ipairs(nodes) do
+        vim.api.nvim_buf_add_highlight(D.state.outline_buf, hovered_hl_ns,
+                                       "FocusedSymbol",
+                                       value.line_in_outline - 1,
+                                       value.depth * 2, -1)
+        vim.api.nvim_win_set_cursor(D.state.outline_win,
+                                    {value.line_in_outline, 1})
     end
 end
 
