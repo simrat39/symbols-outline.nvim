@@ -224,6 +224,7 @@ local function handler(_, _, result)
     D.state.outline_buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_attach(D.state.outline_buf, false,
                             {on_detach = function(_, _) wipe_state() end})
+    vim.api.nvim_buf_set_option(D.state.outline_buf, "bufhidden", "delete")
 
     local current_win = vim.api.nvim_get_current_win()
     local current_win_width = vim.api.nvim_win_get_width(current_win)
