@@ -185,8 +185,6 @@ end
 local hovered_hl_ns = vim.api.nvim_create_namespace("hovered_item")
 
 function D._highlight_current_item()
-    -- setup_highlights()
-    vim.api.nvim_buf_clear_namespace(D.state.outline_buf, hovered_hl_ns, 0, -1)
 
     if D.state.outline_buf == nil or vim.api.nvim_get_current_buf() ==
         D.state.outline_buf then return end
@@ -202,6 +200,8 @@ function D._highlight_current_item()
         end
     end
 
+    -- clear old highlight
+    vim.api.nvim_buf_clear_namespace(D.state.outline_buf, hovered_hl_ns, 0, -1)
     for _, value in ipairs(nodes) do
         vim.api.nvim_buf_add_highlight(D.state.outline_buf, hovered_hl_ns,
                                        "FocusedSymbol",
