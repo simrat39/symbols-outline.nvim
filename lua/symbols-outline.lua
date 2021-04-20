@@ -216,9 +216,14 @@ function D._highlight_current_item()
     end
 end
 
-local function set_onEnter_keymap(bufnr)
+local function setup_keymaps(bufnr)
+    -- goto_location of symbol
     vim.api.nvim_buf_set_keymap(bufnr, "n", "<Cr>",
                                 ":lua require('symbols-outline').goto_location()<Cr>",
+                                {})
+    -- close outline when escape is pressed
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Esc>",
+                                ":bw!<Cr>",
                                 {})
 end
 
@@ -252,7 +257,7 @@ local function handler(_, _, result)
                                     D.state.outline_win)
         write_details(D.state.outline_buf, details)
 
-        set_onEnter_keymap(D.state.outline_buf)
+        setup_keymaps(D.state.outline_buf)
         setup_highlights()
     else
         vim.api.nvim_win_close(D.state.outline_win, true)
