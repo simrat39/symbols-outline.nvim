@@ -12,8 +12,10 @@ function D.R(name)
 end
 
 local function setupCommands()
-    vim.cmd("command! " .. "SymbolsOutline " ..
+    vim.cmd("command! " .. "DSymbolsOutline " ..
                 ":lua require'symbols-outline'.R('symbols-outline').toggle_outline()")
+    vim.cmd("command! " .. "SymbolsOutline " ..
+                ":lua require'symbols-outline'.toggle_outline()")
 end
 
 local function setup_autocmd()
@@ -223,34 +225,38 @@ end
 local function handler(_, _, result)
     D.state.code_win = vim.api.nvim_get_current_win()
 
-    D.state.outline_buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_buf_attach(D.state.outline_buf, false,
-                            {on_detach = function(_, _) wipe_state() end})
-    vim.api.nvim_buf_set_option(D.state.outline_buf, "bufhidden", "delete")
+    if D.state.outline_buf == nil then
+        D.state.outline_buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_attach(D.state.outline_buf, false,
+                                {on_detach = function(_, _) wipe_state() end})
+        vim.api.nvim_buf_set_option(D.state.outline_buf, "bufhidden", "delete")
 
-    local current_win = vim.api.nvim_get_current_win()
-    local current_win_width = vim.api.nvim_win_get_width(current_win)
+        local current_win = vim.api.nvim_get_current_win()
+        local current_win_width = vim.api.nvim_win_get_width(current_win)
 
-    vim.cmd("vsplit")
-    vim.cmd("vertical resize " .. math.ceil(current_win_width * 0.25))
-    D.state.outline_win = vim.api.nvim_get_current_win()
-    vim.api.nvim_win_set_buf(D.state.outline_win, D.state.outline_buf)
+        vim.cmd("vsplit")
+        vim.cmd("vertical resize " .. math.ceil(current_win_width * 0.25))
+        D.state.outline_win = vim.api.nvim_get_current_win()
+        vim.api.nvim_win_set_buf(D.state.outline_win, D.state.outline_buf)
 
-    D.state.outline_items = parse(result)
-    D.state.linear_outline_items = make_linear(parse(result))
+        D.state.outline_items = parse(result)
+        D.state.linear_outline_items = make_linear(parse(result))
 
-    disable_nums(D.state.outline_win)
+        disable_nums(D.state.outline_win)
 
-    local lines = get_lines(D.state.outline_items, D.state.outline_buf,
-                            D.state.outline_win)
-    write_outline(D.state.outline_buf, lines)
-
-    local details = get_details(D.state.outline_items, D.state.outline_buf,
+        local lines = get_lines(D.state.outline_items, D.state.outline_buf,
                                 D.state.outline_win)
-    write_details(D.state.outline_buf, details)
+        write_outline(D.state.outline_buf, lines)
 
-    set_onEnter_keymap(D.state.outline_buf)
-    setup_highlights()
+        local details = get_details(D.state.outline_items, D.state.outline_buf,
+                                    D.state.outline_win)
+        write_details(D.state.outline_buf, details)
+
+        set_onEnter_keymap(D.state.outline_buf)
+        setup_highlights()
+    else
+        vim.api.nvim_win_close(D.state.outline_win, true)
+    end
 end
 
 function D.toggle_outline()
