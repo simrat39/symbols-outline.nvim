@@ -36,26 +36,26 @@ end
 -------------------------
 D.state = {
     outline_items = {},
-    linear_outline_items = {},
+    flattened_outline_items = {},
     outline_win = nil,
     outline_buf = nil,
     code_win = nil
 }
 
 local function wipe_state()
-    D.state = {outline_items = {}, linear_outline_items = {}}
+    D.state = {outline_items = {}, flattened_outline_items = {}}
 end
 
 -------------------------
 -- UI STUFF
 -------------------------
--- local markers = {
---     bottom = "└",
---     middle = "├",
---     vertical = "│",
---     horizontal = "─"
--- }
---
+local markers = {
+    bottom = "└",
+    middle = "├",
+    vertical = "│",
+    horizontal = "─"
+}
+
 local hovered_hl_ns = vim.api.nvim_create_namespace("hovered_item")
 
 local function highlight_text(name, text, hl_group)
@@ -64,6 +64,12 @@ local function highlight_text(name, text, hl_group)
 end
 
 local function setup_highlights()
+    -- markers
+    highlight_text("marker_middle", markers.middle, "Comment")
+    highlight_text("marker_vertical", markers.vertical, "Comment")
+    highlight_text("markers_horizontal", markers.horizontal, "Comment")
+    highlight_text("markers_bottom", markers.bottom, "Comment")
+
     for _, value in ipairs(symbols.kinds) do
         local symbol = symbols[value]
         highlight_text(value, symbol.icon, symbol.hl)
@@ -74,14 +80,34 @@ end
 ----------------------------
 -- PARSING AND WRITING STUFF
 ----------------------------
--- parses result into a neat table
-local function parse(result, depth)
+
+-- copies an array and returns it because lua usually does references
+local function array_copy(t)
     local ret = {}
-    for _, value in pairs(result) do
+    for _, value in ipairs(t) do table.insert(ret, value) end
+    return ret
+end
+
+-- parses result into a neat table
+local function parse(result, depth, heirarchy)
+    local ret = {}
+
+    for index, value in pairs(result) do
+        -- the heirarchy is basically a table of booleans which tells whether
+        -- the parent was the last in its group or not
+        local hir = heirarchy or {}
+        -- how many parents this node has, 1 is the lowest value because its
+        -- easier to work it
         local level = depth or 1
+        -- whether this node is the last in its group
+        local isLast = index == #result
+
         local children = nil
         if value.children ~= nil then
-            children = parse(value.children, level + 1)
+            -- copy by value because we dont want it messing with the hir table
+            local child_hir = array_copy(hir)
+            table.insert(child_hir, isLast)
+            children = parse(value.children, level + 1, child_hir)
         end
 
         table.insert(ret, {
@@ -95,18 +121,20 @@ local function parse(result, depth)
             range_end = value.range["end"].line,
             character = value.selectionRange.start.character,
             children = children,
-            depth = level
+            depth = level,
+            isLast = isLast,
+            heirarchy = hir
         });
     end
     return ret
 end
 
-local function make_linear(outline_items)
+local function flatten(outline_items)
     local ret = {}
     for _, value in ipairs(outline_items) do
         table.insert(ret, value)
         if value.children ~= nil then
-            local inner = make_linear(value.children)
+            local inner = flatten(value.children)
             for _, value_inner in ipairs(inner) do
                 table.insert(ret, value_inner)
             end
@@ -115,15 +143,53 @@ local function make_linear(outline_items)
     return ret
 end
 
-local function get_lines(outline_items, bufnr, winnr, lines)
-    lines = lines or {}
-    for _, value in ipairs(outline_items) do
-        local line = string.rep("  ", value.depth)
-        table.insert(lines, line .. value.icon .. " " .. value.name)
+local function table_to_str(t)
+    local ret = ""
+    for _, value in ipairs(t) do ret = ret .. tostring(value) end
+    return ret
+end
 
-        if value.children ~= nil then
-            get_lines(value.children, bufnr, winnr, lines)
+local function str_to_table(str)
+    local t = {}
+    for i = 1, #str do t[i] = str:sub(i, i) end
+    return t
+end
+
+local function get_lines(flattened_outline_items)
+    local lines = {}
+    for _, value in ipairs(flattened_outline_items) do
+        local line = str_to_table(string.rep(" ", value.depth))
+
+        -- makes the guides
+        for index, _ in ipairs(line) do
+            -- all items start with a space (or two)
+            if index == 1 then
+                line[index] = " "
+                -- if index is last, add a bottom marker if current item is last,
+                -- else add a middle marker
+            elseif index == #line then
+                if value.isLast then
+                    line[index] = markers.bottom
+                else
+                    line[index] = markers.middle
+                end
+                -- else if the parent was not the last in its group, add a
+                -- vertical marker because there are items under us and we need
+                -- to point to those
+            elseif not value.heirarchy[index] then
+                line[index] = markers.vertical
+            end
         end
+
+        local final_prefix = {}
+        -- Add 1 space between the guides
+        for _, v in ipairs(line) do
+            table.insert(final_prefix, v)
+            table.insert(final_prefix, " ")
+        end
+
+        table.insert(lines, table_to_str(final_prefix) .. value.icon .. " " ..
+                         value.name)
     end
     return lines
 end
@@ -131,7 +197,6 @@ end
 local function get_details(outline_items, bufnr, winnr, lines)
     lines = lines or {}
     for _, value in ipairs(outline_items) do
-        table.insert(lines, value.detail or "")
 
         if value.children ~= nil then
             get_details(value.children, bufnr, winnr, lines)
@@ -164,10 +229,9 @@ function D._refresh()
 
             D.state.code_win = vim.api.nvim_get_current_win()
             D.state.outline_items = parse(result)
-            D.state.linear_outline_items = make_linear(parse(result))
+            D.state.flattened_outline_items = flatten(parse(result))
 
-            local lines = get_lines(D.state.outline_items, D.state.outline_buf,
-                                    D.state.outline_win)
+            local lines = get_lines(D.state.flattened_outline_items)
             write_outline(D.state.outline_buf, lines)
 
             clear_virt_text(D.state.outline_buf)
@@ -180,7 +244,7 @@ end
 
 function D._goto_location()
     local current_line = vim.api.nvim_win_get_cursor(D.state.outline_win)[1]
-    local node = D.state.linear_outline_items[current_line]
+    local node = D.state.flattened_outline_items[current_line]
     vim.fn.win_gotoid(D.state.code_win)
     vim.fn.cursor(node.line + 1, node.character + 1)
 end
@@ -193,7 +257,7 @@ function D._highlight_current_item()
                              vim.api.nvim_get_current_win())[1] - 1
 
     local nodes = {}
-    for index, value in ipairs(D.state.linear_outline_items) do
+    for index, value in ipairs(D.state.flattened_outline_items) do
         if value.line == hovered_line or
             (hovered_line > value.range_start and hovered_line < value.range_end) then
             value.line_in_outline = index
@@ -254,10 +318,9 @@ local function handler(_, _, result)
     if D.state.outline_buf == nil then
         setup_buffer()
         D.state.outline_items = parse(result)
-        D.state.linear_outline_items = make_linear(parse(result))
+        D.state.flattened_outline_items = flatten(parse(result))
 
-        local lines = get_lines(D.state.outline_items, D.state.outline_buf,
-                                D.state.outline_win)
+        local lines = get_lines(D.state.flattened_outline_items)
         write_outline(D.state.outline_buf, lines)
 
         local details = get_details(D.state.outline_items, D.state.outline_buf,
@@ -280,8 +343,6 @@ function D.setup(opts)
     setup_autocmd()
 end
 
-D.opts = {
-    highlight_hovered_item = true,
-}
+D.opts = {highlight_hovered_item = true}
 
 return D
