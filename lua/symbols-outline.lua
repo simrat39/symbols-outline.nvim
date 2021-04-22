@@ -1,4 +1,5 @@
 local vim = vim
+local util = vim.lsp.util
 local symbols = require('symbols')
 
 local D = {}
@@ -30,6 +31,17 @@ end
 
 local function getParams()
     return {textDocument = vim.lsp.util.make_text_document_params()}
+end
+
+local function get_hover_params(node, winnr)
+    local bufnr = vim.api.nvim_win_get_buf(winnr)
+    local fn = "file://" .. vim.api.nvim_buf_get_name(bufnr)
+
+    return {
+        textDocument = {uri = fn},
+        position = {line = node.line, character = node.character},
+        bufnr = bufnr
+    }
 end
 
 -------------------------
@@ -66,6 +78,7 @@ end
 
 local function setup_highlights()
     -- markers
+    --
     highlight_text("marker_middle", markers.middle, "Comment")
     highlight_text("marker_vertical", markers.vertical, "Comment")
     highlight_text("markers_horizontal", markers.horizontal, "Comment")
@@ -250,6 +263,46 @@ function D._goto_location()
     vim.fn.cursor(node.line + 1, node.character + 1)
 end
 
+-- handler yoinked from the default implementation
+function D._hover()
+    local current_line = vim.api.nvim_win_get_cursor(D.state.outline_win)[1]
+    local node = D.state.flattened_outline_items[current_line]
+
+    local hover_params = get_hover_params(node, D.state.code_win)
+
+    vim.lsp.buf_request(hover_params.bufnr, "textDocument/hover", hover_params,
+                        function(_, method, result)
+
+        util.focusable_float(method, function()
+            if not (result and result.contents) then
+                -- return { 'No information available' }
+                return
+            end
+
+            local markdown_lines = util.convert_input_to_markdown_lines(
+                                       result.contents)
+            markdown_lines = util.trim_empty_lines(markdown_lines)
+            if vim.tbl_isempty(markdown_lines) then
+                -- return { 'No information available' }
+                return
+            end
+            local bufnr, winnr = util.fancy_floating_markdown(markdown_lines, {
+                border = {
+                    {"┌", "FloatBorder"}, {"─", "FloatBorder"},
+                    {"┐", "FloatBorder"}, {"│", "FloatBorder"},
+                    {"┘", "FloatBorder"}, {"─", "FloatBorder"},
+                    {"└", "FloatBorder"}, {"│", "FloatBorder"}
+                }
+            })
+            util.close_preview_autocmd({
+                "CursorMoved", "BufHidden", "InsertCharPre"
+            }, winnr)
+
+            return bufnr, winnr
+        end)
+    end)
+end
+
 function D._highlight_current_item()
     if D.state.outline_buf == nil or vim.api.nvim_get_current_buf() ==
         D.state.outline_buf then return end
@@ -309,6 +362,10 @@ local function setup_keymaps(bufnr)
     -- goto_location of symbol
     vim.api.nvim_buf_set_keymap(bufnr, "n", "<Cr>",
                                 ":lua require('symbols-outline')._goto_location()<Cr>",
+                                {})
+    -- hover symbol
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "<C-space>",
+                                ":lua require('symbols-outline')._hover()<Cr>",
                                 {})
     -- close outline when escape is pressed
     vim.api.nvim_buf_set_keymap(bufnr, "n", "<Esc>", ":bw!<Cr>", {})
