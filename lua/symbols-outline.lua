@@ -343,25 +343,26 @@ local function handler(_, _, result)
     if result == nil then return end
     D.state.code_win = vim.api.nvim_get_current_win()
 
-    if D.state.outline_buf == nil then
-        setup_buffer()
-        D.state.outline_items = parse(result)
-        D.state.flattened_outline_items = flatten(parse(result))
+    setup_buffer()
+    D.state.outline_items = parse(result)
+    D.state.flattened_outline_items = flatten(parse(result))
 
-        local lines = get_lines(D.state.flattened_outline_items)
-        write_outline(D.state.outline_buf, lines)
+    local lines = get_lines(D.state.flattened_outline_items)
+    write_outline(D.state.outline_buf, lines)
 
-        local details = get_details(D.state.outline_items, D.state.outline_buf,
-                                    D.state.outline_win)
-        write_details(D.state.outline_buf, details)
-        setup_highlights()
-    else
-        vim.api.nvim_win_close(D.state.outline_win, true)
-    end
+    local details = get_details(D.state.outline_items, D.state.outline_buf,
+                                D.state.outline_win)
+    write_details(D.state.outline_buf, details)
+    setup_highlights()
 end
 
 function D.toggle_outline()
-    vim.lsp.buf_request(0, "textDocument/documentSymbol", getParams(), handler)
+    if D.state.outline_buf == nil then
+        vim.lsp.buf_request(0, "textDocument/documentSymbol", getParams(),
+                            handler)
+    else
+        vim.api.nvim_win_close(D.state.outline_win, true)
+    end
 end
 
 function D.setup(opts)
