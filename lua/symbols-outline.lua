@@ -50,10 +50,6 @@ local function wipe_state()
     D.state = {outline_items = {}, flattened_outline_items = {}}
 end
 
-----------------------------
--- PARSING AND WRITING STUFF
-----------------------------
-
 function D._refresh()
     if D.state.outline_buf ~= nil then
         vim.lsp.buf_request(0, "textDocument/documentSymbol", getParams(),
