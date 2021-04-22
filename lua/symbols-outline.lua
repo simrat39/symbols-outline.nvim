@@ -211,6 +211,7 @@ end
 local function get_details(outline_items, bufnr, winnr, lines)
     lines = lines or {}
     for _, value in ipairs(outline_items) do
+        table.insert(lines, value.detail or "")
 
         if value.children ~= nil then
             get_details(value.children, bufnr, winnr, lines)
