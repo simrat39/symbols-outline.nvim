@@ -20,7 +20,8 @@ end
 
 local function setup_autocmd()
     vim.cmd(
-        "autocmd InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost * :lua require('symbols-outline')._refresh()")
+        "au InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost * :lua require('symbols-outline')._refresh()")
+    vim.cmd "au BufDelete * lua require'symbols-outline'._prevent_buffer_override()"
     if D.opts.highlight_hovered_item then
         vim.cmd(
             "autocmd CursorHold * :lua require('symbols-outline')._highlight_current_item()")
@@ -275,6 +276,33 @@ function D._highlight_current_item()
         vim.api.nvim_win_set_cursor(D.state.outline_win,
                                     {value.line_in_outline, 1})
     end
+end
+
+-- credits: https://github.com/kyazdani42/nvim-tree.lua
+function D._prevent_buffer_override()
+    vim.schedule(function()
+        local curwin = vim.api.nvim_get_current_win()
+        local curbuf = vim.api.nvim_win_get_buf(curwin)
+        local wins = vim.api.nvim_list_wins()
+
+        if curwin ~= D.state.outline_win or curbuf ~= D.state.outline_buf then
+            return
+        end
+
+        vim.cmd("buffer " .. D.state.outline_buf)
+
+        local current_win_width = vim.api.nvim_win_get_width(curwin)
+        if #wins < 2 then
+            vim.cmd("vsplit")
+            vim.cmd("vertical resize " .. math.ceil(current_win_width * 0.75))
+        else
+            vim.cmd("wincmd l")
+        end
+
+        vim.cmd("buffer " .. curbuf)
+        vim.cmd("bnext")
+        vim.cmd("wincmd r")
+    end)
 end
 
 local function setup_keymaps(bufnr)
