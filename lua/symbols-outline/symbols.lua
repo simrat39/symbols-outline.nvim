@@ -24,13 +24,14 @@ M.Null = {icon = "NULL", hl = "TSType"}
 M.EnumMember = {icon = "", hl = "TSField"}
 M.Struct = {icon = "𝓢", hl = "TSType"}
 M.Event = {icon = "🗲", hl = "TSType"}
-M.Operator = {icon = "𝒯", hl = "TSOperator"}
+M.Operator = {icon = "+", hl = "TSOperator"}
+M.TypeParameter = {icon = "𝙏", hl = "TSParameter"}
 
 M.kinds = {
     "File", "Module", "Namespace", "Package", "Class", "Method", "Property",
     "Field", "Constructor", "Enum", "Interface", "Function", "Variable",
     "Constant", "String", "Number", "Boolean", "Array", "Object", "Key", "Null",
-    "EnumMember", "Struct", "Event", "Operator"
+    "EnumMember", "Struct", "Event", "Operator", "TypeParameter"
 }
 
 function M.icon_from_kind(kind) return M[M.kinds[kind]].icon end
