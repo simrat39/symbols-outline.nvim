@@ -136,6 +136,10 @@ local function setup_keymaps(bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, "n", "<C-space>",
                                 ":lua require('symbols-outline.hover').show_hover()<Cr>",
                                 {})
+    -- rename symbol
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "r",
+                                ":lua require('symbols-outline.rename').rename()<Cr>",
+                                {})
     -- close outline when escape is pressed
     vim.api.nvim_buf_set_keymap(bufnr, "n", "<Esc>", ":bw!<Cr>", {})
 end
