@@ -54,6 +54,7 @@ function D._refresh()
     if D.state.outline_buf ~= nil then
         vim.lsp.buf_request(0, "textDocument/documentSymbol", getParams(),
                             function(_, _, result)
+            if result == nil or type(result) ~= 'table' then return end
 
             D.state.code_win = vim.api.nvim_get_current_win()
             D.state.outline_items = parser.parse(result)
@@ -170,7 +171,8 @@ local function setup_buffer()
 end
 
 local function handler(_, _, result)
-    if result == nil then return end
+    if result == nil or type(result) ~= 'table' then return end
+
     D.state.code_win = vim.api.nvim_get_current_win()
 
     setup_buffer()
