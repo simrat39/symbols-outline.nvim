@@ -59,11 +59,12 @@ function M._refresh()
     end
 end
 
-function M._goto_location()
+function M._goto_location(change_focus)
     local current_line = vim.api.nvim_win_get_cursor(M.state.outline_win)[1]
     local node = M.state.flattened_outline_items[current_line]
-    vim.fn.win_gotoid(M.state.code_win)
-    vim.fn.cursor(node.line + 1, node.character + 1)
+    vim.api.nvim_win_set_cursor(M.state.code_win, {node.line + 1,
+                                node.character})
+    if change_focus then vim.fn.win_gotoid(M.state.code_win) end
 end
 
 function M._highlight_current_item()
@@ -120,9 +121,13 @@ function M._prevent_buffer_override()
 end
 
 local function setup_keymaps(bufnr)
-    -- goto_location of symbol
+    -- goto_location of symbol and focus that window
     vim.api.nvim_buf_set_keymap(bufnr, "n", "<Cr>",
-                                ":lua require('symbols-outline')._goto_location()<Cr>",
+                                ":lua require('symbols-outline')._goto_location(true)<Cr>",
+                                {})
+    -- goto_location of symbol but stay in outline
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "o",
+                                ":lua require('symbols-outline')._goto_location(false)<Cr>",
                                 {})
     -- hover symbol
     vim.api.nvim_buf_set_keymap(bufnr, "n", "<C-space>",
@@ -133,7 +138,7 @@ local function setup_keymaps(bufnr)
                                 ":lua require('symbols-outline.rename').rename()<Cr>",
                                 {})
     -- close outline when escape is pressed
-    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Esc>", ":bw!<Cr>", {})
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Esc>", ":bw!<Cr>",{})
 end
 
 ----------------------------
