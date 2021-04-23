@@ -23,6 +23,10 @@ local opts = {
     -- or you just hate the highlight
     -- default: true
     highlight_hovered_item = true,
+
+    -- whether to show outline guides 
+    -- default: true
+    show_guides = true,
 }
 
 require('symbols-outline').setup(opts)
