@@ -32,6 +32,9 @@ function M.rename()
             vim.lsp.util.apply_workspace_edit(result)
         end
     end)
+    -- kind of a hack but we want the state to always be the latest, so unload
+    -- this module for the next time it is called its gonna be F R E S H
+    package.loaded["symbols-outline.rename"] = nil
 end
 
 return M
