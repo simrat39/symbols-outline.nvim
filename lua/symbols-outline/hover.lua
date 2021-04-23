@@ -48,12 +48,15 @@ function M.show_hover()
                 }
             })
             util.close_preview_autocmd({
-                "CursorMoved", "BufHidden", "InsertCharPre"
+                "CursorMoved", "BufHidden", "InsertCharPre", "BufWipeout", "BufDelete", "WinClosed"
             }, winnr)
 
             return bufnr, winnr
         end)
     end)
+    -- kind of a hack but we want the state to always be the latest, so unload
+    -- this module for the next time it is called its gonna be F R E S H
+    package.loaded["symbols-outline.hover"] = nil
 end
 
 return M
