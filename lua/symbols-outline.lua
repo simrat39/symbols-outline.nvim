@@ -3,6 +3,7 @@ local vim = vim
 local parser = require('symbols-outline.parser')
 local ui = require('symbols-outline.ui')
 local writer = require('symbols-outline.writer')
+local config = require('symbols-outline.config')
 
 local M = {}
 
@@ -15,7 +16,7 @@ local function setup_autocmd()
     vim.cmd(
         "au InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost * :lua require('symbols-outline')._refresh()")
     vim.cmd "au BufDelete * lua require'symbols-outline'._prevent_buffer_override()"
-    if M.opts.highlight_hovered_item then
+    if config.options.highlight_hovered_item then
         vim.cmd(
             "autocmd CursorHold * :lua require('symbols-outline')._highlight_current_item()")
     end
@@ -185,11 +186,9 @@ function M.toggle_outline()
 end
 
 function M.setup(opts)
-    vim.tbl_deep_extend("force", M.opts, opts or {})
-
+    config.setup(opts)
     setup_commands()
     setup_autocmd()
 end
-M.opts = {highlight_hovered_item = true}
 
 return M
