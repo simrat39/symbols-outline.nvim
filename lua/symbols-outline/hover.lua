@@ -1,6 +1,6 @@
 local vim = vim
 
-local state = require('symbols-outline').state
+local main = require('symbols-outline')
 local util = vim.lsp.util
 
 local M = {}
@@ -18,10 +18,10 @@ end
 
 -- handler yoinked from the default implementation
 function M.show_hover()
-    local current_line = vim.api.nvim_win_get_cursor(state.outline_win)[1]
-    local node = state.flattened_outline_items[current_line]
+    local current_line = vim.api.nvim_win_get_cursor(main.state.outline_win)[1]
+    local node = main.state.flattened_outline_items[current_line]
 
-    local hover_params = get_hover_params(node, state.code_win)
+    local hover_params = get_hover_params(node, main.state.code_win)
 
     vim.lsp.buf_request(hover_params.bufnr, "textDocument/hover", hover_params,
                         function(_, method, result)
@@ -54,9 +54,9 @@ function M.show_hover()
             return bufnr, winnr
         end)
     end)
-    -- kind of a hack but we want the state to always be the latest, so unload
+    -- kind of a hack but we want the main.state to always be the latest, so unload
     -- this module for the next time it is called its gonna be F R E S H
-    package.loaded["symbols-outline.hover"] = nil
+    -- package.loaded["symbols-outline.hover"] = nil
 end
 
 return M
