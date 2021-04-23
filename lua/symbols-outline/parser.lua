@@ -1,5 +1,6 @@
 local symbols = require('symbols-outline.symbols')
 local ui = require('symbols-outline.ui')
+local config = require('symbols-outline.config')
 
 local M = {}
 
@@ -82,24 +83,26 @@ function M.get_lines(flattened_outline_items)
     for _, value in ipairs(flattened_outline_items) do
         local line = str_to_table(string.rep(" ", value.depth))
 
-        -- makes the guides
-        for index, _ in ipairs(line) do
-            -- all items start with a space (or two)
-            if index == 1 then
-                line[index] = " "
-                -- if index is last, add a bottom marker if current item is last,
-                -- else add a middle marker
-            elseif index == #line then
-                if value.isLast then
-                    line[index] = ui.markers.bottom
-                else
-                    line[index] = ui.markers.middle
+        if config.options.show_guides then
+            -- makes the guides
+            for index, _ in ipairs(line) do
+                -- all items start with a space (or two)
+                if index == 1 then
+                    line[index] = " "
+                    -- if index is last, add a bottom marker if current item is last,
+                    -- else add a middle marker
+                elseif index == #line then
+                    if value.isLast then
+                        line[index] = ui.markers.bottom
+                    else
+                        line[index] = ui.markers.middle
+                    end
+                    -- else if the parent was not the last in its group, add a
+                    -- vertical marker because there are items under us and we need
+                    -- to point to those
+                elseif not value.heirarchy[index] then
+                    line[index] = ui.markers.vertical
                 end
-                -- else if the parent was not the last in its group, add a
-                -- vertical marker because there are items under us and we need
-                -- to point to those
-            elseif not value.heirarchy[index] then
-                line[index] = ui.markers.vertical
             end
         end
 

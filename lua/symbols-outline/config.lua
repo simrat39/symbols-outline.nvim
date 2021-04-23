@@ -4,6 +4,7 @@ local M = {}
 
 local defaults = {
     highlight_hovered_item = true,
+    show_guides = true,
 }
 
 M.options = {}
