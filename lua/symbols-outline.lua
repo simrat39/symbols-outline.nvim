@@ -114,8 +114,8 @@ function M._prevent_buffer_override()
         end
 
         vim.cmd("buffer " .. curbuf)
-        vim.cmd("bnext")
         vim.cmd("wincmd r")
+        vim.cmd("bprev")
     end)
 end
 
