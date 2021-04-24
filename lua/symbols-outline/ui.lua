@@ -37,7 +37,6 @@ function M.setup_highlights()
         local symbol = symbols[value]
         highlight_text(value, symbol.icon, symbol.hl)
     end
-    vim.cmd('hi FocusedSymbol term=italic,bold cterm=italic ctermbg=yellow ctermfg=darkblue gui=bold,italic guibg=yellow guifg=darkblue')
 end
 
 return M
