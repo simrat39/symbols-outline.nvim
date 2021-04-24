@@ -12,7 +12,7 @@ end
 
 function D.setup_commands()
     vim.cmd("command! " .. "DSymbolsOutline " ..
-                ":lua require'symbols-outline'.R('symbols-outline').toggle_outline()")
+                ":lua require'symbols-outline.debug'.R('symbols-outline').toggle_outline()")
 end
 
 return D
