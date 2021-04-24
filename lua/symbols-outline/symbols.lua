@@ -1,4 +1,4 @@
-M = {}
+local M = {}
 
 M.File = {icon = "", hl = "TSURI"}
 M.Module = {icon = "", hl = "TSNamespace"}
