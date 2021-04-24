@@ -143,6 +143,10 @@ local function setup_keymaps(bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, "n", "r",
                                 ":lua require('symbols-outline.rename').rename()<Cr>",
                                 {})
+    -- code actions
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "a",
+                                ":lua require('symbols-outline.code_action').show_code_actions()<Cr>",
+                                {})
     -- close outline when escape is pressed
     vim.api.nvim_buf_set_keymap(bufnr, "n", "<Esc>", ":bw!<Cr>",{})
 end
