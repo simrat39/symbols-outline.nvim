@@ -4,6 +4,7 @@ local parser = require('symbols-outline.parser')
 local ui = require('symbols-outline.ui')
 local writer = require('symbols-outline.writer')
 local config = require('symbols-outline.config')
+local utils = require('symbols-outline.utils.lsp_utils')
 
 local M = {}
 
@@ -73,7 +74,7 @@ end
 
 function M._highlight_current_item()
     if M.state.outline_buf == nil or vim.api.nvim_get_current_buf() ==
-        M.state.outline_buf then return end
+        M.state.outline_buf or not utils.is_buf_attached_to_lsp() then return end
 
     local hovered_line = vim.api.nvim_win_get_cursor(
                              vim.api.nvim_get_current_win())[1] - 1
