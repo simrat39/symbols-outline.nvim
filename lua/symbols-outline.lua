@@ -10,6 +10,10 @@ local M = {}
 local function setup_commands()
     vim.cmd("command! " .. "SymbolsOutline " ..
                 ":lua require'symbols-outline'.toggle_outline()")
+    vim.cmd("command! " .. "SymbolsOutlineOpen " ..
+                ":lua require'symbols-outline'.open_outline()")
+    vim.cmd("command! " .. "SymbolsOutlineClose " ..
+                ":lua require'symbols-outline'.close_outline()")
 end
 
 local function setup_autocmd()
@@ -186,6 +190,19 @@ function M.toggle_outline()
         vim.lsp.buf_request(0, "textDocument/documentSymbol", getParams(),
                             handler)
     else
+        vim.api.nvim_win_close(M.state.outline_win, true)
+    end
+end
+
+function M.open_outline()
+    if M.state.outline_buf == nil then
+        vim.lsp.buf_request(0, "textDocument/documentSymbol", getParams(),
+                            handler)
+    end
+end
+
+function M.close_outline()
+    if M.state.outline_buf ~= nil then
         vim.api.nvim_win_close(M.state.outline_win, true)
     end
 end
