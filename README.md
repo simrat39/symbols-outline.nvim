@@ -35,6 +35,8 @@ require('symbols-outline').setup(opts)
 ## Commands
 ```vim
 SymbolsOutline 
+SymbolsOutlineOpen
+SymbolsOutlineClose 
 ```
 ## Keymaps
 ```vim
