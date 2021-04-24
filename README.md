@@ -45,4 +45,5 @@ Enter --> GoTo Symbol location in code
 o --> GoTo Symbol location in code but stay in outline window
 Ctrl + Space --> Hover current symbol
 r --> Rename symbol 
+a --> Code Actions
 ```
