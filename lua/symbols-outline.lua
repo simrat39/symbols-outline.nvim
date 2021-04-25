@@ -113,10 +113,10 @@ function M._prevent_buffer_override()
 
         local current_win_width = vim.api.nvim_win_get_width(curwin)
         if #wins < 2 then
-            vim.cmd("vsplit")
+            vim.cmd(config.get_split_command())
             vim.cmd("vertical resize " .. math.ceil(current_win_width * 0.75))
         else
-            vim.cmd("wincmd l")
+            vim.cmd("wincmd " .. config.get_position_navigation_direction())
         end
 
         vim.cmd("buffer " .. curbuf)
@@ -164,7 +164,7 @@ local function setup_buffer()
     local current_win = vim.api.nvim_get_current_win()
     local current_win_width = vim.api.nvim_win_get_width(current_win)
 
-    vim.cmd("vsplit")
+    vim.cmd(config.get_split_command())
     vim.cmd("vertical resize " .. math.ceil(current_win_width * 0.25))
     M.state.outline_win = vim.api.nvim_get_current_win()
     vim.api.nvim_win_set_buf(M.state.outline_win, M.state.outline_buf)
