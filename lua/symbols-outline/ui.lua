@@ -18,7 +18,6 @@ end
 function M.add_hover_highlight(bufnr, line, col_start)
     vim.api.nvim_buf_add_highlight(bufnr, M.hovered_hl_ns, "FocusedSymbol",
                                    line, col_start, -1)
-
 end
 
 local function highlight_text(name, text, hl_group)
@@ -37,7 +36,13 @@ function M.setup_highlights()
         local symbol = symbols[value]
         highlight_text(value, symbol.icon, symbol.hl)
     end
-    vim.cmd('hi FocusedSymbol term=italic,bold cterm=italic ctermbg=yellow ctermfg=darkblue gui=bold,italic guibg=yellow guifg=darkblue')
+
+    -- Setup the FocusedSymbol highlight group if it hasnt been done already by
+    -- a theme or manually set
+    if vim.fn.hlexists('FocusedSymbol') == 0 then
+        vim.cmd(
+            'hi FocusedSymbol term=italic,bold cterm=italic ctermbg=yellow ctermfg=darkblue gui=bold,italic guibg=yellow guifg=darkblue')
+    end
 end
 
 return M
