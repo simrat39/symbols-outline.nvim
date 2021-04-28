@@ -5,7 +5,15 @@ local M = {}
 local defaults = {
     highlight_hovered_item = true,
     show_guides = true,
-    position = 'right'
+    position = 'right',
+    keymaps = {
+        close = "<Esc>",
+        goto_location = "<Cr>",
+        focus_location = "o",
+        hover_symbol = "<C-space>",
+        rename_symbol = "r",
+        code_actions = "a",
+    }
 }
 
 M.options = {}

@@ -27,22 +27,40 @@ vim.g.symbols_outline = {
     highlight_hovered_item = true,
     show_guides = true,
     position = 'right',
+    keymaps = {
+        close = "<Esc>",
+        goto_location = "<Cr>",
+        focus_location = "o",
+        hover_symbol = "<C-space>",
+        rename_symbol = "r",
+        code_actions = "a",
+    },
 }
 ```
 
 ```vim
 " init.vim
-let g:symbols_outline = {}
-let g:symbols_outline.highlight_hovered_item = v:true
-let g:symbols_outline.show_guides = v:true
-let g:symbols_outline.position = 'right'
+let g:symbols_outline = {
+    \ "highlight_hovered_item": v:true,
+    \ "show_guides": v:true,
+    \ "position": 'right',
+    \ "keymaps": {
+        \ "close": "<Esc>",
+        \ "goto_location": "<Cr>",
+        \ "focus_location": "o",
+        \ "hover_symbol": "<C-space>",
+        \ "rename_symbol": "r",
+        \ "code_actions": "a",
+    \ },
+\ }
 ```
 
-| Property | Description | Type | Default | 
-| --- | -- | -- | -- |
-| highlight_hovered_item | Whether to highlight the currently hovered symbol (high cpu usage) | boolean | true |
-| show_guides | Wether to show outline guides | boolean | true |
-| position | Where to open the split window | 'right' or 'left' | 'right' |
+| Property               | Description                                                        | Type              | Default                  |
+| ---------------------- | ------------------------------------------------------------------ | ----------------- | ------------------------ |
+| highlight_hovered_item | Whether to highlight the currently hovered symbol (high cpu usage) | boolean           | true                     |
+| show_guides            | Wether to show outline guides                                      | boolean           | true                     |
+| position               | Where to open the split window                                     | 'right' or 'left' | 'right'                  |
+| keymaps                | Which keys do what                                                 | table             | [here](#default-keymaps) |
 
 ### Commands
 
@@ -52,14 +70,14 @@ let g:symbols_outline.position = 'right'
 | `:SymbolsOutlineOpen`  | Open symbols outline   |
 | `:SymbolsOutlineClose` | Close symbols outline  |
 
-### Keymaps
+### Default keymaps
 
-| Key | Action |
-| -- | -- |
-| Escape | Close outline |
-| Enter | Go to symbol location in code |
-| o | Go to symbol location in code without losing focus |
-| Ctrl+Space | Hover current symbol | 
-| r | Rename symbol |
-| a | Code actions |
+| Key        | Action                                             |
+| ---------- | -------------------------------------------------- |
+| Escape     | Close outline                                      |
+| Enter      | Go to symbol location in code                      |
+| o          | Go to symbol location in code without losing focus |
+| Ctrl+Space | Hover current symbol                               |
+| r          | Rename symbol                                      |
+| a          | Code actions                                       |
 

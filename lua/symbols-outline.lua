@@ -67,8 +67,8 @@ end
 function M._goto_location(change_focus)
     local current_line = vim.api.nvim_win_get_cursor(M.state.outline_win)[1]
     local node = M.state.flattened_outline_items[current_line]
-    vim.api.nvim_win_set_cursor(M.state.code_win, {node.line + 1,
-                                node.character})
+    vim.api.nvim_win_set_cursor(M.state.code_win,
+                                {node.line + 1, node.character})
     if change_focus then vim.fn.win_gotoid(M.state.code_win) end
 end
 
@@ -129,27 +129,31 @@ end
 
 local function setup_keymaps(bufnr)
     -- goto_location of symbol and focus that window
-    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Cr>",
+    vim.api.nvim_buf_set_keymap(bufnr, "n",
+                                config.options.keymaps.goto_location,
                                 ":lua require('symbols-outline')._goto_location(true)<Cr>",
                                 {})
     -- goto_location of symbol but stay in outline
-    vim.api.nvim_buf_set_keymap(bufnr, "n", "o",
+    vim.api.nvim_buf_set_keymap(bufnr, "n",
+                                config.options.keymaps.focus_location,
                                 ":lua require('symbols-outline')._goto_location(false)<Cr>",
                                 {})
     -- hover symbol
-    vim.api.nvim_buf_set_keymap(bufnr, "n", "<C-space>",
+    vim.api.nvim_buf_set_keymap(bufnr, "n", config.options.keymaps.hover_symbol,
                                 ":lua require('symbols-outline.hover').show_hover()<Cr>",
                                 {})
     -- rename symbol
-    vim.api.nvim_buf_set_keymap(bufnr, "n", "r",
+    vim.api.nvim_buf_set_keymap(bufnr, "n",
+                                config.options.keymaps.rename_symbol,
                                 ":lua require('symbols-outline.rename').rename()<Cr>",
                                 {})
     -- code actions
-    vim.api.nvim_buf_set_keymap(bufnr, "n", "a",
+    vim.api.nvim_buf_set_keymap(bufnr, "n", config.options.keymaps.code_actions,
                                 ":lua require('symbols-outline.code_action').show_code_actions()<Cr>",
                                 {})
-    -- close outline when escape is pressed
-    vim.api.nvim_buf_set_keymap(bufnr, "n", "<Esc>", ":bw!<Cr>",{})
+    -- close outline
+    vim.api.nvim_buf_set_keymap(bufnr, "n", config.options.keymaps.close,
+                                ":bw!<Cr>", {})
 end
 
 ----------------------------
