@@ -35,6 +35,7 @@ vim.g.symbols_outline = {
         rename_symbol = "r",
         code_actions = "a",
     },
+    lsp_blacklist = {},
 }
 ```
 
@@ -52,15 +53,17 @@ let g:symbols_outline = {
         \ "rename_symbol": "r",
         \ "code_actions": "a",
     \ },
+    \ "lsp_blacklist": [],
 \ }
 ```
 
-| Property               | Description                                                        | Type              | Default                  |
-| ---------------------- | ------------------------------------------------------------------ | ----------------- | ------------------------ |
-| highlight_hovered_item | Whether to highlight the currently hovered symbol (high cpu usage) | boolean           | true                     |
-| show_guides            | Wether to show outline guides                                      | boolean           | true                     |
-| position               | Where to open the split window                                     | 'right' or 'left' | 'right'                  |
-| keymaps                | Which keys do what                                                 | table             | [here](#default-keymaps) |
+| Property               | Description                                                        | Type               | Default                  |
+| ---------------------- | ------------------------------------------------------------------ | ------------------ | ------------------------ |
+| highlight_hovered_item | Whether to highlight the currently hovered symbol (high cpu usage) | boolean            | true                     |
+| show_guides            | Wether to show outline guides                                      | boolean            | true                     |
+| position               | Where to open the split window                                     | 'right' or 'left'  | 'right'                  |
+| keymaps                | Which keys do what                                                 | table (dictionary) | [here](#default-keymaps) |
+| lsp_blacklist          | Which lsp clients to ignore                                        | table (array)      | {}                       |
 
 ### Commands
 

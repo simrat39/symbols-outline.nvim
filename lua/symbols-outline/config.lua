@@ -12,8 +12,9 @@ local defaults = {
         focus_location = "o",
         hover_symbol = "<C-space>",
         rename_symbol = "r",
-        code_actions = "a",
-    }
+        code_actions = "a"
+    },
+    lsp_blacklist = {}
 }
 
 M.options = {}
@@ -32,6 +33,17 @@ function M.get_split_command()
     else
         return "vs"
     end
+end
+
+local function has_value(tab, val)
+    for _, value in ipairs(tab) do if value == val then return true end end
+
+    return false
+end
+
+function M.is_client_blacklisted(client_id)
+    local client = vim.lsp.get_client_by_id(client_id)
+    return has_value(M.options.lsp_blacklist, client.name)
 end
 
 function M.setup(options)

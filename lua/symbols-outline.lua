@@ -49,8 +49,9 @@ end
 function M._refresh()
     if M.state.outline_buf ~= nil then
         vim.lsp.buf_request(0, "textDocument/documentSymbol", getParams(),
-                            function(_, _, result)
+                            function(_, _, result, client_id)
             if result == nil or type(result) ~= 'table' then return end
+            if config.is_client_blacklisted(client_id) then return end
 
             M.state.code_win = vim.api.nvim_get_current_win()
             M.state.outline_items = parser.parse(result)
@@ -182,8 +183,9 @@ local function setup_buffer()
     vim.api.nvim_buf_set_option(M.state.outline_buf, "modifiable", false)
 end
 
-local function handler(_, _, result)
+local function handler(_, _, result, client_id)
     if result == nil or type(result) ~= 'table' then return end
+    if config.is_client_blacklisted(client_id) then return end
 
     M.state.code_win = vim.api.nvim_get_current_win()
 
