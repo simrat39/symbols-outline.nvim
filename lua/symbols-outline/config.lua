@@ -31,7 +31,7 @@ function M.get_split_command()
     if M.options.position == 'left' then
         return "topleft vs"
     else
-        return "vs"
+        return "botright vs"
     end
 end
 
