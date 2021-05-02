@@ -4,13 +4,22 @@ local parser = require('symbols-outline.parser')
 
 local M = {}
 
+local function is_buffer_outline(bufnr)
+    local isValid = vim.api.nvim_buf_is_valid(bufnr)
+    local name = vim.api.nvim_buf_get_name(bufnr)
+    local ft = vim.api.nvim_buf_get_option(bufnr, "filetype")
+    return string.match(name, "OUTLINE") ~= nil and ft == "Outline" and isValid
+end
+
 function M.write_outline(bufnr, lines)
+    if not is_buffer_outline(bufnr) then return end
     vim.api.nvim_buf_set_option(bufnr, "modifiable", true)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
     vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
 end
 
 function M.write_details(bufnr, lines)
+    if not is_buffer_outline(bufnr) then return end
     for index, value in ipairs(lines) do
         vim.api.nvim_buf_set_virtual_text(bufnr, -1, index - 1,
                                           {{value, "Comment"}}, {})
