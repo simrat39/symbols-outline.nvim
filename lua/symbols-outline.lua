@@ -62,6 +62,9 @@ function M._refresh()
                             function(_, _, result, client_id)
             if result == nil or type(result) ~= 'table' then return end
             if config.is_client_blacklisted(client_id) then return end
+            if not utils.is_buf_attached_to_lsp(vim.api.nvim_get_current_buf()) then
+                return
+            end
 
             M.state.code_win = vim.api.nvim_get_current_win()
             M.state.outline_items = parser.parse(result)
