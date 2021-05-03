@@ -119,14 +119,10 @@ function M.get_lines(flattened_outline_items)
     return lines
 end
 
-function M.get_details(outline_items, bufnr, winnr, lines)
-    lines = lines or {}
-    for _, value in ipairs(outline_items) do
+function M.get_details(flattened_outline_items)
+    local lines = {}
+    for _, value in ipairs(flattened_outline_items) do
         table.insert(lines, value.detail or "")
-
-        if value.children ~= nil then
-            M.get_details(value.children, bufnr, winnr, lines)
-        end
     end
     return lines
 end

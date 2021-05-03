@@ -32,7 +32,8 @@ end
 
 local function setup_buffer_autocmd()
     if config.options.auto_preview then
-        vim.cmd("au CursorHold <buffer> lua require'symbols-outline.preview'.show()")
+        vim.cmd(
+            "au CursorHold <buffer> lua require'symbols-outline.preview'.show()")
     end
 end
 
@@ -67,8 +68,7 @@ function M._refresh()
             M.state.flattened_outline_items =
                 parser.flatten(parser.parse(result))
 
-            writer.parse_and_write(M.state.outline_buf, M.state.outline_win,
-                                   M.state.outline_items,
+            writer.parse_and_write(M.state.outline_buf,
                                    M.state.flattened_outline_items)
         end)
     end
@@ -203,9 +203,7 @@ local function handler(_, _, result, client_id)
     M.state.outline_items = parser.parse(result)
     M.state.flattened_outline_items = parser.flatten(parser.parse(result))
 
-    writer.parse_and_write(M.state.outline_buf, M.state.outline_win,
-                           M.state.outline_items,
-                           M.state.flattened_outline_items)
+    writer.parse_and_write(M.state.outline_buf, M.state.flattened_outline_items)
     ui.setup_highlights()
 end
 
