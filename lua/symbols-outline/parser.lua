@@ -33,16 +33,28 @@ function M.parse(result, depth, heirarchy)
             children = M.parse(value.children, level + 1, child_hir)
         end
 
+        -- support SymbolInformation[]
+        -- https://microsoft.github.io/language-server-protocol/specification#textDocument_documentSymbol
+        local selectionRange = value.selectionRange
+        if value.selectionRange == nil then
+           selectionRange = value.location.range
+        end
+
+        local range = value.range
+        if value.range == nil then
+           range = value.location.range
+        end
+
         table.insert(ret, {
             deprecated = value.deprecated,
             kind = value.kind,
             icon = symbols.icon_from_kind(value.kind),
             name = value.name,
             detail = value.detail,
-            line = value.selectionRange.start.line,
-            range_start = value.range.start.line,
-            range_end = value.range["end"].line,
-            character = value.selectionRange.start.character,
+            line = selectionRange.start.line,
+            character = selectionRange.start.character,
+            range_start = range.start.line,
+            range_end = range["end"].line,
             children = children,
             depth = level,
             isLast = isLast,
