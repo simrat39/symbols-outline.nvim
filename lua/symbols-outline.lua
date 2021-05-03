@@ -17,13 +17,22 @@ local function setup_commands()
                 ":lua require'symbols-outline'.close_outline()")
 end
 
-local function setup_autocmd()
+local function setup_global_autocmd()
     vim.cmd(
         "au InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost * :lua require('symbols-outline')._refresh()")
-    vim.cmd "au BufDelete * lua require'symbols-outline'._prevent_buffer_override()"
+    vim.cmd "au BufLeave * lua require'symbols-outline'._prevent_buffer_override()"
+    if config.options.auto_preview then
+        vim.cmd "au WinEnter * lua require'symbols-outline.preview'.close_if_not_in_outline()"
+    end
     if config.options.highlight_hovered_item then
         vim.cmd(
             "autocmd CursorHold * :lua require('symbols-outline')._highlight_current_item()")
+    end
+end
+
+local function setup_buffer_autocmd()
+    if config.options.auto_preview then
+        vim.cmd("au CursorHold <buffer> lua require'symbols-outline.preview'.show()")
     end
 end
 
@@ -190,6 +199,7 @@ local function handler(_, _, result, client_id)
     M.state.code_win = vim.api.nvim_get_current_win()
 
     setup_buffer()
+    setup_buffer_autocmd()
     M.state.outline_items = parser.parse(result)
     M.state.flattened_outline_items = parser.flatten(parser.parse(result))
 
@@ -224,7 +234,7 @@ end
 function M.setup(opts)
     config.setup(opts)
     setup_commands()
-    setup_autocmd()
+    setup_global_autocmd()
 end
 
 return M

@@ -6,6 +6,7 @@ local defaults = {
     highlight_hovered_item = true,
     show_guides = true,
     position = 'right',
+    auto_preview = false, -- experimental
     keymaps = {
         close = "<Esc>",
         goto_location = "<Cr>",
