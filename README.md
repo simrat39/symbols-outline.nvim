@@ -8,6 +8,7 @@ Supports all your favourite languages.**
 ### Prerequisites
 
 - `neovim 0.5+` (nightly)
+-  Properly configured Neovim LSP client
 
 ### Installation
 
