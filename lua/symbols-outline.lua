@@ -141,32 +141,21 @@ function M._prevent_buffer_override()
 end
 
 local function setup_keymaps(bufnr)
+    local function nmap(key, action)
+        vim.api.nvim_buf_set_keymap(bufnr, "n", key, action, { silent = true })
+    end
     -- goto_location of symbol and focus that window
-    vim.api.nvim_buf_set_keymap(bufnr, "n",
-                                config.options.keymaps.goto_location,
-                                ":lua require('symbols-outline')._goto_location(true)<Cr>",
-                                {})
+    nmap(config.options.keymaps.goto_location, ":lua require('symbols-outline')._goto_location(true)<Cr>")
     -- goto_location of symbol but stay in outline
-    vim.api.nvim_buf_set_keymap(bufnr, "n",
-                                config.options.keymaps.focus_location,
-                                ":lua require('symbols-outline')._goto_location(false)<Cr>",
-                                {})
+    nmap(config.options.keymaps.focus_location, ":lua require('symbols-outline')._goto_location(false)<Cr>")
     -- hover symbol
-    vim.api.nvim_buf_set_keymap(bufnr, "n", config.options.keymaps.hover_symbol,
-                                ":lua require('symbols-outline.hover').show_hover()<Cr>",
-                                {})
+    nmap(config.options.keymaps.hover_symbol, ":lua require('symbols-outline.hover').show_hover()<Cr>")
     -- rename symbol
-    vim.api.nvim_buf_set_keymap(bufnr, "n",
-                                config.options.keymaps.rename_symbol,
-                                ":lua require('symbols-outline.rename').rename()<Cr>",
-                                {})
+    nmap(config.options.keymaps.rename_symbol, ":lua require('symbols-outline.rename').rename()<Cr>")
     -- code actions
-    vim.api.nvim_buf_set_keymap(bufnr, "n", config.options.keymaps.code_actions,
-                                ":lua require('symbols-outline.code_action').show_code_actions()<Cr>",
-                                {})
+    nmap(config.options.keymaps.code_actions, ":lua require('symbols-outline.code_action').show_code_actions()<Cr>")
     -- close outline
-    vim.api.nvim_buf_set_keymap(bufnr, "n", config.options.keymaps.close,
-                                ":bw!<Cr>", {})
+    nmap(config.options.keymaps.close, ":bw!<Cr>")
 end
 
 ----------------------------
