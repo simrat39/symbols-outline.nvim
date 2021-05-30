@@ -142,18 +142,24 @@ end
 
 local function setup_keymaps(bufnr)
     local function nmap(key, action)
-        vim.api.nvim_buf_set_keymap(bufnr, "n", key, action, { silent = true })
+        vim.api.nvim_buf_set_keymap(bufnr, "n", key, action,
+                                    {silent = true, noremap = true})
     end
     -- goto_location of symbol and focus that window
-    nmap(config.options.keymaps.goto_location, ":lua require('symbols-outline')._goto_location(true)<Cr>")
+    nmap(config.options.keymaps.goto_location,
+         ":lua require('symbols-outline')._goto_location(true)<Cr>")
     -- goto_location of symbol but stay in outline
-    nmap(config.options.keymaps.focus_location, ":lua require('symbols-outline')._goto_location(false)<Cr>")
+    nmap(config.options.keymaps.focus_location,
+         ":lua require('symbols-outline')._goto_location(false)<Cr>")
     -- hover symbol
-    nmap(config.options.keymaps.hover_symbol, ":lua require('symbols-outline.hover').show_hover()<Cr>")
+    nmap(config.options.keymaps.hover_symbol,
+         ":lua require('symbols-outline.hover').show_hover()<Cr>")
     -- rename symbol
-    nmap(config.options.keymaps.rename_symbol, ":lua require('symbols-outline.rename').rename()<Cr>")
+    nmap(config.options.keymaps.rename_symbol,
+         ":lua require('symbols-outline.rename').rename()<Cr>")
     -- code actions
-    nmap(config.options.keymaps.code_actions, ":lua require('symbols-outline.code_action').show_code_actions()<Cr>")
+    nmap(config.options.keymaps.code_actions,
+         ":lua require('symbols-outline.code_action').show_code_actions()<Cr>")
     -- close outline
     nmap(config.options.keymaps.close, ":bw!<Cr>")
 end
