@@ -27,7 +27,7 @@ Define a global variable `symbols_outline` as follows:
 vim.g.symbols_outline = {
     highlight_hovered_item = true,
     show_guides = true,
-    auto_preview = false, -- experimental
+    auto_preview = true,
     position = 'right',
     keymaps = {
         close = "<Esc>",
@@ -48,7 +48,7 @@ let g:symbols_outline = {
     \ "highlight_hovered_item": v:true,
     \ "show_guides": v:true,
     \ "position": 'right',
-    \ "auto_preview": v:false,
+    \ "auto_preview": v:true,
     \ "keymaps": {
         \ "close": "<Esc>",
         \ "goto_location": "<Cr>",
@@ -66,7 +66,7 @@ let g:symbols_outline = {
 | highlight_hovered_item | Whether to highlight the currently hovered symbol (high cpu usage) | boolean            | true                     |
 | show_guides            | Wether to show outline guides                                      | boolean            | true                     |
 | position               | Where to open the split window                                     | 'right' or 'left'  | 'right'                  |
-| auto_preview           | Experimenatl, to show a preview of the code on hover               | boolean            | true                     |
+| auto_preview           | Show a preview of the code on hover                                | boolean            | true                     |
 | keymaps                | Which keys do what                                                 | table (dictionary) | [here](#default-keymaps) |
 | lsp_blacklist          | Which lsp clients to ignore                                        | table (array)      | {}                       |
 
