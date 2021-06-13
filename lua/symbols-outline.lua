@@ -122,6 +122,11 @@ function M._prevent_buffer_override()
             return
         end
 
+        -- if this is the only window left, return early. Else we won't be able to close the last buffer. #22
+        if #wins == 1 and curbuf == M.state.outline_buf then
+            return
+        end
+
         vim.cmd("buffer " .. M.state.outline_buf)
 
         local current_win_width = vim.api.nvim_win_get_width(curwin)
