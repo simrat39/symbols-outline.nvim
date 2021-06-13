@@ -58,18 +58,19 @@ end
 
 function M._refresh()
     if M.state.outline_buf ~= nil then
-        vim.lsp.buf_request(0, "textDocument/documentSymbol", getParams(),
-                            function(_, _, result, client_id)
-            if result == nil or type(result) ~= 'table' then return end
-            if config.is_client_blacklisted(client_id) then return end
+        vim.lsp.buf_request_all(0, "textDocument/documentSymbol", getParams(),
+                            function(response)
+            if response == nil or type(response) ~= 'table' then return end
             if not utils.is_buf_attached_to_lsp(vim.api.nvim_get_current_buf()) then
                 return
             end
 
+            local items = parser.parse(response)
+
             M.state.code_win = vim.api.nvim_get_current_win()
-            M.state.outline_items = parser.parse(result)
+            M.state.outline_items = items
             M.state.flattened_outline_items =
-                parser.flatten(parser.parse(result))
+                parser.flatten(items)
 
             writer.parse_and_write(M.state.outline_buf,
                                    M.state.flattened_outline_items)
@@ -190,16 +191,18 @@ local function setup_buffer()
     vim.api.nvim_buf_set_option(M.state.outline_buf, "modifiable", false)
 end
 
-local function handler(_, _, result, client_id)
-    if result == nil or type(result) ~= 'table' then return end
-    if config.is_client_blacklisted(client_id) then return end
+local function handler(response)
+    if response == nil or type(response) ~= 'table' then return end
 
     M.state.code_win = vim.api.nvim_get_current_win()
 
     setup_buffer()
     setup_buffer_autocmd()
-    M.state.outline_items = parser.parse(result)
-    M.state.flattened_outline_items = parser.flatten(parser.parse(result))
+
+    local items = parser.parse(response)
+
+    M.state.outline_items = items
+    M.state.flattened_outline_items = parser.flatten(items)
 
     writer.parse_and_write(M.state.outline_buf, M.state.flattened_outline_items)
     ui.setup_highlights()
@@ -207,7 +210,7 @@ end
 
 function M.toggle_outline()
     if M.state.outline_buf == nil then
-        vim.lsp.buf_request(0, "textDocument/documentSymbol", getParams(),
+        vim.lsp.buf_request_all(0, "textDocument/documentSymbol", getParams(),
                             handler)
     else
         vim.api.nvim_win_close(M.state.outline_win, true)
@@ -216,7 +219,7 @@ end
 
 function M.open_outline()
     if M.state.outline_buf == nil then
-        vim.lsp.buf_request(0, "textDocument/documentSymbol", getParams(),
+        vim.lsp.buf_request_all(0, "textDocument/documentSymbol", getParams(),
                             handler)
     end
 end
