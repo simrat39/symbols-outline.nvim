@@ -11,8 +11,12 @@ local function array_copy(t)
     return ret
 end
 
--- parses result into a neat table
-function M.parse(result, depth, heirarchy)
+---Parses result from LSP into a table of symbols
+---@param result table The result from a language server.
+---@param depth number The current depth of the symbol in the heirarchy.
+---@param heirarchy table A table of booleans which tells if a symbols parent was the last in its group.
+---@return table
+local function parse_result(result, depth, heirarchy)
     local ret = {}
 
     for index, value in pairs(result) do
@@ -30,7 +34,7 @@ function M.parse(result, depth, heirarchy)
             -- copy by value because we dont want it messing with the hir table
             local child_hir = array_copy(hir)
             table.insert(child_hir, isLast)
-            children = M.parse(value.children, level + 1, child_hir)
+            children = parse_result(value.children, level + 1, child_hir)
         end
 
         -- support SymbolInformation[]
@@ -62,6 +66,73 @@ function M.parse(result, depth, heirarchy)
         });
     end
     return ret
+end
+
+---Sorts the result from LSP by where the symbols start.
+---@param result table Result containing symbols returned from textDocument/documentSymbol
+---@return table
+local function sort_result(result)
+    ---Returns the start location for a symbol, or nil if not found.
+    ---@param item table The symbol.
+    ---@return table|nil
+    local function get_range_start(item)
+        if item.location ~= nil then
+            return item.location.range.start
+        elseif item.range ~= nil then
+            return item.range.start
+        else
+            return nil
+        end
+    end
+
+    table.sort(result, function (a, b)
+        local a_start = get_range_start(a)
+        local b_start = get_range_start(b)
+
+        -- if they both are equal, a should be before b
+        if a_start == nil and b_start == nil then return false end
+
+        -- those with no start go first
+        if a_start == nil then return true end
+        if b_start == nil then return false end
+
+        -- first try to sort by line. If lines are equal, sort by character instead
+        if a_start.line ~= b_start.line then
+            return a_start.line < b_start.line
+        else
+            return a_start.character < b_start.character
+        end
+    end)
+
+    return result
+end
+
+---Parses the response from lsp request 'textDocument/documentSymbol' using buf_request_all
+---@param response table The result from buf_request_all
+---@return table outline items
+function M.parse(response)
+    local all_results = {}
+
+    -- flatten results to one giant table of symbols
+    for client_id,client_response in pairs(response) do
+        if config.is_client_blacklisted(client_id) then
+            print('skipping client ' .. client_id)
+            goto continue
+        end
+
+        local result = client_response['result']
+        if result == nil or type(result) ~= 'table' then goto continue end
+
+        for _,value in pairs(result) do
+            table.insert(all_results, value)
+        end
+
+        ::continue::
+    end
+
+    local sorted = sort_result(all_results)
+
+    return parse_result(sorted)
 end
 
 function M.flatten(outline_items)
