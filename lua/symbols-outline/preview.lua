@@ -65,6 +65,17 @@ end
 local function setup_preview_buf()
     local code_buf = vim.api.nvim_win_get_buf(main.state.code_win)
     local ft = vim.api.nvim_buf_get_option(code_buf, "filetype")
+
+    local function treesitter_attach()
+        local ts_highlight = require('nvim-treesitter.highlight')
+        local ts_parsers = require('nvim-treesitter.parsers')
+
+        ts_highlight.attach(state.preview_buf, ft)
+    end
+
+    -- user might not have tree sitter installed
+    pcall(treesitter_attach)
+
     vim.api.nvim_buf_set_option(state.preview_buf, "syntax", ft)
     vim.api.nvim_buf_set_option(state.preview_buf, "bufhidden", "delete")
     vim.api.nvim_win_set_option(state.preview_win, "cursorline", true)
