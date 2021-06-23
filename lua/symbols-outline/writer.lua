@@ -1,6 +1,7 @@
 local vim = vim
 
 local parser = require('symbols-outline.parser')
+local config = require('symbols-outline.config')
 
 local M = {}
 
@@ -20,6 +21,8 @@ end
 
 function M.write_details(bufnr, lines)
     if not is_buffer_outline(bufnr) then return end
+    if not config.options.show_symbol_details then return end
+
     for index, value in ipairs(lines) do
         vim.api.nvim_buf_set_virtual_text(bufnr, -1, index - 1,
                                           {{value, "Comment"}}, {})

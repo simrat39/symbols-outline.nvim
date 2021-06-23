@@ -31,6 +31,7 @@ vim.g.symbols_outline = {
     position = 'right',
     show_numbers = false,
     show_relative_numbers = false,
+    show_symbol_details = true,
     keymaps = {
         close = "<Esc>",
         goto_location = "<Cr>",
@@ -53,6 +54,7 @@ let g:symbols_outline = {
     \ "auto_preview": v:true,
     \ "show_numbers": v:false,
     \ "show_relative_numbers": v:false,
+    \ "show_symbol_details": v:true,
     \ "keymaps": {
         \ "close": "<Esc>",
         \ "goto_location": "<Cr>",
@@ -73,6 +75,7 @@ let g:symbols_outline = {
 | auto_preview           | Show a preview of the code on hover                                | boolean            | true                     |
 | show_numbers           | Shows numbers with the outline                                     | boolean            | false                    |
 | show_relative_numbers  | Shows relative numbers with the outline                            | boolean            | false                    |
+| show_symbol_details    | Shows extra details with the symbols (lsp dependent)               | boolean            | true                     |
 | keymaps                | Which keys do what                                                 | table (dictionary) | [here](#default-keymaps) |
 | lsp_blacklist          | Which lsp clients to ignore                                        | table (array)      | {}                       |
 

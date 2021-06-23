@@ -9,6 +9,7 @@ local defaults = {
     auto_preview = true,
     show_numbers = false,
     show_relative_numbers = false,
+    show_symbol_details = true,
     keymaps = {
         close = "<Esc>",
         goto_location = "<Cr>",
