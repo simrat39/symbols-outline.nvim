@@ -194,6 +194,14 @@ local function setup_buffer()
     vim.api.nvim_buf_set_name(M.state.outline_buf, "OUTLINE")
     vim.api.nvim_buf_set_option(M.state.outline_buf, "filetype", "Outline")
     vim.api.nvim_buf_set_option(M.state.outline_buf, "modifiable", false)
+
+    if config.options.show_numbers or config.options.show_relative_numbers then
+        vim.api.nvim_win_set_option(M.state.outline_win, "nu", true)
+    end
+
+    if config.options.show_relative_numbers then
+        vim.api.nvim_win_set_option(M.state.outline_win, "rnu", true)
+    end
 end
 
 local function handler(response)

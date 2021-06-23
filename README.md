@@ -29,6 +29,8 @@ vim.g.symbols_outline = {
     show_guides = true,
     auto_preview = true,
     position = 'right',
+    show_numbers = false,
+    show_relative_numbers = false,
     keymaps = {
         close = "<Esc>",
         goto_location = "<Cr>",
@@ -49,6 +51,8 @@ let g:symbols_outline = {
     \ "show_guides": v:true,
     \ "position": 'right',
     \ "auto_preview": v:true,
+    \ "show_numbers": v:false,
+    \ "show_relative_numbers": v:false,
     \ "keymaps": {
         \ "close": "<Esc>",
         \ "goto_location": "<Cr>",
@@ -67,6 +71,8 @@ let g:symbols_outline = {
 | show_guides            | Wether to show outline guides                                      | boolean            | true                     |
 | position               | Where to open the split window                                     | 'right' or 'left'  | 'right'                  |
 | auto_preview           | Show a preview of the code on hover                                | boolean            | true                     |
+| show_numbers           | Shows numbers with the outline                                     | boolean            | false                    |
+| show_relative_numbers  | Shows relative numbers with the outline                            | boolean            | false                    |
 | keymaps                | Which keys do what                                                 | table (dictionary) | [here](#default-keymaps) |
 | lsp_blacklist          | Which lsp clients to ignore                                        | table (array)      | {}                       |
 

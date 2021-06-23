@@ -7,6 +7,8 @@ local defaults = {
     show_guides = true,
     position = 'right',
     auto_preview = true,
+    show_numbers = false,
+    show_relative_numbers = false,
     keymaps = {
         close = "<Esc>",
         goto_location = "<Cr>",
@@ -19,6 +21,10 @@ local defaults = {
 }
 
 M.options = {}
+
+function M.has_numbers()
+   return M.options.show_numbers or M.options.show_relative_numbers
+end
 
 function M.get_position_navigation_direction()
     if M.options.position == 'left' then

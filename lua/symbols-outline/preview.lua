@@ -29,6 +29,10 @@ local function get_offset()
     local width = 53
     local height = 0
 
+    if config.has_numbers() then
+       width = width + 4;
+    end
+
     if config.options.position == 'right' then
         width = 0 - width
     else
