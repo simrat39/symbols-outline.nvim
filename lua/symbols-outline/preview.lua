@@ -131,6 +131,7 @@ local function setup_hover_buf()
     vim.api.nvim_buf_set_option(state.hover_buf, "syntax", ft)
     vim.api.nvim_buf_set_option(state.hover_buf, "bufhidden", "delete")
     vim.api.nvim_win_set_option(state.hover_win, "wrap", true)
+    vim.api.nvim_win_set_option(state.hover_win, "cursorline", false)
     update_hover()
 end
 
