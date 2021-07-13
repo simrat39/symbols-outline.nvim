@@ -72,7 +72,6 @@ local function setup_preview_buf()
 
     local function treesitter_attach()
         local ts_highlight = require('nvim-treesitter.highlight')
-        local ts_parsers = require('nvim-treesitter.parsers')
 
         ts_highlight.attach(state.preview_buf, ft)
     end
@@ -114,45 +113,13 @@ local function update_hover()
         end
         markdown_lines = vim.lsp.util.trim_empty_lines(markdown_lines)
         if vim.tbl_isempty(markdown_lines) then
-            markdown_lines = {"No info available!"}
+            markdown_lines = {"###No info available!"}
         end
 
-        local stripped = {}
-        local highlights = {}
-        do
-            local i = 1
-            while i <= #markdown_lines do
-                local line = markdown_lines[i]
-                -- TODO(ashkan): use a more strict regex for filetype?
-                local ft = line:match("^```([a-zA-Z0-9_]*)$")
-                -- local ft = line:match("^```(.*)$")
-                -- TODO(ashkan): validate the filetype here.
-                if ft then
-                    local start = #stripped
-                    i = i + 1
-                    while i <= #markdown_lines do
-                        line = markdown_lines[i]
-                        if line == "```" then
-                            i = i + 1
-                            break
-                        end
-                        table.insert(stripped, line)
-                        i = i + 1
-                    end
-                    table.insert(highlights, {
-                        ft = ft,
-                        start = start + 1,
-                        finish = #stripped + 1 - 1
-                    })
-                else
-                    table.insert(stripped, line)
-                    i = i + 1
-                end
-            end
-        end
+        markdown_lines = vim.lsp.util.stylize_markdown(state.hover_buf, markdown_lines, {})
 
         if state.hover_buf ~= nil then
-            vim.api.nvim_buf_set_lines(state.hover_buf, 0, -1, 0, stripped)
+            vim.api.nvim_buf_set_lines(state.hover_buf, 0, -1, 0, markdown_lines)
         end
     end)
 end
