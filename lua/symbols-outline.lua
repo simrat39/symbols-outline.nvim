@@ -59,8 +59,10 @@ end
 function M._refresh()
     if M.state.outline_buf ~= nil then
         vim.lsp.buf_request_all(0, "textDocument/documentSymbol", getParams(),
-                            function(response)
-            if response == nil or type(response) ~= 'table' then return end
+                                function(response)
+            if response == nil or type(response) ~= 'table' then
+                return
+            end
             if not utils.is_buf_attached_to_lsp(vim.api.nvim_get_current_buf()) then
                 return
             end
@@ -69,8 +71,7 @@ function M._refresh()
 
             M.state.code_win = vim.api.nvim_get_current_win()
             M.state.outline_items = items
-            M.state.flattened_outline_items =
-                parser.flatten(items)
+            M.state.flattened_outline_items = parser.flatten(items)
 
             writer.parse_and_write(M.state.outline_buf,
                                    M.state.flattened_outline_items)
@@ -86,12 +87,30 @@ function M._goto_location(change_focus)
     if change_focus then vim.fn.win_gotoid(M.state.code_win) end
 end
 
-function M._highlight_current_item()
-    if M.state.outline_buf == nil or vim.api.nvim_get_current_buf() ==
-        M.state.outline_buf or not utils.is_buf_attached_to_lsp() then return end
+function M._highlight_current_item(winnr)
+    local doesnt_have_lsp = not utils.is_buf_attached_to_lsp(
+                                vim.api.nvim_win_get_buf(winnr or 0))
 
-    local hovered_line = vim.api.nvim_win_get_cursor(
-                             vim.api.nvim_get_current_win())[1] - 1
+    local is_current_buffer_the_outline =
+        M.state.outline_buf == vim.api.nvim_get_current_buf()
+
+    local doesnt_have_outline_buf = not M.state.outline_buf
+
+    local should_exit = doesnt_have_lsp or doesnt_have_outline_buf or
+                            is_current_buffer_the_outline
+
+    -- Make a special case if we have a window number
+    -- Because we might use this to manually focus so we dont want to quit this
+    -- function
+    if winnr then should_exit = false end
+
+    if should_exit then return end
+
+    if winnr ~= nil then print("here lolol") end
+
+    local win = winnr or vim.api.nvim_get_current_win()
+
+    local hovered_line = vim.api.nvim_win_get_cursor(win)[1] - 1
 
     local nodes = {}
     for index, value in ipairs(M.state.flattened_outline_items) do
@@ -124,9 +143,7 @@ function M._prevent_buffer_override()
         end
 
         -- if this is the only window left, return early. Else we won't be able to close the last buffer. #22
-        if #wins == 1 and curbuf == M.state.outline_buf then
-            return
-        end
+        if #wins == 1 and curbuf == M.state.outline_buf then return end
 
         vim.cmd("buffer " .. M.state.outline_buf)
 
@@ -219,12 +236,14 @@ local function handler(response)
 
     writer.parse_and_write(M.state.outline_buf, M.state.flattened_outline_items)
     ui.setup_highlights()
+
+    M._highlight_current_item(M.state.code_win)
 end
 
 function M.toggle_outline()
     if M.state.outline_buf == nil then
         vim.lsp.buf_request_all(0, "textDocument/documentSymbol", getParams(),
-                            handler)
+                                handler)
     else
         vim.api.nvim_win_close(M.state.outline_win, true)
     end
@@ -233,7 +252,7 @@ end
 function M.open_outline()
     if M.state.outline_buf == nil then
         vim.lsp.buf_request_all(0, "textDocument/documentSymbol", getParams(),
-                            handler)
+                                handler)
     end
 end
 
