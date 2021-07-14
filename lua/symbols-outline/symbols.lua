@@ -34,6 +34,10 @@ M.kinds = {
     "EnumMember", "Struct", "Event", "Operator", "TypeParameter"
 }
 
-function M.icon_from_kind(kind) return M[M.kinds[kind]].icon end
+function M.icon_from_kind(kind)
+    -- If the kind is higher than the available ones then default to 'Object'
+    if kind > #M.kinds then kind = 19 end
+    return M[M.kinds[kind]].icon
+end
 
 return M
