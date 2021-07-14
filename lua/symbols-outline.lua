@@ -106,8 +106,6 @@ function M._highlight_current_item(winnr)
 
     if should_exit then return end
 
-    if winnr ~= nil then print("here lolol") end
-
     local win = winnr or vim.api.nvim_get_current_win()
 
     local hovered_line = vim.api.nvim_win_get_cursor(win)[1] - 1
