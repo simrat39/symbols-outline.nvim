@@ -22,6 +22,9 @@ Plug 'simrat39/symbols-outline.nvim'
 
 Define a global variable `symbols_outline` as follows:
 
+Only add stuff that you want to override (even in nested tables), or skip this section entirely if you
+want to roll with the defaults.
+
 ```lua
 -- init.lua
 vim.g.symbols_outline = {
@@ -41,6 +44,34 @@ vim.g.symbols_outline = {
         code_actions = "a",
     },
     lsp_blacklist = {},
+    symbols = {
+        File = {icon = "", hl = "TSURI"},
+        Module = {icon = "", hl = "TSNamespace"},
+        Namespace = {icon = "", hl = "TSNamespace"},
+        Package = {icon = "", hl = "TSNamespace"},
+        Class = {icon = "𝓒", hl = "TSType"},
+        Method = {icon = "ƒ", hl = "TSMethod"},
+        Property = {icon = "", hl = "TSMethod"},
+        Field = {icon = "", hl = "TSField"},
+        Constructor = {icon = "", hl = "TSConstructor"},
+        Enum = {icon = "ℰ", hl = "TSType"},
+        Interface = {icon = "ﰮ", hl = "TSType"},
+        Function = {icon = "", hl = "TSFunction"},
+        Variable = {icon = "", hl = "TSConstant"},
+        Constant = {icon = "", hl = "TSConstant"},
+        String = {icon = "𝓐", hl = "TSString"},
+        Number = {icon = "#", hl = "TSNumber"},
+        Boolean = {icon = "⊨", hl = "TSBoolean"},
+        Array = {icon = "", hl = "TSConstant"},
+        Object = {icon = "⦿", hl = "TSType"},
+        Key = {icon = "🔐", hl = "TSType"},
+        Null = {icon = "NULL", hl = "TSType"},
+        EnumMember = {icon = "", hl = "TSField"},
+        Struct = {icon = "𝓢", hl = "TSType"},
+        Event = {icon = "🗲", hl = "TSType"},
+        Operator = {icon = "+", hl = "TSOperator"},
+        TypeParameter = {icon = "𝙏", hl = "TSParameter"}
+    }
 }
 ```
 or
@@ -77,6 +108,7 @@ let g:symbols_outline = {
 | show_relative_numbers  | Shows relative numbers with the outline                            | boolean            | false                    |
 | show_symbol_details    | Shows extra details with the symbols (lsp dependent)               | boolean            | true                     |
 | keymaps                | Which keys do what                                                 | table (dictionary) | [here](#default-keymaps) |
+| symbols                | Icon and highlight config for symbol icons                         | table (dictionary) | scroll up                |
 | lsp_blacklist          | Which lsp clients to ignore                                        | table (array)      | {}                       |
 
 ### Commands

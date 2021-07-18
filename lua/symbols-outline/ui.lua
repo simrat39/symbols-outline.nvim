@@ -1,5 +1,6 @@
 local vim = vim
-local symbols = require('symbols-outline.symbols')
+local config = require('symbols-outline.config')
+local symbol_kinds = require('symbols-outline.symbols').kinds
 local M = {}
 
 M.markers = {
@@ -26,13 +27,15 @@ local function highlight_text(name, text, hl_group)
 end
 
 function M.setup_highlights()
+    local symbols = config.options.symbols
+
     -- markers
     highlight_text("marker_middle", M.markers.middle, "Comment")
     highlight_text("marker_vertical", M.markers.vertical, "Comment")
     highlight_text("markers_horizontal", M.markers.horizontal, "Comment")
     highlight_text("markers_bottom", M.markers.bottom, "Comment")
 
-    for _, value in ipairs(symbols.kinds) do
+    for _, value in ipairs(symbol_kinds) do
         local symbol = symbols[value]
         highlight_text(value, symbol.icon, symbol.hl)
     end
