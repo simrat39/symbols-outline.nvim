@@ -20,50 +20,50 @@ local function parse_result(result, depth, heirarchy)
     local ret = {}
 
     for index, value in pairs(result) do
-        -- the heirarchy is basically a table of booleans which tells whether
-        -- the parent was the last in its group or not
-        local hir = heirarchy or {}
-        -- how many parents this node has, 1 is the lowest value because its
-        -- easier to work it
-        local level = depth or 1
-        -- whether this node is the last in its group
-        local isLast = index == #result
+        if not config.is_symbol_blacklisted(symbols.kinds[value.kind]) then
+            -- the heirarchy is basically a table of booleans which tells whether
+            -- the parent was the last in its group or not
+            local hir = heirarchy or {}
+            -- how many parents this node has, 1 is the lowest value because its
+            -- easier to work it
+            local level = depth or 1
+            -- whether this node is the last in its group
+            local isLast = index == #result
 
-        local children = nil
-        if value.children ~= nil then
-            -- copy by value because we dont want it messing with the hir table
-            local child_hir = array_copy(hir)
-            table.insert(child_hir, isLast)
-            children = parse_result(value.children, level + 1, child_hir)
+            local children = nil
+            if value.children ~= nil then
+                -- copy by value because we dont want it messing with the hir table
+                local child_hir = array_copy(hir)
+                table.insert(child_hir, isLast)
+                children = parse_result(value.children, level + 1, child_hir)
+            end
+
+            -- support SymbolInformation[]
+            -- https://microsoft.github.io/language-server-protocol/specification#textDocument_documentSymbol
+            local selectionRange = value.selectionRange
+            if value.selectionRange == nil then
+                selectionRange = value.location.range
+            end
+
+            local range = value.range
+            if value.range == nil then range = value.location.range end
+
+            table.insert(ret, {
+                deprecated = value.deprecated,
+                kind = value.kind,
+                icon = symbols.icon_from_kind(value.kind),
+                name = value.name,
+                detail = value.detail,
+                line = selectionRange.start.line,
+                character = selectionRange.start.character,
+                range_start = range.start.line,
+                range_end = range["end"].line,
+                children = children,
+                depth = level,
+                isLast = isLast,
+                heirarchy = hir
+            });
         end
-
-        -- support SymbolInformation[]
-        -- https://microsoft.github.io/language-server-protocol/specification#textDocument_documentSymbol
-        local selectionRange = value.selectionRange
-        if value.selectionRange == nil then
-           selectionRange = value.location.range
-        end
-
-        local range = value.range
-        if value.range == nil then
-           range = value.location.range
-        end
-
-        table.insert(ret, {
-            deprecated = value.deprecated,
-            kind = value.kind,
-            icon = symbols.icon_from_kind(value.kind),
-            name = value.name,
-            detail = value.detail,
-            line = selectionRange.start.line,
-            character = selectionRange.start.character,
-            range_start = range.start.line,
-            range_end = range["end"].line,
-            children = children,
-            depth = level,
-            isLast = isLast,
-            heirarchy = hir
-        });
     end
     return ret
 end
@@ -85,7 +85,7 @@ local function sort_result(result)
         end
     end
 
-    table.sort(result, function (a, b)
+    table.sort(result, function(a, b)
         local a_start = get_range_start(a)
         local b_start = get_range_start(b)
 
@@ -114,7 +114,7 @@ function M.parse(response)
     local all_results = {}
 
     -- flatten results to one giant table of symbols
-    for client_id,client_response in pairs(response) do
+    for client_id, client_response in pairs(response) do
         if config.is_client_blacklisted(client_id) then
             print('skipping client ' .. client_id)
             goto continue
@@ -123,9 +123,7 @@ function M.parse(response)
         local result = client_response['result']
         if result == nil or type(result) ~= 'table' then goto continue end
 
-        for _,value in pairs(result) do
-            table.insert(all_results, value)
-        end
+        for _, value in pairs(result) do table.insert(all_results, value) end
 
         ::continue::
     end

@@ -19,6 +19,7 @@ local defaults = {
         code_actions = "a"
     },
     lsp_blacklist = {},
+    symbol_blacklist = {},
     symbols = {
         File = {icon = "", hl = "TSURI"},
         Module = {icon = "", hl = "TSNamespace"},
@@ -75,6 +76,11 @@ local function has_value(tab, val)
     for _, value in ipairs(tab) do if value == val then return true end end
 
     return false
+end
+
+function M.is_symbol_blacklisted(kind)
+    if kind == nil then return false end
+    return has_value(M.options.symbol_blacklist, kind)
 end
 
 function M.is_client_blacklisted(client_id)
