@@ -206,6 +206,7 @@ local function setup_buffer()
 
     vim.api.nvim_win_set_option(M.state.outline_win, "number", false)
     vim.api.nvim_win_set_option(M.state.outline_win, "relativenumber", false)
+    vim.api.nvim_win_set_option(M.state.outline_win, "winfixwidth", true)
     vim.api.nvim_buf_set_name(M.state.outline_buf, "OUTLINE")
     vim.api.nvim_buf_set_option(M.state.outline_buf, "filetype", "Outline")
     vim.api.nvim_buf_set_option(M.state.outline_buf, "modifiable", false)
