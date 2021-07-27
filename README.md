@@ -32,6 +32,7 @@ vim.g.symbols_outline = {
     show_guides = true,
     auto_preview = true,
     position = 'right',
+    width = 25,
     show_numbers = false,
     show_relative_numbers = false,
     show_symbol_details = true,
@@ -81,6 +82,7 @@ vim.g.symbols_outline = {
 | highlight_hovered_item | Whether to highlight the currently hovered symbol (high cpu usage)             | boolean            | true                     |
 | show_guides            | Wether to show outline guides                                                  | boolean            | true                     |
 | position               | Where to open the split window                                                 | 'right' or 'left'  | 'right'                  |
+| width                  | How big the window is (relative to the current split)                          | int                | 25                       |
 | auto_preview           | Show a preview of the code on hover                                            | boolean            | true                     |
 | show_numbers           | Shows numbers with the outline                                                 | boolean            | false                    |
 | show_relative_numbers  | Shows relative numbers with the outline                                        | boolean            | false                    |

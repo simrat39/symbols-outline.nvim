@@ -198,7 +198,7 @@ local function setup_buffer()
     local current_win_width = vim.api.nvim_win_get_width(current_win)
 
     vim.cmd(config.get_split_command())
-    vim.cmd("vertical resize " .. math.ceil(current_win_width * 0.25))
+    vim.cmd("vertical resize " .. math.ceil(current_win_width * config.get_width_percentage()))
     M.state.outline_win = vim.api.nvim_get_current_win()
     vim.api.nvim_win_set_buf(M.state.outline_win, M.state.outline_buf)
 

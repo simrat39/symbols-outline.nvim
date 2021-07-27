@@ -6,6 +6,7 @@ local defaults = {
     highlight_hovered_item = true,
     show_guides = true,
     position = 'right',
+    width = 25,
     auto_preview = true,
     show_numbers = false,
     show_relative_numbers = false,
@@ -62,6 +63,10 @@ function M.get_position_navigation_direction()
     else
         return 'l'
     end
+end
+
+function M.get_width_percentage()
+    return M.options.width / 100
 end
 
 function M.get_split_command()
