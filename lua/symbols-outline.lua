@@ -162,10 +162,18 @@ function M._prevent_buffer_override()
 end
 
 local function setup_keymaps(bufnr)
-    local function nmap(key, action)
-        vim.api.nvim_buf_set_keymap(bufnr, "n", key, action,
-                                    {silent = true, noremap = true})
+    ---maps the table of keys to the action
+    ---@param keys table
+    ---@param action string
+    local function nmap(keys, action)
+        if type(keys) == 'string' then keys = {keys} end
+
+        for _, value in ipairs(keys) do
+            vim.api.nvim_buf_set_keymap(bufnr, "n", value, action,
+                                        {silent = true, noremap = true})
+        end
     end
+
     -- goto_location of symbol and focus that window
     nmap(config.options.keymaps.goto_location,
          ":lua require('symbols-outline')._goto_location(true)<Cr>")
@@ -198,7 +206,8 @@ local function setup_buffer()
     local current_win_width = vim.api.nvim_win_get_width(current_win)
 
     vim.cmd(config.get_split_command())
-    vim.cmd("vertical resize " .. math.ceil(current_win_width * config.get_width_percentage()))
+    vim.cmd("vertical resize " ..
+                math.ceil(current_win_width * config.get_width_percentage()))
     M.state.outline_win = vim.api.nvim_get_current_win()
     vim.api.nvim_win_set_buf(M.state.outline_win, M.state.outline_buf)
 
