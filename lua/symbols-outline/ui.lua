@@ -37,9 +37,9 @@ function M.setup_highlights()
     -- notably making them italic, which messes up the outline connector. Fix
     -- this by copying the foreground color from the comment hl into a new
     -- highlight.
-    local comment_fg_gui = vim.fn.synIDattr(vim.fn.hlID('SignColumn'), 'fg',
+    local comment_fg_gui = vim.fn.synIDattr(vim.fn.hlID('Comment'), 'fg',
                                             'gui')
-    local comment_fg_cterm = vim.fn.synIDattr(vim.fn.hlID('SignColumn'), 'fg',
+    local comment_fg_cterm = vim.fn.synIDattr(vim.fn.hlID('Comment'), 'fg',
                                               'cterm')
 
 
