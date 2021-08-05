@@ -16,6 +16,7 @@ local defaults = {
         goto_location = "<Cr>",
         focus_location = "o",
         hover_symbol = "<C-space>",
+        preview_symbol = "K",
         rename_symbol = "r",
         code_actions = "a"
     },
