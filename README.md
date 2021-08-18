@@ -41,6 +41,7 @@ vim.g.symbols_outline = {
         goto_location = "<Cr>",
         focus_location = "o",
         hover_symbol = "<C-space>",
+        preview_symbol = "K",
         rename_symbol = "r",
         code_actions = "a",
     },
@@ -108,6 +109,7 @@ vim.g.symbols_outline = {
 | Enter      | Go to symbol location in code                      |
 | o          | Go to symbol location in code without losing focus |
 | Ctrl+Space | Hover current symbol                               |
+| K          | Show current symbol preview                        |
 | r          | Rename symbol                                      |
 | a          | Code actions                                       |
 
