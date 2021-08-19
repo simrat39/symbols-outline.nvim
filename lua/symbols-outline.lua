@@ -20,7 +20,7 @@ end
 
 local function setup_global_autocmd()
     vim.cmd(
-        "au InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost * :lua require('symbols-outline')._refresh()")
+        "au InsertLeave,WinEnter,BufEnter,BufWinEnter,TabEnter,BufWritePost * :lua require('symbols-outline')._refresh()")
     vim.cmd "au BufLeave * lua require'symbols-outline'._prevent_buffer_override()"
     if config.options.auto_preview then
         vim.cmd "au WinEnter * lua require'symbols-outline.preview'.close_if_not_in_outline()"
@@ -42,6 +42,23 @@ local function getParams()
     return {textDocument = vim.lsp.util.make_text_document_params()}
 end
 
+--- @param  f function
+--- @param  delay number
+--- @return function
+local function debounce(f, delay)
+    local timer = vim.loop.new_timer()
+
+    return function (...)
+        local args = { ... }
+
+        timer:start(delay, 0, vim.schedule_wrap(function ()
+            timer:stop()
+            f(unpack(args))
+        end))
+    end
+end
+
+
 -------------------------
 -- STATE
 -------------------------
@@ -57,7 +74,7 @@ local function wipe_state()
     M.state = {outline_items = {}, flattened_outline_items = {}}
 end
 
-function M._refresh()
+local function __refresh ()
     if M.state.outline_buf ~= nil then
         local function refresh_handler(response)
             if response == nil or type(response) ~= 'table' then
@@ -87,6 +104,8 @@ function M._refresh()
                                 refresh_handler)
     end
 end
+
+M._refresh = debounce(__refresh, 100)
 
 function M._goto_location(change_focus)
     local current_line = vim.api.nvim_win_get_cursor(M.state.outline_win)[1]
