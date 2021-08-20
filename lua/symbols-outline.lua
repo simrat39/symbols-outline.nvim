@@ -223,6 +223,9 @@ local function setup_keymaps(bufnr)
     -- code actions
     nmap(config.options.keymaps.code_actions,
          ":lua require('symbols-outline.code_action').show_code_actions()<Cr>")
+    -- show help
+    nmap(config.options.keymaps.show_help,
+         ":lua require('symbols-outline.config').show_help()<Cr>")
     -- close outline
     nmap(config.options.keymaps.close, ":bw!<Cr>")
 end

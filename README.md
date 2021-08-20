@@ -112,4 +112,5 @@ vim.g.symbols_outline = {
 | K          | Show current symbol preview                        |
 | r          | Rename symbol                                      |
 | a          | Code actions                                       |
+| ?          | Show help message                                  |
 

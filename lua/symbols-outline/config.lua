@@ -18,7 +18,8 @@ local defaults = {
         hover_symbol = "<C-space>",
         preview_symbol = "K",
         rename_symbol = "r",
-        code_actions = "a"
+        code_actions = "a",
+        show_help = "?",
     },
     lsp_blacklist = {},
     symbol_blacklist = {},
@@ -91,6 +92,11 @@ function M.is_client_blacklisted(client_id)
     local client = vim.lsp.get_client_by_id(client_id)
     if not client then return false end
     return has_value(M.options.lsp_blacklist, client.name)
+end
+
+function M.show_help()
+    print "Current keymaps:"
+    print(vim.inspect(M.options.keymaps))
 end
 
 function M.setup(options)
