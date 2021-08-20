@@ -236,6 +236,7 @@ symbol_blacklist
 | K          | Show current symbol preview                        |
 | r          | Rename symbol                                      |
 | a          | Code actions                                       |
+| ?          | Show help message                                  |
 
 ================================================================================
 vim:tw=79:ts=8:ft=help:norl
