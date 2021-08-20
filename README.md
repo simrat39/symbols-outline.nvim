@@ -109,7 +109,7 @@ vim.g.symbols_outline = {
 | Enter      | Go to symbol location in code                      |
 | o          | Go to symbol location in code without losing focus |
 | Ctrl+Space | Hover current symbol                               |
-| K          | Show current symbol preview                        |
+| K          | Toggles the current symbol preview                 |
 | r          | Rename symbol                                      |
 | a          | Code actions                                       |
 
