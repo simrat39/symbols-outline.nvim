@@ -214,7 +214,7 @@ function M.close()
 end
 
 function M.toggle()
-    code = M.show()
+    local code = M.show()
     if code == 1 then
         M.close()
     end
