@@ -41,7 +41,7 @@ vim.g.symbols_outline = {
         goto_location = "<Cr>",
         focus_location = "o",
         hover_symbol = "<C-space>",
-        preview_symbol = "K",
+        toggle_preview = "K",
         rename_symbol = "r",
         code_actions = "a",
     },
@@ -103,16 +103,16 @@ vim.g.symbols_outline = {
 
 ### Default keymaps
 
-| Key        | Action                                             |
-| ---------- | -------------------------------------------------- |
-| Escape     | Close outline                                      |
-| Enter      | Go to symbol location in code                      |
-| o          | Go to symbol location in code without losing focus |
-| Ctrl+Space | Hover current symbol                               |
-| K          | Show current symbol preview                        |
-| r          | Rename symbol                                      |
-| a          | Code actions                                       |
-| ?          | Show help message                                  |
+| Key        | Action                                                             |
+| ---------- | ------------------------------------------------------------------ |
+| Escape     | Close outline                                                      |
+| Enter      | Go to symbol location in code                                      |
+| o          | Go to symbol location in code without losing focus                 |
+| Ctrl+Space | Hover current symbol                                               |
+| K          | Toggles the current symbol preview (Only when auto_preview is off) |
+| r          | Rename symbol                                                      |
+| a          | Code actions                                                       |
+| ?          | Show help message                                                  |
 
 ### Highlights
 | Highlight     | Purpose                                                 |

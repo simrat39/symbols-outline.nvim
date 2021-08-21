@@ -22,9 +22,7 @@ local function setup_global_autocmd()
     vim.cmd(
         "au InsertLeave,WinEnter,BufEnter,BufWinEnter,TabEnter,BufWritePost * :lua require('symbols-outline')._refresh()")
     vim.cmd "au BufLeave * lua require'symbols-outline'._prevent_buffer_override()"
-    if config.options.auto_preview then
-        vim.cmd "au WinEnter * lua require'symbols-outline.preview'.close_if_not_in_outline()"
-    end
+    vim.cmd("au WinEnter * lua require'symbols-outline.preview'.close()")
     if config.options.highlight_hovered_item then
         vim.cmd(
             "autocmd CursorHold * :lua require('symbols-outline')._highlight_current_item()")
@@ -34,8 +32,12 @@ end
 local function setup_buffer_autocmd()
     if config.options.auto_preview then
         vim.cmd(
-            "au CursorHold <buffer> lua require'symbols-outline.preview'.show()")
+            "au CursorHold <buffer> lua require'symbols-outline.preview'.show(true)")
+    else
+        vim.cmd(
+            "au CursorMoved <buffer> lua require'symbols-outline.preview'.close()")
     end
+
 end
 
 local function getParams()
@@ -215,8 +217,8 @@ local function setup_keymaps(bufnr)
     nmap(config.options.keymaps.hover_symbol,
          ":lua require('symbols-outline.hover').show_hover()<Cr>")
     -- preview symbol
-    nmap(config.options.keymaps.preview_symbol,
-         ":lua require('symbols-outline.preview').show()<Cr>")
+    nmap(config.options.keymaps.toggle_preview,
+         ":lua require('symbols-outline.preview').toggle()<Cr>")
     -- rename symbol
     nmap(config.options.keymaps.rename_symbol,
          ":lua require('symbols-outline.rename').rename()<Cr>")
