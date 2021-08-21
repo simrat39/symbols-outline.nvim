@@ -115,8 +115,9 @@ vim.g.symbols_outline = {
 | ?          | Show help message                                                  |
 
 ### Highlights
-| Highlight     | Purpose                                                 |
-| ------------- | ------------------------------------------------------- |
-| FocusedSymbol | Highlight of the focused symbol                         |
-| Pmenu         | Highlight of the preview popup windows                  |
-| Comment       | Highlight of the table connectors and info virtual text |
+| Highlight               | Purpose                                |
+| ----------------------- | -------------------------------------- |
+| FocusedSymbol           | Highlight of the focused symbol        |
+| Pmenu                   | Highlight of the preview popup windows |
+| SymbolsOutlineConnector | Highlight of the table connectors      |
+| Comment                 | Highlight of the info virtual text     |
