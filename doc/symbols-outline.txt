@@ -9,6 +9,7 @@ CONTENTS                                              *symbols-outline-contents*
   4. Configuration.........................|symbols-outline-configuration|
   5. Commands...................................|symbols-outline-commands|
   6. Default keymaps.....................|symbols-outline-default_keymaps|
+  7. Highlights...............................|symbols-outline-highlights|
 
 
 ================================================================================
@@ -223,7 +224,6 @@ symbol_blacklist
 | `:SymbolsOutlineOpen`  | Open symbols outline   |
 | `:SymbolsOutlineClose` | Close symbols outline  |
 
-
 ================================================================================
 6. DEFAULT KEYMAPS                             *symbols-outline-default_keymaps*
 
@@ -237,6 +237,15 @@ symbol_blacklist
 | r          | Rename symbol                                      |
 | a          | Code actions                                       |
 | ?          | Show help message                                  |
+
+================================================================================
+7. HIGHLIGHTS                                       *symbols-outline-highlights*
+
+| Highlight     | Purpose                                                 |
+| ------------- | ------------------------------------------------------- |
+| FocusedSymbol | Highlight of the focused symbol                         |
+| Pmenu         | Highlight of the preview popup windows                  |
+| Comment       | Highlight of the table connectors and info virtual text |
 
 ================================================================================
 vim:tw=79:ts=8:ft=help:norl

@@ -81,7 +81,7 @@ vim.g.symbols_outline = {
 | Property               | Description                                                                    | Type               | Default                  |
 | ---------------------- | ------------------------------------------------------------------------------ | ------------------ | ------------------------ |
 | highlight_hovered_item | Whether to highlight the currently hovered symbol (high cpu usage)             | boolean            | true                     |
-| show_guides            | Whether to show outline guides                                                  | boolean            | true                     |
+| show_guides            | Whether to show outline guides                                                 | boolean            | true                     |
 | position               | Where to open the split window                                                 | 'right' or 'left'  | 'right'                  |
 | width                  | How big the window is (relative to the current split)                          | int                | 25                       |
 | auto_preview           | Show a preview of the code on hover                                            | boolean            | true                     |
@@ -114,3 +114,9 @@ vim.g.symbols_outline = {
 | a          | Code actions                                       |
 | ?          | Show help message                                  |
 
+### Highlights
+| Highlight     | Purpose                                                 |
+| ------------- | ------------------------------------------------------- |
+| FocusedSymbol | Highlight of the focused symbol                         |
+| Pmenu         | Highlight of the preview popup windows                  |
+| Comment       | Highlight of the table connectors and info virtual text |
