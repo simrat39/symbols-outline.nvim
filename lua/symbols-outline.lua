@@ -217,7 +217,7 @@ local function setup_keymaps(bufnr)
     nmap(config.options.keymaps.hover_symbol,
          ":lua require('symbols-outline.hover').show_hover()<Cr>")
     -- preview symbol
-    nmap(config.options.keymaps.preview_symbol,
+    nmap(config.options.keymaps.toggle_preview,
          ":lua require('symbols-outline.preview').toggle()<Cr>")
     -- rename symbol
     nmap(config.options.keymaps.rename_symbol,
