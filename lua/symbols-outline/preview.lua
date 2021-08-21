@@ -135,18 +135,6 @@ local function setup_hover_buf()
     update_hover()
 end
 
-function M.close_if_not_in_outline()
-    if not is_current_win_outline() and has_code_win() then
-        if state.preview_win ~= nil and
-            vim.api.nvim_win_is_valid(state.preview_win) then
-            vim.api.nvim_win_close(state.preview_win, true)
-        end
-        if state.hover_win ~= nil and vim.api.nvim_win_is_valid(state.hover_win) then
-            vim.api.nvim_win_close(state.hover_win, true)
-        end
-    end
-end
-
 local function show_preview()
     if state.preview_win == nil and state.preview_buf == nil then
         state.preview_buf = vim.api.nvim_create_buf(false, true)
@@ -198,12 +186,38 @@ local function show_hover()
     end
 end
 
-function M.show()
-    if not is_current_win_outline() or #vim.api.nvim_list_wins() < 2 then
+function M.show(force)
+    if not is_current_win_outline() or
+        #vim.api.nvim_list_wins() < 2 then
         return
     end
+
+    if force ~= true and state.preview_win ~= nil then
+        return 1
+    end
+
     show_preview()
     show_hover()
+end
+
+function M.close()
+    if has_code_win() then
+        if state.preview_win ~= nil and
+            vim.api.nvim_win_is_valid(state.preview_win) then
+            vim.api.nvim_win_close(state.preview_win, true)
+        end
+        if state.hover_win ~= nil and
+            vim.api.nvim_win_is_valid(state.hover_win) then
+            vim.api.nvim_win_close(state.hover_win, true)
+        end
+    end
+end
+
+function M.toggle()
+    code = M.show()
+    if code == 1 then
+        M.close()
+    end
 end
 
 return M
