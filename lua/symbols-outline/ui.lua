@@ -40,7 +40,6 @@ function M.setup_highlights()
     local comment_fg_gui = vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.hlID('Comment')), 'fg', 'gui')
     local comment_fg_cterm = vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.hlID('Comment')), 'fg',
                                               'cterm')
-                                              print(comment_fg_gui)
 
     if vim.fn.hlexists('SymbolsOutlineConnector') == 0 then
         vim.cmd(string.format('hi SymbolsOutlineConnector ctermfg=%s guifg=%s',
