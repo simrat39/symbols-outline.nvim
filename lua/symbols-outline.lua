@@ -10,23 +10,10 @@ local markdown = require('symbols-outline.markdown')
 
 local M = {}
 
-local function setup_commands()
-    vim.cmd("command! " .. "SymbolsOutline " ..
-                ":lua require'symbols-outline'.toggle_outline()")
-    vim.cmd("command! " .. "SymbolsOutlineOpen " ..
-                ":lua require'symbols-outline'.open_outline()")
-    vim.cmd("command! " .. "SymbolsOutlineClose " ..
-                ":lua require'symbols-outline'.close_outline()")
-end
-
 local function setup_global_autocmd()
-    vim.cmd(
-        "au InsertLeave,WinEnter,BufEnter,BufWinEnter,TabEnter,BufWritePost * :lua require('symbols-outline')._refresh()")
-    vim.cmd "au BufLeave * lua require'symbols-outline'._prevent_buffer_override()"
-    vim.cmd("au WinEnter * lua require'symbols-outline.preview'.close()")
     if config.options.highlight_hovered_item then
         vim.cmd(
-            "autocmd CursorHold * :lua require('symbols-outline')._highlight_current_item()")
+            "au CursorHold * :lua require('symbols-outline')._highlight_current_item()")
     end
 end
 
@@ -297,7 +284,6 @@ end
 
 function M.setup(opts)
     config.setup(opts)
-    setup_commands()
     setup_global_autocmd()
 end
 
