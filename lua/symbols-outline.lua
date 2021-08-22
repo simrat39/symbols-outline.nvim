@@ -133,38 +133,6 @@ function M._highlight_current_item(winnr)
     end
 end
 
--- credits: https://github.com/kyazdani42/nvim-tree.lua
-function M._prevent_buffer_override()
-    vim.schedule(function()
-        local curwin = vim.api.nvim_get_current_win()
-        local curbuf = vim.api.nvim_win_get_buf(curwin)
-        local wins = vim.api.nvim_list_wins()
-
-        if curwin ~= M.state.outline_win or curbuf ~= M.state.outline_buf then
-            return
-        end
-
-        -- if this is the only window left, return early. Else we won't be able to close the last buffer. #22
-        if #wins == 1 and curbuf == M.state.outline_buf then return end
-
-        vim.cmd("buffer " .. M.state.outline_buf)
-
-        local current_win_width = vim.api.nvim_win_get_width(curwin)
-        if #wins < 2 then
-            vim.cmd(config.get_split_command())
-            vim.cmd("vertical resize " .. math.ceil(current_win_width * 0.75))
-        else
-            vim.cmd("wincmd " .. config.get_position_navigation_direction())
-        end
-
-        vim.cmd("buffer " .. curbuf)
-        if #wins < 2 then
-            vim.cmd("wincmd r")
-            vim.cmd("bprev")
-        end
-    end)
-end
-
 local function setup_keymaps(bufnr)
     ---maps the table of keys to the action
     ---@param keys table
