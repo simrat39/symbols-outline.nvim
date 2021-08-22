@@ -186,14 +186,10 @@ local function show_hover()
     end
 end
 
-function M.show(force)
+function M.show()
     if not is_current_win_outline() or
         #vim.api.nvim_list_wins() < 2 then
         return
-    end
-
-    if force ~= true and state.preview_win ~= nil then
-        return 1
     end
 
     show_preview()
@@ -214,9 +210,10 @@ function M.close()
 end
 
 function M.toggle()
-    local code = M.show()
-    if code == 1 then
+    if state.preview_win ~= nil then
         M.close()
+    else
+        M.show()
     end
 end
 

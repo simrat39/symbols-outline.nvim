@@ -32,7 +32,7 @@ end
 local function setup_buffer_autocmd()
     if config.options.auto_preview then
         vim.cmd(
-            "au CursorHold <buffer> lua require'symbols-outline.preview'.show(true)")
+            "au CursorHold <buffer> lua require'symbols-outline.preview'.show()")
     else
         vim.cmd(
             "au CursorMoved <buffer> lua require'symbols-outline.preview'.close()")
