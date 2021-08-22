@@ -4,7 +4,8 @@ local parser = require('symbols-outline.parser')
 local ui = require('symbols-outline.ui')
 local writer = require('symbols-outline.writer')
 local config = require('symbols-outline.config')
-local utils = require('symbols-outline.utils.lsp_utils')
+local lsp_utils = require('symbols-outline.utils.lsp_utils')
+local utils = require('symbols-outline.utils.init')
 local markdown = require('symbols-outline.markdown')
 
 local M = {}
@@ -44,23 +45,6 @@ local function getParams()
     return {textDocument = vim.lsp.util.make_text_document_params()}
 end
 
---- @param  f function
---- @param  delay number
---- @return function
-local function debounce(f, delay)
-    local timer = vim.loop.new_timer()
-
-    return function (...)
-        local args = { ... }
-
-        timer:start(delay, 0, vim.schedule_wrap(function ()
-            timer:stop()
-            f(unpack(args))
-        end))
-    end
-end
-
-
 -------------------------
 -- STATE
 -------------------------
@@ -84,8 +68,8 @@ local function __refresh ()
             end
 
             local current_buf = vim.api.nvim_get_current_buf()
-            if (not utils.is_buf_markdown(current_buf)) and
-                (not utils.is_buf_attached_to_lsp(current_buf)) then
+            if (not lsp_utils.is_buf_markdown(current_buf)) and
+                (not lsp_utils.is_buf_attached_to_lsp(current_buf)) then
                 return
             end
 
@@ -107,7 +91,7 @@ local function __refresh ()
     end
 end
 
-M._refresh = debounce(__refresh, 100)
+M._refresh = utils.debounce(__refresh, 100)
 
 function M._goto_location(change_focus)
     local current_line = vim.api.nvim_win_get_cursor(M.state.outline_win)[1]
@@ -118,7 +102,7 @@ function M._goto_location(change_focus)
 end
 
 function M._highlight_current_item(winnr)
-    local doesnt_have_lsp = not utils.is_buf_attached_to_lsp(
+    local doesnt_have_lsp = not lsp_utils.is_buf_attached_to_lsp(
                                 vim.api.nvim_win_get_buf(winnr or 0))
 
     local is_current_buffer_the_outline =
@@ -126,7 +110,7 @@ function M._highlight_current_item(winnr)
 
     local doesnt_have_outline_buf = not M.state.outline_buf
 
-    local is_not_markdown = not utils.is_buf_markdown(0)
+    local is_not_markdown = not lsp_utils.is_buf_markdown(0)
 
     local should_exit = (doesnt_have_lsp and is_not_markdown) or
                             doesnt_have_outline_buf or
