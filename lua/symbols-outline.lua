@@ -134,41 +134,32 @@ function M._highlight_current_item(winnr)
 end
 
 local function setup_keymaps(bufnr)
-    ---maps the table of keys to the action
-    ---@param keys table
-    ---@param action string
-    local function nmap(keys, action)
-        if type(keys) == 'string' then keys = {keys} end
-
-        for _, value in ipairs(keys) do
-            vim.api.nvim_buf_set_keymap(bufnr, "n", value, action,
-                                        {silent = true, noremap = true})
-        end
+    local map = function (...)
+       utils.nmap(bufnr, ...)
     end
-
     -- goto_location of symbol and focus that window
-    nmap(config.options.keymaps.goto_location,
+    map(config.options.keymaps.goto_location,
          ":lua require('symbols-outline')._goto_location(true)<Cr>")
     -- goto_location of symbol but stay in outline
-    nmap(config.options.keymaps.focus_location,
+    map(config.options.keymaps.focus_location,
          ":lua require('symbols-outline')._goto_location(false)<Cr>")
     -- hover symbol
-    nmap(config.options.keymaps.hover_symbol,
+    map(config.options.keymaps.hover_symbol,
          ":lua require('symbols-outline.hover').show_hover()<Cr>")
     -- preview symbol
-    nmap(config.options.keymaps.toggle_preview,
+    map(config.options.keymaps.toggle_preview,
          ":lua require('symbols-outline.preview').toggle()<Cr>")
     -- rename symbol
-    nmap(config.options.keymaps.rename_symbol,
+    map(config.options.keymaps.rename_symbol,
          ":lua require('symbols-outline.rename').rename()<Cr>")
     -- code actions
-    nmap(config.options.keymaps.code_actions,
+    map(config.options.keymaps.code_actions,
          ":lua require('symbols-outline.code_action').show_code_actions()<Cr>")
     -- show help
-    nmap(config.options.keymaps.show_help,
+    map(config.options.keymaps.show_help,
          ":lua require('symbols-outline.config').show_help()<Cr>")
     -- close outline
-    nmap(config.options.keymaps.close, ":bw!<Cr>")
+    map(config.options.keymaps.close, ":bw!<Cr>")
 end
 
 ----------------------------
