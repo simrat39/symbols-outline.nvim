@@ -7,6 +7,7 @@ local config = require('symbols-outline.config')
 local lsp_utils = require('symbols-outline.utils.lsp_utils')
 local utils = require('symbols-outline.utils.init')
 local markdown = require('symbols-outline.markdown')
+local view = require('symbols-outline.view')
 
 local M = {}
 
@@ -162,48 +163,16 @@ local function setup_keymaps(bufnr)
     map(config.options.keymaps.close, ":bw!<Cr>")
 end
 
-----------------------------
--- WINDOW AND BUFFER STUFF
-----------------------------
-local function setup_buffer()
-    M.state.outline_buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_buf_attach(M.state.outline_buf, false,
-                            {on_detach = function(_, _) wipe_state() end})
-    vim.api.nvim_buf_set_option(M.state.outline_buf, "bufhidden", "delete")
-
-    local current_win = vim.api.nvim_get_current_win()
-    local current_win_width = vim.api.nvim_win_get_width(current_win)
-
-    vim.cmd(config.get_split_command())
-    vim.cmd("vertical resize " ..
-                math.ceil(current_win_width * config.get_width_percentage()))
-    M.state.outline_win = vim.api.nvim_get_current_win()
-    vim.api.nvim_win_set_buf(M.state.outline_win, M.state.outline_buf)
-
-    setup_keymaps(M.state.outline_buf)
-
-    vim.api.nvim_win_set_option(M.state.outline_win, "number", false)
-    vim.api.nvim_win_set_option(M.state.outline_win, "relativenumber", false)
-    vim.api.nvim_win_set_option(M.state.outline_win, "winfixwidth", true)
-    vim.api.nvim_buf_set_name(M.state.outline_buf, "OUTLINE")
-    vim.api.nvim_buf_set_option(M.state.outline_buf, "filetype", "Outline")
-    vim.api.nvim_buf_set_option(M.state.outline_buf, "modifiable", false)
-
-    if config.options.show_numbers or config.options.show_relative_numbers then
-        vim.api.nvim_win_set_option(M.state.outline_win, "nu", true)
-    end
-
-    if config.options.show_relative_numbers then
-        vim.api.nvim_win_set_option(M.state.outline_win, "rnu", true)
-    end
-end
-
 local function handler(response)
     if response == nil or type(response) ~= 'table' then return end
 
     M.state.code_win = vim.api.nvim_get_current_win()
 
-    setup_buffer()
+    M.state.outline_buf, M.state.outline_win = view.setup_view()
+    -- clear state when buffer is closed
+    vim.api.nvim_buf_attach(M.state.outline_buf, false,
+                            {on_detach = function(_, _) wipe_state() end})
+    setup_keymaps(M.state.outline_buf)
     setup_buffer_autocmd()
 
     local items = parser.parse(response)
