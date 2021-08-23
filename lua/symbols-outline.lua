@@ -56,8 +56,7 @@ local function __refresh ()
             end
 
             local current_buf = vim.api.nvim_get_current_buf()
-            if (not lsp_utils.is_buf_markdown(current_buf)) and
-                (not lsp_utils.is_buf_attached_to_lsp(current_buf)) then
+            if lsp_utils.should_not_refresh(current_buf) then
                 return
             end
 
