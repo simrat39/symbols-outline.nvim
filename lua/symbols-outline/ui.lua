@@ -38,12 +38,9 @@ function M.setup_highlights()
     -- this by copying the foreground color from the comment hl into a new
     -- highlight.
     local comment_fg_gui = vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.hlID('Comment')), 'fg', 'gui')
-    local comment_fg_cterm = vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.hlID('Comment')), 'fg',
-                                              'cterm')
 
     if vim.fn.hlexists('SymbolsOutlineConnector') == 0 then
-        vim.cmd(string.format('hi SymbolsOutlineConnector ctermfg=%s guifg=%s',
-                              comment_fg_cterm, comment_fg_gui))
+        vim.cmd(string.format('hi SymbolsOutlineConnector guifg=%s', comment_fg_gui))
     end
 
     local symbols = config.options.symbols
