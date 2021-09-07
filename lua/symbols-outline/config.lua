@@ -2,7 +2,7 @@ local vim = vim
 
 local M = {}
 
-local defaults = {
+M.defaults = {
     highlight_hovered_item = true,
     show_guides = true,
     position = 'right',
@@ -100,7 +100,7 @@ function M.show_help()
 end
 
 function M.setup(options)
-    M.options = vim.tbl_deep_extend("force", {}, defaults, options or {})
+    M.options = vim.tbl_deep_extend("force", {}, M.defaults, options or {})
 end
 
 return M
