@@ -19,7 +19,7 @@ M.defaults = {
         toggle_preview = "K",
         rename_symbol = "r",
         code_actions = "a",
-        show_help = "?",
+        show_help = "?"
     },
     lsp_blacklist = {},
     symbol_blacklist = {},
@@ -100,6 +100,7 @@ function M.show_help()
 end
 
 function M.setup(options)
+    vim.g.symbols_outline_loaded = 1
     M.options = vim.tbl_deep_extend("force", {}, M.defaults, options or {})
 end
 
