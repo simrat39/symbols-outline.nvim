@@ -1,6 +1,7 @@
 local vim = vim
 
 local main = require('symbols-outline')
+local buf_request = require('symbols-outline.utils.lsp_utils').request
 
 local M = {}
 
@@ -24,7 +25,7 @@ function M.show_code_actions()
 
     local params = get_action_params(node, main.state.code_win)
 
-    vim.lsp.buf_request(params.bufnr, "textDocument/codeAction", params,
+    buf_request(params.bufnr, "textDocument/codeAction", params,
                         vim.lsp.handlers["textDocument/codeAction"])
 end
 
