@@ -1,6 +1,7 @@
 local vim = vim
 
 local main = require('symbols-outline')
+local buf_request = require('symbols-outline.utils.lsp_utils').request
 
 local M = {}
 
@@ -26,8 +27,8 @@ function M.rename()
 
     params.newName = new_name
 
-    vim.lsp.buf_request(params.bufnr, "textDocument/rename", params,
-                        function(_, _, result)
+    buf_request(params.bufnr, "textDocument/rename", params,
+                        function(_, result)
         if result ~= nil then
             vim.lsp.util.apply_workspace_edit(result)
         end

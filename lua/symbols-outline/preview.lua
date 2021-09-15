@@ -1,6 +1,7 @@
 local vim = vim
 local main = require('symbols-outline')
 local config = require('symbols-outline.config')
+local buf_request = require('symbols-outline.utils.lsp_utils').request
 
 local M = {}
 
@@ -103,8 +104,8 @@ local function update_hover()
     if not node then return end
     local params = get_hover_params(node, main.state.code_win)
 
-    vim.lsp.buf_request(params.bufnr, "textDocument/hover", params,
-                        function(err, _, result)
+    buf_request(params.bufnr, "textDocument/hover", params,
+                        function(err, result)
         if err then print(vim.inspect(err)) end
         local markdown_lines = {}
         if result ~= nil then
