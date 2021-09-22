@@ -11,6 +11,7 @@ M.defaults = {
     show_numbers = false,
     show_relative_numbers = false,
     show_symbol_details = true,
+    preview_bg_highlight = 'Pmenu',
     keymaps = { -- These keymaps can be a string or a table for multiple keys
         close = {"<Esc>", "q"},
         goto_location = "<Cr>",

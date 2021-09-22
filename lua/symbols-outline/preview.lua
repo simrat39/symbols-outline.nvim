@@ -136,6 +136,12 @@ local function setup_hover_buf()
     update_hover()
 end
 
+local function set_bg_hl()
+    local winhi = "Normal:" .. config.options.preview_bg_highlight
+    vim.api.nvim_win_set_option(state.preview_win, "winhighlight", winhi)
+    vim.api.nvim_win_set_option(state.hover_win, "winhighlight", winhi)
+end
+
 local function show_preview()
     if state.preview_win == nil and state.preview_buf == nil then
         state.preview_buf = vim.api.nvim_create_buf(false, true)
@@ -195,6 +201,7 @@ function M.show()
 
     show_preview()
     show_hover()
+    set_bg_hl()
 end
 
 function M.close()
