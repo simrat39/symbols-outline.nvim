@@ -10,7 +10,7 @@ function M.handle_markdown()
     local results = {}
 
     for line, value in ipairs(lines) do
-        if string.find(value, "^#+") then
+        if string.find(value, "^#+ ") then
             if #results > 0 then
                results[#results].selectionRange["end"].line = line - 1
                results[#results].range["end"].line = line - 1
