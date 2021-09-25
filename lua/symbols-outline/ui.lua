@@ -27,7 +27,7 @@ local function highlight_text(name, text, hl_group)
 end
 
 function M.setup_highlights()
-    -- Setup the FocusedSymbol highlight group if it hasnt been done already by
+    -- Setup the FocusedSymbol highlight group if it hasn't been done already by
     -- a theme or manually set
     if vim.fn.hlexists('FocusedSymbol') == 0 then
         vim.cmd 'hi FocusedSymbol term=italic,bold cterm=italic ctermbg=yellow ctermfg=darkblue gui=bold,italic guibg=yellow guifg=darkblue'

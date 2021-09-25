@@ -13,17 +13,17 @@ end
 
 ---Parses result from LSP into a table of symbols
 ---@param result table The result from a language server.
----@param depth number The current depth of the symbol in the heirarchy.
----@param heirarchy table A table of booleans which tells if a symbols parent was the last in its group.
+---@param depth number The current depth of the symbol in the hierarchy.
+---@param hierarchy table A table of booleans which tells if a symbols parent was the last in its group.
 ---@return table
-local function parse_result(result, depth, heirarchy)
+local function parse_result(result, depth, hierarchy)
     local ret = {}
 
     for index, value in pairs(result) do
         if not config.is_symbol_blacklisted(symbols.kinds[value.kind]) then
-            -- the heirarchy is basically a table of booleans which tells whether
+            -- the hierarchy is basically a table of booleans which tells whether
             -- the parent was the last in its group or not
-            local hir = heirarchy or {}
+            local hir = hierarchy or {}
             -- how many parents this node has, 1 is the lowest value because its
             -- easier to work it
             local level = depth or 1
@@ -61,7 +61,7 @@ local function parse_result(result, depth, heirarchy)
                 children = children,
                 depth = level,
                 isLast = isLast,
-                heirarchy = hir
+                hierarchy = hir
             });
         end
     end
@@ -181,7 +181,7 @@ function M.get_lines(flattened_outline_items)
                     -- else if the parent was not the last in its group, add a
                     -- vertical marker because there are items under us and we need
                     -- to point to those
-                elseif not value.heirarchy[index] then
+                elseif not value.hierarchy[index] then
                     line[index] = ui.markers.vertical
                 end
             end

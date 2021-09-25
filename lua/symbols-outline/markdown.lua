@@ -3,7 +3,7 @@ local M = {}
 ---Parses markdown files and returns a table of SymbolInformation[] which is
 -- used by the plugin to show the outline.
 -- We do this because markdown does not have a LSP.
--- Note that the headings won't have any heirarchy (as of now).
+-- Note that the headings won't have any hierarchy (as of now).
 ---@return table
 function M.handle_markdown()
     local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
