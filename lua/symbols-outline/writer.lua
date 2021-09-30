@@ -19,13 +19,18 @@ function M.write_outline(bufnr, lines)
     vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
 end
 
+local ns = vim.api.nvim_create_namespace("symbols-outline-virt-text")
+
 function M.write_details(bufnr, lines)
     if not is_buffer_outline(bufnr) then return end
     if not config.options.show_symbol_details then return end
 
     for index, value in ipairs(lines) do
-        vim.api.nvim_buf_set_virtual_text(bufnr, -1, index - 1,
-                                          {{value, "Comment"}}, {})
+        vim.api.nvim_buf_set_extmark(bufnr, ns, index - 1, -1, {
+            virt_text = {{value, "Comment"}},
+            virt_text_pos = "eol",
+            hl_mode = "combine"
+        })
     end
 end
 
