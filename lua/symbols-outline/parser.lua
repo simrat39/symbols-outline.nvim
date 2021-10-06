@@ -52,7 +52,7 @@ local function parse_result(result, depth, hierarchy)
                 deprecated = value.deprecated,
                 kind = value.kind,
                 icon = symbols.icon_from_kind(value.kind),
-                name = value.name,
+                name = value.name or value.text,
                 detail = value.detail,
                 line = selectionRange.start.line,
                 character = selectionRange.start.character,

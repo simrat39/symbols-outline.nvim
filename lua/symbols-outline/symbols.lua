@@ -12,6 +12,10 @@ M.kinds = {
 function M.icon_from_kind(kind)
     local symbols = config.options.symbols
 
+    if type(kind) == 'string' then
+       return symbols[kind].icon
+    end
+
     -- If the kind is higher than the available ones then default to 'Object'
     if kind > #M.kinds then kind = 19 end
     return symbols[M.kinds[kind]].icon

@@ -36,13 +36,4 @@ function M.is_buf_markdown(bufnr)
     return vim.api.nvim_buf_get_option(bufnr, 'ft') == 'markdown'
 end
 
----@param bufnr number
----@return boolean
-function M.should_not_refresh(bufnr)
-    if (not M.is_buf_markdown(bufnr)) and (not M.is_buf_attached_to_lsp(bufnr)) then
-        return true
-    end
-    return false
-end
-
 return M

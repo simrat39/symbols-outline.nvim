@@ -5,7 +5,6 @@ local providers = require('symbols-outline.providers.init')
 local ui = require('symbols-outline.ui')
 local writer = require('symbols-outline.writer')
 local config = require('symbols-outline.config')
-local lsp_utils = require('symbols-outline.utils.lsp_utils')
 local utils = require('symbols-outline.utils.init')
 local view = require('symbols-outline.view')
 
@@ -51,11 +50,6 @@ local function __refresh()
                 return
             end
 
-            local current_buf = vim.api.nvim_get_current_buf()
-            if lsp_utils.should_not_refresh(current_buf) then
-                return
-            end
-
             local items = parser.parse(response)
 
             M.state.code_win = vim.api.nvim_get_current_win()
@@ -81,17 +75,14 @@ function M._goto_location(change_focus)
 end
 
 function M._highlight_current_item(winnr)
-    local doesnt_have_lsp = not lsp_utils.is_buf_attached_to_lsp(
-                                vim.api.nvim_win_get_buf(winnr or 0))
+    local has_provider = providers.has_provider()
 
     local is_current_buffer_the_outline =
         M.state.outline_buf == vim.api.nvim_get_current_buf()
 
     local doesnt_have_outline_buf = not M.state.outline_buf
 
-    local is_not_markdown = not lsp_utils.is_buf_markdown(0)
-
-    local should_exit = (doesnt_have_lsp and is_not_markdown) or
+    local should_exit = (not has_provider) or
                             doesnt_have_outline_buf or
                             is_current_buffer_the_outline
 
