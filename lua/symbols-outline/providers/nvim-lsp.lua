@@ -11,7 +11,7 @@ function M.should_use_provider(bufnr)
     local clients = vim.lsp.buf_get_clients(bufnr)
     local ret = false
 
-    for id, client in ipairs(clients) do
+    for id, client in pairs(clients) do
         if config.is_client_blacklisted(id) then
            goto continue
         else
