@@ -49,6 +49,7 @@ or skip this section entirely if you want to roll with the defaults.
         auto_preview = true,
         position = 'right',
         width = 25,
+        auto_close = false,
         show_numbers = false,
         show_relative_numbers = false,
         show_symbol_details = true,
@@ -131,6 +132,15 @@ width
     Default: 25                                                            ~
 
     Type: int
+
+-----------------------------------------------------------------------------
+auto_close
+
+    Whether to automatically close the window after selection
+
+    Default: false                                                         ~
+
+    Type: boolean
 
 -----------------------------------------------------------------------------
 auto_preview

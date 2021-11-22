@@ -7,6 +7,7 @@ M.defaults = {
     show_guides = true,
     position = 'right',
     width = 25,
+    auto_close = false,
     auto_preview = true,
     show_numbers = false,
     show_relative_numbers = false,
