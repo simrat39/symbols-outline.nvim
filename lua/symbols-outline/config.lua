@@ -71,7 +71,6 @@ end
 
 function M.get_window_width()
   if M.options.relative_width then
-    -- local current_win_width = vim.api.nvim_win_get_width(0)
     return math.ceil(vim.api.nvim_win_get_width(0) * (M.options.width / 100))
   else
     return M.options.width
