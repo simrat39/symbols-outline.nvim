@@ -124,9 +124,20 @@ position
     Type: 'right' or 'left'
 
 -----------------------------------------------------------------------------
+relative_width
+
+    Whether the width of the window is relative to the current split or an
+    absolute width
+
+    Default: true                                                            ~
+
+    Type: boolean
+
+-----------------------------------------------------------------------------
 width
 
-    How big the window is (relative to the current split)
+    Width of the window as a percentage of the current split
+    (`relative_width `= true) or as number of columns (`relative_width `= false)
 
     Default: 25                                                            ~
 

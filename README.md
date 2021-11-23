@@ -32,6 +32,7 @@ vim.g.symbols_outline = {
     show_guides = true,
     auto_preview = true,
     position = 'right',
+    relative_width = true,
     width = 25,
     show_numbers = false,
     show_relative_numbers = false,
