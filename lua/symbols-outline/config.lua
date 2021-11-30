@@ -110,7 +110,7 @@ end
 
 function M.setup(options)
     vim.g.symbols_outline_loaded = 1
-    M.options = vim.tbl_deep_extend("force", {}, M.defaults, options or {})
+    M.options = vim.tbl_deep_extend("force", {}, M.defaults, options or {}, vim.g.symbols_outline)
 end
 
 return M
