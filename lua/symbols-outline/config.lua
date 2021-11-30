@@ -109,8 +109,10 @@ function M.show_help()
 end
 
 function M.setup(options)
-    vim.g.symbols_outline_loaded = 1
-    M.options = vim.tbl_deep_extend("force", {}, M.defaults, options or {}, vim.g.symbols_outline)
+    if vim.g.symbols_outline_loaded ~= 1 then
+        vim.g.symbols_outline_loaded = 1
+        M.options = vim.tbl_deep_extend("force", {}, M.defaults, options or {})
+    end
 end
 
 return M
