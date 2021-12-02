@@ -1,21 +1,30 @@
 local M = {}
 
 function M.should_use_provider(_)
-    local coc_installed = vim.fn.exists("*CocActionAsync")
+	local coc_installed = vim.fn.exists("*CocActionAsync")
 
-    if coc_installed == 0 then return end
+	if coc_installed == 0 then
+		return
+	end
 
-    local coc_attached = vim.fn.call('CocAction', {'ensureDocument'})
-    local has_symbols = vim.fn.call('CocHasProvider', {'documentSymbol'})
+	local coc_attached = vim.fn.call("CocAction", { "ensureDocument" })
+	local has_symbols = vim.fn.call("CocHasProvider", { "documentSymbol" })
 
-    return coc_attached and has_symbols;
+	return coc_attached and has_symbols
+end
+
+function M.hover_info(_, _, on_info)
+	on_info(nil, { contents = { kind = "markdown", contents = { "No extra information availaible!" } } })
 end
 
 ---@param on_symbols function
 function M.request_symbols(on_symbols)
-    vim.fn.call('CocActionAsync', {'documentSymbols', function (_, symbols)
-        on_symbols{[1000000]={result=symbols}}
-    end})
+	vim.fn.call("CocActionAsync", {
+		"documentSymbols",
+		function(_, symbols)
+			on_symbols({ [1000000] = { result = symbols } })
+		end,
+	})
 end
 
 return M

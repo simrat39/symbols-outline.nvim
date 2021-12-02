@@ -11,15 +11,10 @@ function M.setup_view()
 
     -- delete buffer when window is closed / buffer is hidden
     vim.api.nvim_buf_set_option(bufnr, "bufhidden", "delete")
-
-    local current_win = vim.api.nvim_get_current_win()
-    local current_win_width = vim.api.nvim_win_get_width(current_win)
-
     -- create a split
     vim.cmd(config.get_split_command())
     -- resize to a % of the current window size
-    vim.cmd("vertical resize " ..
-                math.ceil(current_win_width * config.get_width_percentage()))
+    vim.cmd("vertical resize " .. config.get_window_width())
 
     -- get current (outline) window and attach our buffer to it
     local winnr = vim.api.nvim_get_current_win()

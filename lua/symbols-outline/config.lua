@@ -6,6 +6,7 @@ M.defaults = {
     highlight_hovered_item = true,
     show_guides = true,
     position = 'right',
+    relative_width = true,
     width = 25,
     auto_close = false,
     auto_preview = true,
@@ -69,7 +70,14 @@ function M.get_position_navigation_direction()
     end
 end
 
-function M.get_width_percentage() return M.options.width / 100 end
+function M.get_window_width()
+  if M.options.relative_width then
+    return math.ceil(vim.api.nvim_win_get_width(0) * (M.options.width / 100))
+  else
+    return M.options.width
+  end
+end
+
 
 function M.get_split_command()
     if M.options.position == 'left' then
