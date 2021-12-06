@@ -52,6 +52,7 @@ or skip this section entirely if you want to roll with the defaults.
         show_numbers = false,
         show_relative_numbers = false,
         show_symbol_details = true,
+	show_icon = true,
         preview_bg_highlight = 'Pmenu',
         -- These keymaps can be a string or a table for multiple keys
         keymaps = {
@@ -174,6 +175,15 @@ show_relative_numbers
 show_symbol_details
 
     Shows extra details with the symbols (lsp dependent)
+
+    Default: true                                                          ~
+
+    Type: boolean
+
+-----------------------------------------------------------------------------
+show_icon
+
+    Shows icon
 
     Default: true                                                          ~
 

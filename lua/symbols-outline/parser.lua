@@ -194,8 +194,9 @@ function M.get_lines(flattened_outline_items)
             table.insert(final_prefix, " ")
         end
 
-        table.insert(lines, table_to_str(final_prefix) .. value.icon .. " " ..
-                         value.name)
+        local icon = ""
+        if config.show_icon then icon = value.icon .. " " end
+        table.insert(lines, table_to_str(final_prefix) .. icon .. value.name)
     end
     return lines
 end

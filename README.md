@@ -37,6 +37,7 @@ vim.g.symbols_outline = {
     show_numbers = false,
     show_relative_numbers = false,
     show_symbol_details = true,
+    show_icon = true,
     preview_bg_highlight = 'Pmenu',
     keymaps = { -- These keymaps can be a string or a table for multiple keys
         close = {"<Esc>", "q"},
@@ -91,6 +92,7 @@ vim.g.symbols_outline = {
 | show_numbers           | Shows numbers with the outline                                                 | boolean            | false                    |
 | show_relative_numbers  | Shows relative numbers with the outline                                        | boolean            | false                    |
 | show_symbol_details    | Shows extra details with the symbols (lsp dependent)                           | boolean            | true                     |
+| show_icon              | Show icon                                                           | boolean            | true                     |
 | preview_bg_highlight   | Background color of the preview window                                         | string             | Pmenu                    |
 | keymaps                | Which keys do what                                                             | table (dictionary) | [here](#default-keymaps) |
 | symbols                | Icon and highlight config for symbol icons                                     | table (dictionary) | scroll up                |
