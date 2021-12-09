@@ -8,6 +8,7 @@ M.defaults = {
     position = 'right',
     relative_width = true,
     width = 25,
+    auto_close = false,
     auto_preview = true,
     show_numbers = false,
     show_relative_numbers = false,

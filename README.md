@@ -8,7 +8,7 @@ Supports all your favourite languages.**
 ### Prerequisites
 
 - `neovim 0.5+`
--  Properly configured Neovim LSP client
+- Properly configured Neovim LSP client
 
 ### Installation
 
@@ -34,6 +34,7 @@ vim.g.symbols_outline = {
     position = 'right',
     relative_width = true,
     width = 25,
+    auto_close = false,
     show_numbers = false,
     show_relative_numbers = false,
     show_symbol_details = true,
@@ -87,6 +88,7 @@ vim.g.symbols_outline = {
 | position               | Where to open the split window                                                 | 'right' or 'left'  | 'right'                  |
 | relative_width         | Whether width of window is set relative to existing windows                    | boolean            | true                     |
 | width                  | Width of window (as a % or columns based on `relative_width`)                  | int                | 25                       |
+| auto_close             | Whether to automatically close the window after selection                      | boolean            | false                    |
 | auto_preview           | Show a preview of the code on hover                                            | boolean            | true                     |
 | show_numbers           | Shows numbers with the outline                                                 | boolean            | false                    |
 | show_relative_numbers  | Shows relative numbers with the outline                                        | boolean            | false                    |
@@ -107,18 +109,19 @@ vim.g.symbols_outline = {
 
 ### Default keymaps
 
-| Key        | Action                                                             |
-| ---------- | ------------------------------------------------------------------ |
-| Escape     | Close outline                                                      |
-| Enter      | Go to symbol location in code                                      |
-| o          | Go to symbol location in code without losing focus                 |
-| Ctrl+Space | Hover current symbol                                               |
-| K          | Toggles the current symbol preview                                 |
-| r          | Rename symbol                                                      |
-| a          | Code actions                                                       |
-| ?          | Show help message                                                  |
+| Key        | Action                                             |
+| ---------- | -------------------------------------------------- |
+| Escape     | Close outline                                      |
+| Enter      | Go to symbol location in code                      |
+| o          | Go to symbol location in code without losing focus |
+| Ctrl+Space | Hover current symbol                               |
+| K          | Toggles the current symbol preview                 |
+| r          | Rename symbol                                      |
+| a          | Code actions                                       |
+| ?          | Show help message                                  |
 
 ### Highlights
+
 | Highlight               | Purpose                                |
 | ----------------------- | -------------------------------------- |
 | FocusedSymbol           | Highlight of the focused symbol        |
