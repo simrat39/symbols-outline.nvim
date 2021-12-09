@@ -1,9 +1,10 @@
 local M = {}
 
 function M.should_use_provider(_)
-	local coc_installed = vim.fn.exists("*CocActionAsync")
+	local not_coc_installed = vim.fn.exists("*CocActionAsync") == 0
+	local not_coc_service_initialized = vim.g.coc_service_initialized == 0
 
-	if coc_installed == 0 then
+	if not_coc_installed or not_coc_service_initialized then
 		return
 	end
 
