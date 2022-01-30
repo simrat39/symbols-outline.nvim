@@ -6,6 +6,13 @@ M.defaults = {
     highlight_hovered_item = true,
     show_guides = true,
     position = 'right',
+    floating = {
+        enabled = false,
+        width = 30,
+        height = 15,
+        row = 0.5,
+        col = 0.5,
+    },
     relative_width = true,
     width = 25,
     auto_close = false,
