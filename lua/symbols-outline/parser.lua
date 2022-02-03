@@ -196,7 +196,7 @@ function M.get_lines(flattened_outline_items)
         end
 
         local string_prefix = table_to_str(final_prefix)
-        local hl_start = #string_prefix + 1
+        local hl_start = #string_prefix
         local hl_end = #string_prefix + #value.icon
         table.insert(lines, string_prefix .. value.icon .. " " ..
                          value.name)
