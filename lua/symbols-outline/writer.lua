@@ -12,11 +12,20 @@ local function is_buffer_outline(bufnr)
     return string.match(name, "OUTLINE") ~= nil and ft == "Outline" and isValid
 end
 
+local hlns = vim.api.nvim_create_namespace("symbols-outline-icon-highlight")
+
 function M.write_outline(bufnr, lines)
     if not is_buffer_outline(bufnr) then return end
     vim.api.nvim_buf_set_option(bufnr, "modifiable", true)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
     vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
+end
+
+function M.add_highlights(bufnr, hl_info)
+    for line, line_hl in ipairs(hl_info) do
+        hl_start, hl_end, hl_type = unpack(line_hl)
+        vim.api.nvim_buf_add_highlight(bufnr, hlns, hl_type, line - 1, hl_start - 1, hl_end)
+    end
 end
 
 local ns = vim.api.nvim_create_namespace("symbols-outline-virt-text")
@@ -41,11 +50,12 @@ end
 -- runs the whole writing routine where the text is cleared, new data is parsed
 -- and then written
 function M.parse_and_write(bufnr, flattened_outline_items)
-    local lines = parser.get_lines(flattened_outline_items)
+    local lines, hl_info = parser.get_lines(flattened_outline_items)
     M.write_outline(bufnr, lines)
 
     clear_virt_text(bufnr)
     local details = parser.get_details(flattened_outline_items)
+    M.add_highlights(bufnr, hl_info)
     M.write_details(bufnr, details)
 end
 
