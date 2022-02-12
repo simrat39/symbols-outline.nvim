@@ -18,6 +18,9 @@ local function is_current_win_outline()
 end
 
 local function has_code_win()
+	if main.state.code_win == nil then
+		return false
+	end
 	local isWinValid = vim.api.nvim_win_is_valid(main.state.code_win)
 	if not isWinValid then
 		return false
