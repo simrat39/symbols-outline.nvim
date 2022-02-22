@@ -170,7 +170,7 @@ local function show_preview()
 			bufpos = { 0, 0 },
 			row = offsets[1],
 			col = offsets[2],
-			border = "single",
+			border = config.options.border,
 		})
 		setup_preview_buf()
 	else
@@ -196,7 +196,7 @@ local function show_hover()
 			bufpos = { 0, 0 },
 			row = offsets[1] + height + 2,
 			col = offsets[2],
-			border = "single",
+			border = config.options.border,
 		})
 		setup_hover_buf()
 	else

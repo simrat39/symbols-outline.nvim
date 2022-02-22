@@ -52,12 +52,6 @@ function M.setup_highlights()
     highlight_text("markers_horizontal", M.markers.horizontal,
                    "SymbolsOutlineConnector")
     highlight_text("markers_bottom", M.markers.bottom, "SymbolsOutlineConnector")
-
-    for _, value in ipairs(symbol_kinds) do
-        local symbol = symbols[value]
-        highlight_text(value, symbol.icon, symbol.hl)
-    end
-
 end
 
 return M

@@ -7,8 +7,8 @@ local M = {}
 ---@return table
 function M.handle_markdown()
     local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-    local results = {}
-
+    local level_symbols = {{children = {}}}
+    local max_level = 1
     local is_inside_code_block = false
 
     for line, value in ipairs(lines) do
@@ -16,15 +16,29 @@ function M.handle_markdown()
             is_inside_code_block = not is_inside_code_block
         end
 
-        if string.find(value, "^#+ ") and not is_inside_code_block then
-            if #results > 0 then
-               results[#results].selectionRange["end"].line = line - 1
-               results[#results].range["end"].line = line - 1
+        header, title = string.match(value, "^(#+)%s+(.*)$")
+        if header and not is_inside_code_block then
+            depth = #header + 1
+
+            for i = depth - 1, 1, -1 do
+                if level_symbols[i] ~= nil then
+                    parent = level_symbols[i].children
+                    break
+                end
             end
 
-            table.insert(results, {
+            for i = depth, max_level do
+                if level_symbols[i] ~= nil then
+                    level_symbols[i].selectionRange["end"].line = line - 1
+                    level_symbols[i].range["end"].line = line - 1
+                    level_symbols[i] = nil
+                end
+            end
+            max_level = depth
+
+            entry = {
                 kind = 13,
-                name = value,
+                name = title,
                 selectionRange = {
                     start = {character = 1, line = line - 1},
                     ["end"] = {character = 1, line = line - 1}
@@ -32,12 +46,23 @@ function M.handle_markdown()
                 range = {
                     start = {character = 1, line = line - 1},
                     ["end"] = {character = 1, line = line - 1}
-                }
-            })
+                },
+                children = {},
+            }
+
+            parent[#parent + 1] = entry
+            level_symbols[depth] = entry
         end
     end
 
-    return {[1000000]={result=results}}
+    for i = 2, max_level do
+        if level_symbols[i] ~= nil then
+            level_symbols[i].selectionRange["end"].line = #lines
+            level_symbols[i].range["end"].line = #lines
+        end
+    end
+
+    return {[1000000]={result=level_symbols[1].children}}
 end
 
 return M

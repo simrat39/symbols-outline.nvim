@@ -161,6 +161,7 @@ end
 
 function M.get_lines(flattened_outline_items)
     local lines = {}
+    local hl_info = {}
     for _, value in ipairs(flattened_outline_items) do
         local line = str_to_table(string.rep(" ", value.depth))
 
@@ -194,10 +195,15 @@ function M.get_lines(flattened_outline_items)
             table.insert(final_prefix, " ")
         end
 
-        table.insert(lines, table_to_str(final_prefix) .. value.icon .. " " ..
+        local string_prefix = table_to_str(final_prefix)
+        local hl_start = #string_prefix
+        local hl_end = #string_prefix + #value.icon
+        table.insert(lines, string_prefix .. value.icon .. " " ..
                          value.name)
+        hl_type = config.options.symbols[symbols.kinds[value.kind]].hl
+        table.insert(hl_info, {hl_start, hl_end, hl_type})
     end
-    return lines
+    return lines, hl_info
 end
 
 function M.get_details(flattened_outline_items)

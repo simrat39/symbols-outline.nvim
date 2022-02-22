@@ -13,6 +13,7 @@ M.defaults = {
         row = 0.5,
         col = 0.5,
     },
+    border = 'single',
     relative_width = true,
     width = 25,
     auto_close = false,
@@ -79,7 +80,7 @@ end
 
 function M.get_window_width()
   if M.options.relative_width then
-    return math.ceil(vim.api.nvim_win_get_width(0) * (M.options.width / 100))
+    return math.ceil(vim.o.columns * (M.options.width / 100))
   else
     return M.options.width
   end
