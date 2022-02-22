@@ -6,6 +6,7 @@ M.defaults = {
     highlight_hovered_item = true,
     show_guides = true,
     position = 'right',
+    border = 'single',
     relative_width = true,
     width = 25,
     auto_close = false,
