@@ -7,7 +7,7 @@ local M = {}
 local function mk_handler(fn)
   return function(...)
     local config_or_client_id = select(4, ...)
-    local is_new = type(config_or_client_id) ~= "number"
+    local is_new = type(config_or_client_id) ~= 'number'
     if is_new then
       fn(...)
     else
@@ -28,12 +28,12 @@ function M.request(bufnr, method, params, handler)
 end
 
 function M.is_buf_attached_to_lsp(bufnr)
-    local clients = vim.lsp.buf_get_clients(bufnr or 0)
-    return clients ~= nil and #clients > 0
+  local clients = vim.lsp.buf_get_clients(bufnr or 0)
+  return clients ~= nil and #clients > 0
 end
 
 function M.is_buf_markdown(bufnr)
-    return vim.api.nvim_buf_get_option(bufnr, 'ft') == 'markdown'
+  return vim.api.nvim_buf_get_option(bufnr, 'ft') == 'markdown'
 end
 
 return M
