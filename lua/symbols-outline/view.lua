@@ -29,6 +29,18 @@ function M.setup_view()
     vim.api.nvim_buf_set_option(bufnr, "filetype", "Outline")
     vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
 
+    if config.options.floating.enabled == true then
+        local opts = {
+            height = config.options.floating.height,
+            width = config.options.floating.width,
+            row = config.options.floating.row,
+            col = config.options.floating.col,
+            border = "single",
+            relative = "editor",
+        }
+        vim.api.nvim_win_set_config(winnr, opts)
+    end
+
     if config.options.show_numbers or config.options.show_relative_numbers then
         vim.api.nvim_win_set_option(winnr, "nu", true)
     end
