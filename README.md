@@ -31,6 +31,7 @@ vim.g.symbols_outline = {
     highlight_hovered_item = true,
     show_guides = true,
     auto_preview = true,
+    instant_preview = false,
     position = 'right',
     relative_width = true,
     width = 25,
@@ -90,6 +91,7 @@ vim.g.symbols_outline = {
 | width                  | Width of window (as a % or columns based on `relative_width`)                  | int                | 25                       |
 | auto_close             | Whether to automatically close the window after selection                      | boolean            | false                    |
 | auto_preview           | Show a preview of the code on hover                                            | boolean            | true                     |
+| instant_preview        | Instantly activates `auto_preview` without any delay                           | boolean            | false                    |
 | show_numbers           | Shows numbers with the outline                                                 | boolean            | false                    |
 | show_relative_numbers  | Shows relative numbers with the outline                                        | boolean            | false                    |
 | show_symbol_details    | Shows extra details with the symbols (lsp dependent)                           | boolean            | true                     |
