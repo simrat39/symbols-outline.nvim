@@ -94,6 +94,7 @@ vim.g.symbols_outline = {
 | show_relative_numbers  | Shows relative numbers with the outline                                        | boolean            | false                    |
 | show_symbol_details    | Shows extra details with the symbols (lsp dependent)                           | boolean            | true                     |
 | preview_bg_highlight   | Background color of the preview window                                         | string             | Pmenu                    |
+| winblend               | Pseudo-transparency of the preview window                                      | int                | 0                        |
 | keymaps                | Which keys do what                                                             | table (dictionary) | [here](#default-keymaps) |
 | symbols                | Icon and highlight config for symbol icons                                     | table (dictionary) | scroll up                |
 | lsp_blacklist          | Which lsp clients to ignore                                                    | table (array)      | {}                       |

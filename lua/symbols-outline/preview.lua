@@ -151,6 +151,9 @@ local function set_bg_hl()
   local winhi = 'Normal:' .. config.options.preview_bg_highlight
   vim.api.nvim_win_set_option(state.preview_win, 'winhighlight', winhi)
   vim.api.nvim_win_set_option(state.hover_win, 'winhighlight', winhi)
+  local winblend = config.options.winblend
+  vim.api.nvim_win_set_option(state.preview_win, 'winblend', winblend)
+  vim.api.nvim_win_set_option(state.hover_win, 'winblend', winblend)
 end
 
 local function show_preview()
