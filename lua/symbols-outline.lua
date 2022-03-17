@@ -67,9 +67,9 @@ function M._goto_location(change_focus)
   vim.api.nvim_win_set_cursor(M.state.code_win, { node.line + 1, node.character })
   if change_focus then
     vim.fn.win_gotoid(M.state.code_win)
-  end
-  if config.options.auto_close then
-    M.close_outline()
+    if config.options.auto_close then
+      M.close_outline()
+    end
   end
 end
 
