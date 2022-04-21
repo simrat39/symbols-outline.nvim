@@ -86,6 +86,8 @@ local function setup_preview_buf()
   vim.api.nvim_buf_set_option(state.preview_buf, 'syntax', ft)
   vim.api.nvim_buf_set_option(state.preview_buf, 'bufhidden', 'delete')
   vim.api.nvim_win_set_option(state.preview_win, 'cursorline', true)
+  vim.api.nvim_win_set_option(state.preview_win, 'signcolumn', 'no')
+  vim.api.nvim_win_set_option(state.preview_win, 'cursorlineopt', 'line')
   vim.api.nvim_win_set_option(state.preview_win, 'wrap', config.options.preview_wrap)
   update_preview(code_buf)
 end
@@ -145,6 +147,8 @@ local function setup_hover_buf()
   vim.api.nvim_buf_set_option(state.hover_buf, 'bufhidden', 'delete')
   vim.api.nvim_win_set_option(state.hover_win, 'wrap', true)
   vim.api.nvim_win_set_option(state.hover_win, 'cursorline', false)
+  vim.api.nvim_win_set_option(state.hover_win, 'fillchars', 'eob: ')
+  vim.api.nvim_win_set_option(state.hover_win, 'signcolumn', 'no')
   update_hover()
 end
 
