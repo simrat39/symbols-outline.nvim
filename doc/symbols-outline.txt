@@ -48,6 +48,7 @@ or skip this section entirely if you want to roll with the defaults.
         show_guides = true,
         auto_preview = true,
         position = 'right',
+        border = 'single',
         width = 25,
         auto_close = false,
         show_numbers = false,
@@ -125,6 +126,16 @@ position
     Default: 'right'                                                       ~
 
     Type: 'right' or 'left'
+
+-----------------------------------------------------------------------------
+border
+
+    Border style of the preview window, as specified in |nvim_open_win()|
+    `config` parameter
+
+    Default: 'single'                                                       ~
+
+    Type: string or table (array)
 
 -----------------------------------------------------------------------------
 relative_width

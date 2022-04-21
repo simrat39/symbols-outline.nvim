@@ -32,6 +32,7 @@ vim.g.symbols_outline = {
     show_guides = true,
     auto_preview = true,
     position = 'right',
+    border = 'single',
     relative_width = true,
     width = 25,
     auto_close = false,
@@ -88,6 +89,7 @@ vim.g.symbols_outline = {
 | highlight_hovered_item   | Whether to highlight the currently hovered symbol (high cpu usage)             | boolean                 | true                     |
 | show_guides              | Whether to show outline guides                                                 | boolean                 | true                     |
 | position                 | Where to open the split window                                                 | 'right' or 'left'       | 'right'                  |
+| border                   | Border style of the preview window                                             | string or table (array) | 'single'                 |
 | relative_width           | Whether width of window is set relative to existing windows                    | boolean                 | true                     |
 | width                    | Width of window (as a % or columns based on `relative_width`)                  | int                     | 25                       |
 | auto_close               | Whether to automatically close the window after selection                      | boolean                 | false                    |
