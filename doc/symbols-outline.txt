@@ -53,7 +53,9 @@ or skip this section entirely if you want to roll with the defaults.
         show_numbers = false,
         show_relative_numbers = false,
         show_symbol_details = true,
+        preview_wrap = true,
         preview_bg_highlight = 'Pmenu',
+        preview_border_highlight = 'Pmenu',
         -- These keymaps can be a string or a table for multiple keys
         keymaps = {
             close = {"<Esc>", "q"},
@@ -190,9 +192,27 @@ show_symbol_details
     Type: boolean
 
 -----------------------------------------------------------------------------
+preview_wrap
+
+    Whether preview window lines should be wrapped
+
+    Default: true
+
+    Type: boolean
+
+-----------------------------------------------------------------------------
 preview_bg_highlight
 
     Background color of the preview window
+
+    Default: Pmenu
+
+    Type: string
+
+-----------------------------------------------------------------------------
+preview_border_highlight
+
+    Border color of the preview window
 
     Default: Pmenu
 

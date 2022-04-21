@@ -38,7 +38,9 @@ vim.g.symbols_outline = {
     show_numbers = false,
     show_relative_numbers = false,
     show_symbol_details = true,
+    preview_wrap = true,
     preview_bg_highlight = 'Pmenu',
+    preview_border_highlight = 'Pmenu',
     keymaps = { -- These keymaps can be a string or a table for multiple keys
         close = {"<Esc>", "q"},
         goto_location = "<Cr>",
@@ -81,23 +83,25 @@ vim.g.symbols_outline = {
 }
 ```
 
-| Property               | Description                                                                    | Type               | Default                  |
-| ---------------------- | ------------------------------------------------------------------------------ | ------------------ | ------------------------ |
-| highlight_hovered_item | Whether to highlight the currently hovered symbol (high cpu usage)             | boolean            | true                     |
-| show_guides            | Whether to show outline guides                                                 | boolean            | true                     |
-| position               | Where to open the split window                                                 | 'right' or 'left'  | 'right'                  |
-| relative_width         | Whether width of window is set relative to existing windows                    | boolean            | true                     |
-| width                  | Width of window (as a % or columns based on `relative_width`)                  | int                | 25                       |
-| auto_close             | Whether to automatically close the window after selection                      | boolean            | false                    |
-| auto_preview           | Show a preview of the code on hover                                            | boolean            | true                     |
-| show_numbers           | Shows numbers with the outline                                                 | boolean            | false                    |
-| show_relative_numbers  | Shows relative numbers with the outline                                        | boolean            | false                    |
-| show_symbol_details    | Shows extra details with the symbols (lsp dependent)                           | boolean            | true                     |
-| preview_bg_highlight   | Background color of the preview window                                         | string             | Pmenu                    |
-| keymaps                | Which keys do what                                                             | table (dictionary) | [here](#default-keymaps) |
-| symbols                | Icon and highlight config for symbol icons                                     | table (dictionary) | scroll up                |
-| lsp_blacklist          | Which lsp clients to ignore                                                    | table (array)      | {}                       |
-| symbol_blacklist       | Which symbols to ignore ([possible values](./lua/symbols-outline/symbols.lua)) | table (array)      | {}                       |
+| Property                 | Description                                                                    | Type                    | Default                  |
+| ------------------------ | ------------------------------------------------------------------------------ | ----------------------- | ------------------------ |
+| highlight_hovered_item   | Whether to highlight the currently hovered symbol (high cpu usage)             | boolean                 | true                     |
+| show_guides              | Whether to show outline guides                                                 | boolean                 | true                     |
+| position                 | Where to open the split window                                                 | 'right' or 'left'       | 'right'                  |
+| relative_width           | Whether width of window is set relative to existing windows                    | boolean                 | true                     |
+| width                    | Width of window (as a % or columns based on `relative_width`)                  | int                     | 25                       |
+| auto_close               | Whether to automatically close the window after selection                      | boolean                 | false                    |
+| auto_preview             | Show a preview of the code on hover                                            | boolean                 | true                     |
+| show_numbers             | Shows numbers with the outline                                                 | boolean                 | false                    |
+| show_relative_numbers    | Shows relative numbers with the outline                                        | boolean                 | false                    |
+| show_symbol_details      | Shows extra details with the symbols (lsp dependent)                           | boolean                 | true                     |
+| preview_wrap             | Whether preview window lines should be wrapped                                 | boolean                 | true                     |
+| preview_bg_highlight     | Background color of the preview window                                         | string                  | Pmenu                    |
+| preview_border_highlight | Border color of the preview window                                             | string                  | Pmenu                    |
+| keymaps                  | Which keys do what                                                             | table (dictionary)      | [here](#default-keymaps) |
+| symbols                  | Icon and highlight config for symbol icons                                     | table (dictionary)      | scroll up                |
+| lsp_blacklist            | Which lsp clients to ignore                                                    | table (array)           | {}                       |
+| symbol_blacklist         | Which symbols to ignore ([possible values](./lua/symbols-outline/symbols.lua)) | table (array)           | {}                       |
 
 ### Commands
 

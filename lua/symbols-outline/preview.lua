@@ -86,6 +86,7 @@ local function setup_preview_buf()
   vim.api.nvim_buf_set_option(state.preview_buf, 'syntax', ft)
   vim.api.nvim_buf_set_option(state.preview_buf, 'bufhidden', 'delete')
   vim.api.nvim_win_set_option(state.preview_win, 'cursorline', true)
+  vim.api.nvim_win_set_option(state.preview_win, 'wrap', config.options.preview_wrap)
   update_preview(code_buf)
 end
 
@@ -147,8 +148,14 @@ local function setup_hover_buf()
   update_hover()
 end
 
-local function set_bg_hl()
-  local winhi = 'Normal:' .. config.options.preview_bg_highlight
+local function set_hl()
+  local winhi = string.format(
+    'Normal:%s,EndOfBuffer:%s,FloatBorder:%s,CursorLine:%s',
+    config.options.preview_bg_highlight,
+    config.options.preview_bg_highlight,
+    config.options.preview_border_highlight,
+    'FocusedSymbol'
+  )
   vim.api.nvim_win_set_option(state.preview_win, 'winhighlight', winhi)
   vim.api.nvim_win_set_option(state.hover_win, 'winhighlight', winhi)
 end
@@ -211,7 +218,7 @@ function M.show()
 
   show_preview()
   show_hover()
-  set_bg_hl()
+  set_hl()
 end
 
 function M.close()
