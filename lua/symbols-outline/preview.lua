@@ -29,7 +29,7 @@ end
 
 local function get_offset()
   local outline_winnr = main.state.outline_win
-  local width = 53
+  local width = config.get_preview_width() + 6
   local height = 0
 
   if config.has_numbers() then
@@ -41,6 +41,7 @@ local function get_offset()
   else
     width = vim.api.nvim_win_get_width(outline_winnr) + 1
   end
+
   return { height, width }
 end
 
@@ -168,7 +169,7 @@ local function show_preview()
     local offsets = get_offset()
     state.preview_win = vim.api.nvim_open_win(state.preview_buf, false, {
       relative = 'win',
-      width = 50,
+      width = config.get_preview_width(),
       height = get_height(),
       bufpos = { 0, 0 },
       row = offsets[1],
@@ -194,7 +195,7 @@ local function show_hover()
     local height = get_height()
     state.hover_win = vim.api.nvim_open_win(state.hover_buf, false, {
       relative = 'win',
-      width = 50,
+      width = config.get_preview_width(),
       height = height,
       bufpos = { 0, 0 },
       row = offsets[1] + height + 2,
