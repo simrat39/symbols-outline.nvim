@@ -199,6 +199,16 @@ preview_bg_highlight
     Type: string
 
 -----------------------------------------------------------------------------
+winblend
+
+    Pseudo-transparency of the preview window (value between `0` and `100`)
+    See `:h winblend`
+
+    Default: 0
+
+    Type: int
+
+-----------------------------------------------------------------------------
 keymaps
 
     Which keys do what
