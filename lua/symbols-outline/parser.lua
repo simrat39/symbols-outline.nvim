@@ -131,7 +131,9 @@ function M.parse(response)
     end
 
     local result = client_response['result']
-    if result == nil or type(result) ~= 'table' then goto continue end
+    if result == nil or type(result) ~= 'table' then
+      goto continue
+    end
 
     for _, value in pairs(result) do
       table.insert(all_results, value)
@@ -184,9 +186,9 @@ function M.get_lines(flattened_outline_items)
     if config.options.show_guides then
       -- makes the guides
       for index, _ in ipairs(line) do
-        -- all items start with a space (or two)
+        -- do not print unnecessary spaces before items
         if index == 1 then
-          line[index] = ' '
+          line[index] = nil
           -- if index is last, add a bottom marker if current item is last,
           -- else add a middle marker
         elseif index == #line then
@@ -206,7 +208,7 @@ function M.get_lines(flattened_outline_items)
 
     local final_prefix = {}
     -- Add 1 space between the guides
-    for _, v in ipairs(line) do
+    for _, v in pairs(line) do
       table.insert(final_prefix, v)
       table.insert(final_prefix, ' ')
     end
