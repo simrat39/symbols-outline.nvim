@@ -42,6 +42,8 @@ function M.setup_highlights()
     vim.cmd(string.format('hi SymbolsOutlineConnector guifg=%s', comment_fg_gui))
   end
 
+	vim.api.nvim_command(string.format('setlocal winhighlight=Normal:%s', config.options.window_bg_highlight))
+
   local symbols = config.options.symbols
 
   -- markers
