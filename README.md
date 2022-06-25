@@ -49,6 +49,12 @@ vim.g.symbols_outline = {
         code_actions = "a",
     },
     lsp_blacklist = {},
+    markers = {
+      bottom = '└',
+      middle = '├',
+      vertical = '│',
+      horizontal = '─',
+    },
     symbol_blacklist = {},
     symbols = {
         File = {icon = "", hl = "TSURI"},
@@ -99,6 +105,7 @@ vim.g.symbols_outline = {
 | symbols                | Icon and highlight config for symbol icons                                     | table (dictionary) | scroll up                |
 | lsp_blacklist          | Which lsp clients to ignore                                                    | table (array)      | {}                       |
 | symbol_blacklist       | Which symbols to ignore ([possible values](./lua/symbols-outline/symbols.lua)) | table (array)      | {}                       |
+| markers                | Icon config for markers                                                        | table (dictionary) | scroll up                |
 
 ### Commands
 

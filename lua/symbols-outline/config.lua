@@ -27,6 +27,12 @@ M.defaults = {
     show_help = '?',
   },
   lsp_blacklist = {},
+  markers = {
+    bottom = '└',
+    middle = '├',
+    vertical = '│',
+    horizontal = '─',
+  },
   symbol_blacklist = {},
   symbols = {
     File = { icon = '', hl = 'TSURI' },

@@ -3,13 +3,6 @@ local config = require 'symbols-outline.config'
 local symbol_kinds = require('symbols-outline.symbols').kinds
 local M = {}
 
-M.markers = {
-  bottom = '└',
-  middle = '├',
-  vertical = '│',
-  horizontal = '─',
-}
-
 M.hovered_hl_ns = vim.api.nvim_create_namespace 'hovered_item'
 
 function M.clear_hover_highlight(bufnr)
@@ -45,10 +38,10 @@ function M.setup_highlights()
   local symbols = config.options.symbols
 
   -- markers
-  highlight_text('marker_middle', M.markers.middle, 'SymbolsOutlineConnector')
-  highlight_text('marker_vertical', M.markers.vertical, 'SymbolsOutlineConnector')
-  highlight_text('markers_horizontal', M.markers.horizontal, 'SymbolsOutlineConnector')
-  highlight_text('markers_bottom', M.markers.bottom, 'SymbolsOutlineConnector')
+  highlight_text('marker_middle', config.markers.middle, 'SymbolsOutlineConnector')
+  highlight_text('marker_vertical', config.markers.vertical, 'SymbolsOutlineConnector')
+  highlight_text('markers_horizontal', config.markers.horizontal, 'SymbolsOutlineConnector')
+  highlight_text('markers_bottom', config.markers.bottom, 'SymbolsOutlineConnector')
 end
 
 return M
