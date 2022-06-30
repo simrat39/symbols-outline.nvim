@@ -54,6 +54,10 @@ or skip this section entirely if you want to roll with the defaults.
         show_relative_numbers = false,
         show_symbol_details = true,
         preview_bg_highlight = 'Pmenu',
+        autofold_depth = nil,
+        auto_unfold_hover = true,
+        fold_markers = { '', '' },
+        only_reload_on_change=false,
         -- These keymaps can be a string or a table for multiple keys
         keymaps = {
             close = {"<Esc>", "q"},
@@ -63,6 +67,11 @@ or skip this section entirely if you want to roll with the defaults.
             toggle_preview  = "K",
             rename_symbol = "r",
             code_actions = "a",
+            fold = "h",
+            unfold = "l",
+            fold_all = "W",
+            unfold_all = "E",
+            fold_reset = "R",
         },
         lsp_blacklist = {},
         symbol_blacklist = {},
@@ -255,6 +264,47 @@ symbol_blacklist
     Default: {}                                                            ~
 
     Type: table (dictionary)
+-----------------------------------------------------------------------------
+autofold_depth
+
+    Depth past which nodes will be folded by default
+    Set to nil to disable this feature
+    Set to 0 to fold all symbols by default
+
+    Default: nil
+
+    Type: int
+
+-----------------------------------------------------------------------------
+auto_unfold_hover
+
+    Automatically unfold hovered symbols
+
+    Default: true
+
+    Type: boolean
+
+-----------------------------------------------------------------------------
+fold_markers
+
+    Markers to denote foldable symbol's status
+    Order is { unfolded, folded }
+    Set to nil to disable this feature
+
+    Default: { '', '' }
+
+    Type: table (dictionary)
+
+-----------------------------------------------------------------------------
+only_reload_on_change
+
+    Only reloads changed symbols on LSP update
+    This prevents folding from resetting on symbol changes
+    NOTE: this incurs additional CPU overhead
+
+    Default: false
+
+    Type: boolean
 
 ================================================================================
 5. COMMANDS                                           *symbols-outline-commands*
@@ -278,6 +328,11 @@ symbol_blacklist
 | r          | Rename symbol                                                      |
 | a          | Code actions                                                       |
 | ?          | Show help message                                                  |
+| h          | Unfold symbol                                                      |
+| l          | Fold symbol                                                        |
+| W          | Fold all symbols                                                   |
+| E          | Unfold all symbols                                                 |
+| R          | Reset all folding                                                  |
 
 ================================================================================
 7. HIGHLIGHTS                                       *symbols-outline-highlights*

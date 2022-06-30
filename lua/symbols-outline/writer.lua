@@ -2,6 +2,7 @@ local vim = vim
 
 local parser = require 'symbols-outline.parser'
 local config = require 'symbols-outline.config'
+local ui = require 'symbols-outline.ui'
 
 local M = {}
 
@@ -23,11 +24,13 @@ function M.write_outline(bufnr, lines)
   vim.api.nvim_buf_set_option(bufnr, 'modifiable', false)
 end
 
-function M.add_highlights(bufnr, hl_info)
+function M.add_highlights(bufnr, hl_info, nodes)
   for line, line_hl in ipairs(hl_info) do
     hl_start, hl_end, hl_type = unpack(line_hl)
     vim.api.nvim_buf_add_highlight(bufnr, hlns, hl_type, line - 1, hl_start, hl_end)
   end
+
+  M.add_hover_highlights(bufnr, nodes)
 end
 
 local ns = vim.api.nvim_create_namespace 'symbols-outline-virt-text'
@@ -53,6 +56,22 @@ local function clear_virt_text(bufnr)
   vim.api.nvim_buf_clear_namespace(bufnr, -1, 0, -1)
 end
 
+M.add_hover_highlights = function(bufnr, nodes)
+  if not config.options.highlight_hovered_item then
+    return
+  end
+
+  -- clear old highlight
+  ui.clear_hover_highlight(bufnr)
+  for _, value in ipairs(nodes) do
+    if not value.hovered then
+      goto continue
+    end
+    ui.add_hover_highlight(bufnr, value.line_in_outline - 1, value.depth * 2)
+    ::continue::
+  end
+end
+
 -- runs the whole writing routine where the text is cleared, new data is parsed
 -- and then written
 function M.parse_and_write(bufnr, flattened_outline_items)
@@ -61,7 +80,7 @@ function M.parse_and_write(bufnr, flattened_outline_items)
 
   clear_virt_text(bufnr)
   local details = parser.get_details(flattened_outline_items)
-  M.add_highlights(bufnr, hl_info)
+  M.add_highlights(bufnr, hl_info, flattened_outline_items)
   M.write_details(bufnr, details)
 end
 
