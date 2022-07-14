@@ -55,6 +55,8 @@ M.defaults = {
     Event = { icon = '🗲', hl = 'TSType' },
     Operator = { icon = '+', hl = 'TSOperator' },
     TypeParameter = { icon = '𝙏', hl = 'TSParameter' },
+    Component = { icon = '', hl = 'TSFunction' },
+    Fragment = { icon = '', hl = 'TSConstant' },
   },
 }
 
