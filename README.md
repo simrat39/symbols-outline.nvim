@@ -27,7 +27,7 @@ want to roll with the defaults.
 
 ```lua
 -- init.lua
-vim.g.symbols_outline = {
+require("symbols-outline").setup({
     highlight_hovered_item = true,
     show_guides = true,
     auto_preview = true,
@@ -78,7 +78,7 @@ vim.g.symbols_outline = {
         Operator = {icon = "+", hl = "TSOperator"},
         TypeParameter = {icon = "𝙏", hl = "TSParameter"}
     }
-}
+})
 ```
 
 | Property               | Description                                                                    | Type               | Default                  |
