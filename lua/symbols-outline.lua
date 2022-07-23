@@ -14,6 +14,20 @@ local function setup_global_autocmd()
   if config.options.highlight_hovered_item then
     vim.cmd "au CursorHold * :lua require('symbols-outline')._highlight_current_item()"
   end
+
+  vim.api.nvim_create_autocmd({ 'InsertLeave', 'WinEnter', 'BufEnter', 'BufWinEnter', 'TabEnter', 'BufWritePost' }, {
+    pattern = '*',
+    callback = function()
+      M._refresh()
+    end,
+  })
+
+  vim.api.nvim_create_autocmd({ 'WinEnter' }, {
+    pattern = '*',
+    callback = function()
+      M.preview.close()
+    end,
+  })
 end
 
 local function setup_buffer_autocmd()
