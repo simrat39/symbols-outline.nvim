@@ -65,6 +65,7 @@ function M._goto_location(change_focus)
   local current_line = vim.api.nvim_win_get_cursor(M.state.outline_win)[1]
   local node = M.state.flattened_outline_items[current_line]
   vim.api.nvim_win_set_cursor(M.state.code_win, { node.line + 1, node.character })
+  vim.api.nvim_win_call(M.state.code_win, function() vim.cmd 'normal zz' end)
   if change_focus then
     vim.fn.win_gotoid(M.state.code_win)
   end
