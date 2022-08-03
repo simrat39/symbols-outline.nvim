@@ -1,14 +1,13 @@
 local M = {}
 
-local parsers = require("nvim-treesitter.parsers")
-
 local SYMBOL_COMPONENT = 27
 local SYMBOL_FRAGMENT = 28
 
 function M.should_use_provider(bufnr)
  local ft = vim.api.nvim_buf_get_option(bufnr, 'ft')
+ local status, _ = pcall(require, "nvim-treesitter.parsers")
 
- return string.match(ft, 'typescriptreact') or string.match(ft, 'javascriptreact')
+ return status and string.match(ft, 'typescriptreact') or string.match(ft, 'javascriptreact')
 end
 
 function M.hover_info(_, _, on_info)
@@ -100,6 +99,7 @@ end
 function M.request_symbols(on_symbols)
   local bufnr = 0
 
+  local parsers = require("nvim-treesitter.parsers")
   local parser = parsers.get_parser(bufnr)
   local root = parser:parse()[1]:root()
 
