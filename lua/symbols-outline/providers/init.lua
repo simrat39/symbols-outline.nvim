@@ -1,6 +1,7 @@
 local M = {}
 
 local providers = {
+  'symbols-outline/providers/jsx',
   'symbols-outline/providers/nvim-lsp',
   'symbols-outline/providers/coc',
   'symbols-outline/providers/markdown',

@@ -29,6 +29,8 @@ M.kinds = {
   'Event',
   'Operator',
   'TypeParameter',
+  'Component',
+  'Fragment',
 }
 
 function M.icon_from_kind(kind)
