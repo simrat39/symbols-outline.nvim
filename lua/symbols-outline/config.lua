@@ -9,6 +9,9 @@ M.defaults = {
   border = 'single',
   relative_width = true,
   width = 25,
+  preview_min_width = 100,
+  preview_width = 50,
+  relative_preview_width = true,
   auto_close = false,
   auto_preview = true,
   show_numbers = false,
@@ -79,6 +82,20 @@ function M.get_window_width()
     return math.ceil(vim.o.columns * (M.options.width / 100))
   else
     return M.options.width
+  end
+end
+
+function M.get_preview_width()
+  if M.options.relative_preview_width then
+    local relative_width = math.ceil(vim.o.columns * (M.options.preview_width / 100))
+
+    if relative_width < M.options.preview_min_width then
+      return M.options.preview_min_width
+    else
+      return relative_width
+    end
+  else
+    return M.options.preview_width
   end
 end
 
