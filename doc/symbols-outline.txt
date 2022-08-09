@@ -47,6 +47,7 @@ or skip this section entirely if you want to roll with the defaults.
         highlight_hovered_item = true,
         show_guides = true,
         auto_preview = true,
+        instant_preview = false,
         position = 'right',
         width = 25,
         auto_close = false,
@@ -159,6 +160,15 @@ auto_preview
     Show a preview of the code on hover
 
     Default: true                                                          ~
+
+    Type: boolean
+
+-----------------------------------------------------------------------------
+instant_preview
+
+    Instantly activates |auto_preview| without any delay.
+
+    Default: false                                                         ~
 
     Type: boolean
 
