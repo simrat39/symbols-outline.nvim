@@ -6,7 +6,7 @@ local ui = require 'symbols-outline.ui'
 local writer = require 'symbols-outline.writer'
 local config = require 'symbols-outline.config'
 local utils = require 'symbols-outline.utils.init'
-local view = require 'symbols-outline.view'
+local View = require 'symbols-outline.view'
 
 local M = {}
 
@@ -40,7 +40,7 @@ local function wipe_state()
 end
 
 local function __refresh()
-  if M.state.outline_buf ~= nil then
+  if M.view.bufnr ~= nil then
     local function refresh_handler(response)
       if response == nil or type(response) ~= 'table' then
         return
@@ -52,7 +52,7 @@ local function __refresh()
       M.state.outline_items = items
       M.state.flattened_outline_items = parser.flatten(items)
 
-      writer.parse_and_write(M.state.outline_buf, M.state.flattened_outline_items)
+      writer.parse_and_write(M.view.bufnr, M.state.flattened_outline_items)
     end
 
     providers.request_symbols(refresh_handler)
@@ -62,7 +62,7 @@ end
 M._refresh = utils.debounce(__refresh, 100)
 
 function M._goto_location(change_focus)
-  local current_line = vim.api.nvim_win_get_cursor(M.state.outline_win)[1]
+  local current_line = vim.api.nvim_win_get_cursor(M.view.winnr)[1]
   local node = M.state.flattened_outline_items[current_line]
   vim.api.nvim_win_set_cursor(M.state.code_win, { node.line + 1, node.character })
   if change_focus then
@@ -76,9 +76,9 @@ end
 function M._highlight_current_item(winnr)
   local has_provider = providers.has_provider()
 
-  local is_current_buffer_the_outline = M.state.outline_buf == vim.api.nvim_get_current_buf()
+  local is_current_buffer_the_outline = M.view.bufnr == vim.api.nvim_get_current_buf()
 
-  local doesnt_have_outline_buf = not M.state.outline_buf
+  local doesnt_have_outline_buf = not M.view.bufnr
 
   local should_exit = not has_provider or doesnt_have_outline_buf or is_current_buffer_the_outline
 
@@ -106,10 +106,10 @@ function M._highlight_current_item(winnr)
   end
 
   -- clear old highlight
-  ui.clear_hover_highlight(M.state.outline_buf)
+  ui.clear_hover_highlight(M.view.bufnr)
   for _, value in ipairs(nodes) do
-    ui.add_hover_highlight(M.state.outline_buf, value.line_in_outline - 1, value.depth * 2)
-    vim.api.nvim_win_set_cursor(M.state.outline_win, { value.line_in_outline, 1 })
+    ui.add_hover_highlight(M.view.bufnr, value.line_in_outline - 1, value.depth * 2)
+    vim.api.nvim_win_set_cursor(M.view.winnr, { value.line_in_outline, 1 })
   end
 end
 
@@ -142,14 +142,14 @@ local function handler(response)
 
   M.state.code_win = vim.api.nvim_get_current_win()
 
-  M.state.outline_buf, M.state.outline_win = view.setup_view()
+  M.view:setup_view()
   -- clear state when buffer is closed
-  vim.api.nvim_buf_attach(M.state.outline_buf, false, {
+  vim.api.nvim_buf_attach(M.view.bufnr, false, {
     on_detach = function(_, _)
       wipe_state()
     end,
   })
-  setup_keymaps(M.state.outline_buf)
+  setup_keymaps(M.view.bufnr)
   setup_buffer_autocmd()
 
   local items = parser.parse(response)
@@ -157,14 +157,14 @@ local function handler(response)
   M.state.outline_items = items
   M.state.flattened_outline_items = parser.flatten(items)
 
-  writer.parse_and_write(M.state.outline_buf, M.state.flattened_outline_items)
+  writer.parse_and_write(M.view.bufnr, M.state.flattened_outline_items)
   ui.setup_highlights()
 
   M._highlight_current_item(M.state.code_win)
 end
 
 function M.toggle_outline()
-  if M.state.outline_buf == nil then
+  if M.view.bufnr == nil then
     M.open_outline()
   else
     M.close_outline()
@@ -172,19 +172,19 @@ function M.toggle_outline()
 end
 
 function M.open_outline()
-  if M.state.outline_buf == nil then
+  if not M.view:is_open() then
     providers.request_symbols(handler)
   end
 end
 
 function M.close_outline()
-  if M.state.outline_buf then
-    vim.api.nvim_win_close(M.state.outline_win, true)
-  end
+  M.view:close()
 end
 
 function M.setup(opts)
   config.setup(opts)
+
+  M.view = View:new()
   setup_global_autocmd()
 end
 
