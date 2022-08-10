@@ -1,7 +1,6 @@
 local vim = vim
 local main = require 'symbols-outline'
 local config = require 'symbols-outline.config'
-local buf_request = require('symbols-outline.utils.lsp_utils').request
 
 local M = {}
 

@@ -1,6 +1,5 @@
 local so = require 'symbols-outline'
 local util = vim.lsp.util
-local buf_request = require('symbols-outline.utils.lsp_utils').request
 
 local M = {}
 
@@ -22,10 +21,11 @@ function M.show_hover()
 
   local hover_params = get_hover_params(node, so.state.code_win)
 
-  buf_request(
+  vim.lsp.buf_request(
     hover_params.bufnr,
     'textDocument/hover',
     hover_params,
+---@diagnostic disable-next-line: param-type-mismatch
     function(_, result, _, config)
       if not (result and result.contents) then
         -- return { 'No information available' }

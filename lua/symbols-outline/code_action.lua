@@ -1,7 +1,6 @@
 local vim = vim
 
 local main = require 'symbols-outline'
-local buf_request = require('symbols-outline.utils.lsp_utils').request
 
 local M = {}
 
@@ -24,8 +23,7 @@ function M.show_code_actions()
   local node = main.state.flattened_outline_items[current_line]
 
   local params = get_action_params(node, main.state.code_win)
-
-  buf_request(
+  vim.lsp.buf_request(
     params.bufnr,
     'textDocument/codeAction',
     params,
