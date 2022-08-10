@@ -15,7 +15,15 @@ function M.should_use_provider(_)
 end
 
 function M.hover_info(_, _, on_info)
-  on_info(nil, { contents = { kind = 'markdown', contents = { 'No extra information availaible!' } } })
+  on_info(
+    nil,
+    {
+      contents = {
+        kind = 'markdown',
+        contents = { 'No extra information availaible!' },
+      },
+    }
+  )
 end
 
 ---@param on_symbols function

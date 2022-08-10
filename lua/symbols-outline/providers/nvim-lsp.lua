@@ -23,7 +23,15 @@ function M.hover_info(bufnr, params, on_info)
   end
 
   if not used_client then
-    on_info(nil, { contents = { kind = 'markdown', content = { 'No extra information availaible!' } } })
+    on_info(
+      nil,
+      {
+        contents = {
+          kind = 'markdown',
+          content = { 'No extra information availaible!' },
+        },
+      }
+    )
   end
 
   used_client.request('textDocument/hover', params, on_info, bufnr)
@@ -51,7 +59,12 @@ end
 
 ---@param on_symbols function
 function M.request_symbols(on_symbols)
-  vim.lsp.buf_request_all(0, 'textDocument/documentSymbol', getParams(), on_symbols)
+  vim.lsp.buf_request_all(
+    0,
+    'textDocument/documentSymbol',
+    getParams(),
+    on_symbols
+  )
 end
 
 return M

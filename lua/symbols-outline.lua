@@ -52,7 +52,10 @@ M._refresh = utils.debounce(__refresh, 100)
 local function goto_location(change_focus)
   local current_line = vim.api.nvim_win_get_cursor(M.view.winnr)[1]
   local node = M.state.flattened_outline_items[current_line]
-  vim.api.nvim_win_set_cursor(M.state.code_win, { node.line + 1, node.character })
+  vim.api.nvim_win_set_cursor(
+    M.state.code_win,
+    { node.line + 1, node.character }
+  )
   if change_focus then
     vim.fn.win_gotoid(M.state.code_win)
   end
@@ -64,11 +67,14 @@ end
 function M._highlight_current_item(winnr)
   local has_provider = providers.has_provider()
 
-  local is_current_buffer_the_outline = M.view.bufnr == vim.api.nvim_get_current_buf()
+  local is_current_buffer_the_outline = M.view.bufnr
+    == vim.api.nvim_get_current_buf()
 
   local doesnt_have_outline_buf = not M.view.bufnr
 
-  local should_exit = not has_provider or doesnt_have_outline_buf or is_current_buffer_the_outline
+  local should_exit = not has_provider
+    or doesnt_have_outline_buf
+    or is_current_buffer_the_outline
 
   -- Make a special case if we have a window number
   -- Because we might use this to manually focus so we dont want to quit this
@@ -87,7 +93,10 @@ function M._highlight_current_item(winnr)
 
   local nodes = {}
   for index, value in ipairs(M.state.flattened_outline_items) do
-    if value.line == hovered_line or (hovered_line > value.range_start and hovered_line < value.range_end) then
+    if
+      value.line == hovered_line
+      or (hovered_line > value.range_start and hovered_line < value.range_end)
+    then
       value.line_in_outline = index
       table.insert(nodes, value)
     end
@@ -96,7 +105,11 @@ function M._highlight_current_item(winnr)
   -- clear old highlight
   ui.clear_hover_highlight(M.view.bufnr)
   for _, value in ipairs(nodes) do
-    ui.add_hover_highlight(M.view.bufnr, value.line_in_outline - 1, value.depth * 2)
+    ui.add_hover_highlight(
+      M.view.bufnr,
+      value.line_in_outline - 1,
+      value.depth * 2
+    )
     vim.api.nvim_win_set_cursor(M.view.winnr, { value.line_in_outline, 1 })
   end
 end
@@ -114,17 +127,28 @@ local function setup_keymaps(bufnr)
     goto_location(false)
   end)
   -- hover symbol
-  map(config.options.keymaps.hover_symbol, require('symbols-outline.hover').show_hover)
+  map(
+    config.options.keymaps.hover_symbol,
+    require('symbols-outline.hover').show_hover
+  )
   -- rename symbol
-  map(config.options.keymaps.rename_symbol, require('symbols-outline.rename').rename)
+  map(
+    config.options.keymaps.rename_symbol,
+    require('symbols-outline.rename').rename
+  )
   -- code actions
-  map(config.options.keymaps.code_actions, require('symbols-outline.code_action').show_code_actions)
+  map(
+    config.options.keymaps.code_actions,
+    require('symbols-outline.code_action').show_code_actions
+  )
   -- show help
-  map(config.options.keymaps.show_help, require('symbols-outline.config').show_help)
+  map(
+    config.options.keymaps.show_help,
+    require('symbols-outline.config').show_help
+  )
   -- close outline
-  map(config.options.keymaps.close, 
-  function ()
-  M.view:close()
+  map(config.options.keymaps.close, function()
+    M.view:close()
   end)
 end
 

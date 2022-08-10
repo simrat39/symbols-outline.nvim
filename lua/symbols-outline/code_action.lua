@@ -25,7 +25,12 @@ function M.show_code_actions()
 
   local params = get_action_params(node, main.state.code_win)
 
-  buf_request(params.bufnr, 'textDocument/codeAction', params, vim.lsp.handlers['textDocument/codeAction'])
+  buf_request(
+    params.bufnr,
+    'textDocument/codeAction',
+    params,
+    vim.lsp.handlers['textDocument/codeAction']
+  )
 end
 
 return M

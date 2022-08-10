@@ -17,7 +17,12 @@ local function mk_handler(fn)
       local client_id = select(4, ...)
       local bufnr = select(5, ...)
       local config = select(6, ...)
-      fn(err, result, { method = method, client_id = client_id, bufnr = bufnr }, config)
+      fn(
+        err,
+        result,
+        { method = method, client_id = client_id, bufnr = bufnr },
+        config
+      )
     end
   end
 end

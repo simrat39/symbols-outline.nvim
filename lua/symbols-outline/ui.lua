@@ -17,7 +17,14 @@ function M.clear_hover_highlight(bufnr)
 end
 
 function M.add_hover_highlight(bufnr, line, col_start)
-  vim.api.nvim_buf_add_highlight(bufnr, M.hovered_hl_ns, 'FocusedSymbol', line, col_start, -1)
+  vim.api.nvim_buf_add_highlight(
+    bufnr,
+    M.hovered_hl_ns,
+    'FocusedSymbol',
+    line,
+    col_start,
+    -1
+  )
 end
 
 local function highlight_text(name, text, hl_group)
@@ -36,18 +43,32 @@ function M.setup_highlights()
   -- notably making them italic, which messes up the outline connector. Fix
   -- this by copying the foreground color from the comment hl into a new
   -- highlight.
-  local comment_fg_gui = vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.hlID 'Comment'), 'fg', 'gui')
+  local comment_fg_gui = vim.fn.synIDattr(
+    vim.fn.synIDtrans(vim.fn.hlID 'Comment'),
+    'fg',
+    'gui'
+  )
 
   if vim.fn.hlexists 'SymbolsOutlineConnector' == 0 then
-    vim.cmd(string.format('hi SymbolsOutlineConnector guifg=%s', comment_fg_gui))
+    vim.cmd(
+      string.format('hi SymbolsOutlineConnector guifg=%s', comment_fg_gui)
+    )
   end
 
   local symbols = config.options.symbols
 
   -- markers
   highlight_text('marker_middle', M.markers.middle, 'SymbolsOutlineConnector')
-  highlight_text('marker_vertical', M.markers.vertical, 'SymbolsOutlineConnector')
-  highlight_text('markers_horizontal', M.markers.horizontal, 'SymbolsOutlineConnector')
+  highlight_text(
+    'marker_vertical',
+    M.markers.vertical,
+    'SymbolsOutlineConnector'
+  )
+  highlight_text(
+    'markers_horizontal',
+    M.markers.horizontal,
+    'SymbolsOutlineConnector'
+  )
   highlight_text('markers_bottom', M.markers.bottom, 'SymbolsOutlineConnector')
 end
 

@@ -66,7 +66,10 @@ local function update_preview(code_buf)
 
   if state.preview_buf ~= nil then
     vim.api.nvim_buf_set_lines(state.preview_buf, 0, -1, 0, lines)
-    vim.api.nvim_win_set_cursor(state.preview_win, { node.line + 1, node.character })
+    vim.api.nvim_win_set_cursor(
+      state.preview_win,
+      { node.line + 1, node.character }
+    )
   end
 end
 
@@ -119,14 +122,20 @@ local function update_hover()
     end
     local markdown_lines = {}
     if result ~= nil then
-      markdown_lines = vim.lsp.util.convert_input_to_markdown_lines(result.contents)
+      markdown_lines = vim.lsp.util.convert_input_to_markdown_lines(
+        result.contents
+      )
     end
     markdown_lines = vim.lsp.util.trim_empty_lines(markdown_lines)
     if vim.tbl_isempty(markdown_lines) then
       markdown_lines = { '###No info available!' }
     end
 
-    markdown_lines = vim.lsp.util.stylize_markdown(state.hover_buf, markdown_lines, {})
+    markdown_lines = vim.lsp.util.stylize_markdown(
+      state.hover_buf,
+      markdown_lines,
+      {}
+    )
 
     if state.hover_buf ~= nil then
       vim.api.nvim_buf_set_lines(state.hover_buf, 0, -1, 0, markdown_lines)
@@ -219,10 +228,14 @@ end
 
 function M.close()
   if has_code_win() then
-    if state.preview_win ~= nil and vim.api.nvim_win_is_valid(state.preview_win) then
+    if
+      state.preview_win ~= nil and vim.api.nvim_win_is_valid(state.preview_win)
+    then
       vim.api.nvim_win_close(state.preview_win, true)
     end
-    if state.hover_win ~= nil and vim.api.nvim_win_is_valid(state.hover_win) then
+    if
+      state.hover_win ~= nil and vim.api.nvim_win_is_valid(state.hover_win)
+    then
       vim.api.nvim_win_close(state.hover_win, true)
     end
   end

@@ -8,9 +8,13 @@ function M.nmap(bufnr, keys, action)
     keys = { keys }
   end
 
-
   for _, lhs in ipairs(keys) do
-    vim.keymap.set('n', lhs, action, { silent = true, noremap = true, buffer = bufnr })
+    vim.keymap.set(
+      'n',
+      lhs,
+      action,
+      { silent = true, noremap = true, buffer = bufnr }
+    )
   end
 end
 

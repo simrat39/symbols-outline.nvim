@@ -131,7 +131,9 @@ function M.parse(response)
     end
 
     local result = client_response['result']
-    if result == nil or type(result) ~= 'table' then goto continue end
+    if result == nil or type(result) ~= 'table' then
+      goto continue
+    end
 
     for _, value in pairs(result) do
       table.insert(all_results, value)

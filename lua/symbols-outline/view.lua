@@ -47,7 +47,10 @@ function View:close()
 end
 
 function View:is_open()
-  return self.winnr and self.bufnr and vim.api.nvim_buf_is_valid(self.bufnr) and vim.api.nvim_win_is_valid(self.winnr)
+  return self.winnr
+    and self.bufnr
+    and vim.api.nvim_buf_is_valid(self.bufnr)
+    and vim.api.nvim_win_is_valid(self.winnr)
 end
 
 return View

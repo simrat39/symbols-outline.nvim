@@ -27,12 +27,17 @@ function M.rename()
 
   params.newName = new_name
 
-  buf_request(params.bufnr, 'textDocument/rename', params, function(_, result, ctx)
-    if result ~= nil then
-      local client = vim.lsp.get_client_by_id(ctx.client_id)
-      vim.lsp.util.apply_workspace_edit(result, client.offset_encoding)
+  buf_request(
+    params.bufnr,
+    'textDocument/rename',
+    params,
+    function(_, result, ctx)
+      if result ~= nil then
+        local client = vim.lsp.get_client_by_id(ctx.client_id)
+        vim.lsp.util.apply_workspace_edit(result, client.offset_encoding)
+      end
     end
-  end)
+  )
 end
 
 return M

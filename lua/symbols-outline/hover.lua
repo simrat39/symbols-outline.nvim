@@ -22,19 +22,26 @@ function M.show_hover()
 
   local hover_params = get_hover_params(node, so.state.code_win)
 
-  buf_request(hover_params.bufnr, 'textDocument/hover', hover_params, function(_, result, _, config)
-    if not (result and result.contents) then
-      -- return { 'No information available' }
-      return
+  buf_request(
+    hover_params.bufnr,
+    'textDocument/hover',
+    hover_params,
+    function(_, result, _, config)
+      if not (result and result.contents) then
+        -- return { 'No information available' }
+        return
+      end
+      local markdown_lines = util.convert_input_to_markdown_lines(
+        result.contents
+      )
+      markdown_lines = util.trim_empty_lines(markdown_lines)
+      if vim.tbl_isempty(markdown_lines) then
+        -- return { 'No information available' }
+        return
+      end
+      return util.open_floating_preview(markdown_lines, 'markdown', config)
     end
-    local markdown_lines = util.convert_input_to_markdown_lines(result.contents)
-    markdown_lines = util.trim_empty_lines(markdown_lines)
-    if vim.tbl_isempty(markdown_lines) then
-      -- return { 'No information available' }
-      return
-    end
-    return util.open_floating_preview(markdown_lines, 'markdown', config)
-  end)
+  )
 end
 
 return M
