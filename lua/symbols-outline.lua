@@ -14,14 +14,6 @@ local function setup_global_autocmd()
   end
 end
 
-local function setup_buffer_autocmd()
-  if config.options.auto_preview then
-    vim.cmd "au CursorHold <buffer> lua require'symbols-outline.preview'.show()"
-  else
-    vim.cmd "au CursorMoved <buffer> lua require'symbols-outline.preview'.close()"
-  end
-end
-
 -------------------------
 -- STATE
 -------------------------
@@ -123,8 +115,6 @@ local function setup_keymaps(bufnr)
   end)
   -- hover symbol
   map(config.options.keymaps.hover_symbol, require('symbols-outline.hover').show_hover)
-  -- preview symbol
-  map(config.options.keymaps.toggle_preview, require('symbols-outline.preview').toggle)
   -- rename symbol
   map(config.options.keymaps.rename_symbol, require('symbols-outline.rename').rename)
   -- code actions
@@ -150,7 +140,6 @@ local function handler(response)
     end,
   })
   setup_keymaps(M.view.bufnr)
-  setup_buffer_autocmd()
 
   local items = parser.parse(response)
 
