@@ -28,8 +28,6 @@ end
 M.state = {
   outline_items = {},
   flattened_outline_items = {},
-  outline_win = nil,
-  outline_buf = nil,
   code_win = 0,
 }
 
