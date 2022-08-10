@@ -122,7 +122,10 @@ local function setup_keymaps(bufnr)
   -- show help
   map(config.options.keymaps.show_help, require('symbols-outline.config').show_help)
   -- close outline
-  map(config.options.keymaps.close, M.view.close)
+  map(config.options.keymaps.close, 
+  function ()
+  M.view:close()
+  end)
 end
 
 local function handler(response)
