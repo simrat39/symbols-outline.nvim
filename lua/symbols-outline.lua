@@ -57,7 +57,7 @@ end
 
 M._refresh = utils.debounce(__refresh, 100)
 
-function M._goto_location(change_focus)
+local function goto_location(change_focus)
   local current_line = vim.api.nvim_win_get_cursor(M.view.winnr)[1]
   local node = M.state.flattened_outline_items[current_line]
   vim.api.nvim_win_set_cursor(M.state.code_win, { node.line + 1, node.character })
@@ -114,21 +114,25 @@ local function setup_keymaps(bufnr)
     utils.nmap(bufnr, ...)
   end
   -- goto_location of symbol and focus that window
-  map(config.options.keymaps.goto_location, ":lua require('symbols-outline')._goto_location(true)<Cr>")
+  map(config.options.keymaps.goto_location, function()
+    goto_location(true)
+  end)
   -- goto_location of symbol but stay in outline
-  map(config.options.keymaps.focus_location, ":lua require('symbols-outline')._goto_location(false)<Cr>")
+  map(config.options.keymaps.focus_location, function()
+    goto_location(false)
+  end)
   -- hover symbol
-  map(config.options.keymaps.hover_symbol, ":lua require('symbols-outline.hover').show_hover()<Cr>")
+  map(config.options.keymaps.hover_symbol, require('symbols-outline.hover').show_hover)
   -- preview symbol
-  map(config.options.keymaps.toggle_preview, ":lua require('symbols-outline.preview').toggle()<Cr>")
+  map(config.options.keymaps.toggle_preview, require('symbols-outline.preview').toggle)
   -- rename symbol
-  map(config.options.keymaps.rename_symbol, ":lua require('symbols-outline.rename').rename()<Cr>")
+  map(config.options.keymaps.rename_symbol, require('symbols-outline.rename').rename)
   -- code actions
-  map(config.options.keymaps.code_actions, ":lua require('symbols-outline.code_action').show_code_actions()<Cr>")
+  map(config.options.keymaps.code_actions, require('symbols-outline.code_action').show_code_actions)
   -- show help
-  map(config.options.keymaps.show_help, ":lua require('symbols-outline.config').show_help()<Cr>")
+  map(config.options.keymaps.show_help, require('symbols-outline.config').show_help)
   -- close outline
-  map(config.options.keymaps.close, ':bw!<Cr>')
+  map(config.options.keymaps.close, M.view.close)
 end
 
 local function handler(response)
