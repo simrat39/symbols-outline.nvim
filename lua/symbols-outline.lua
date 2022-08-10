@@ -31,7 +31,7 @@ local function wipe_state()
 end
 
 local function __refresh()
-  if M.view.bufnr ~= nil then
+  if M.view:is_open() then
     local function refresh_handler(response)
       if response == nil or type(response) ~= 'table' then
         return
