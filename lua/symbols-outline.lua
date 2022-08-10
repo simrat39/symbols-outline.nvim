@@ -1,5 +1,3 @@
-local vim = vim
-
 local parser = require 'symbols-outline.parser'
 local providers = require 'symbols-outline.providers.init'
 local ui = require 'symbols-outline.ui'
@@ -164,10 +162,10 @@ local function handler(response)
 end
 
 function M.toggle_outline()
-  if M.view.bufnr == nil then
-    M.open_outline()
-  else
+  if M.view:is_open() then
     M.close_outline()
+  else
+    M.open_outline()
   end
 end
 
