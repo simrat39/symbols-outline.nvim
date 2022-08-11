@@ -1,6 +1,4 @@
 local vim = vim
-local config = require 'symbols-outline.config'
-local symbol_kinds = require('symbols-outline.symbols').kinds
 local M = {}
 
 M.markers = {
@@ -54,8 +52,6 @@ function M.setup_highlights()
       string.format('hi SymbolsOutlineConnector guifg=%s', comment_fg_gui)
     )
   end
-
-  local symbols = config.options.symbols
 
   -- markers
   highlight_text('marker_middle', M.markers.middle, 'SymbolsOutlineConnector')

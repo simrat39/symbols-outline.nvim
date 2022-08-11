@@ -25,7 +25,7 @@ end
 
 function M.add_highlights(bufnr, hl_info)
   for line, line_hl in ipairs(hl_info) do
-    hl_start, hl_end, hl_type = unpack(line_hl)
+    local hl_start, hl_end, hl_type = unpack(line_hl)
     vim.api.nvim_buf_add_highlight(
       bufnr,
       hlns,
