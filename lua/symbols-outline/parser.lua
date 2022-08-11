@@ -180,19 +180,22 @@ end
 function M.get_lines(flattened_outline_items)
   local lines = {}
   local hl_info = {}
-  for _, value in ipairs(flattened_outline_items) do
-    local line = str_to_table(string.rep(' ', value.depth))
+
+  for node_line, node in ipairs(flattened_outline_items) do
+    local line = str_to_table(string.rep(' ', node.depth))
 
     if config.options.show_guides then
       -- makes the guides
       for index, _ in ipairs(line) do
+        local guide_hl_type = 'SymbolsOutlineConnector'
         -- all items start with a space (or two)
         if index == 1 then
           line[index] = ' '
+          guide_hl_type = 'Normal'
           -- if index is last, add a bottom marker if current item is last,
           -- else add a middle marker
         elseif index == #line then
-          if value.isLast then
+          if node.isLast then
             line[index] = ui.markers.bottom
           else
             line[index] = ui.markers.middle
@@ -200,25 +203,30 @@ function M.get_lines(flattened_outline_items)
           -- else if the parent was not the last in its group, add a
           -- vertical marker because there are items under us and we need
           -- to point to those
-        elseif not value.hierarchy[index] then
+        elseif not node.hierarchy[index] then
           line[index] = ui.markers.vertical
         end
+
+        line[index] = line[index] .. ' '
+
+        local guide_hl_start = index * 2
+        local guide_hl_end = index * 2 + #line[index]
+
+        table.insert(
+          hl_info,
+          { node_line, guide_hl_start, guide_hl_end, guide_hl_type }
+        )
       end
     end
 
-    local final_prefix = {}
-    -- Add 1 space between the guides
-    for _, v in ipairs(line) do
-      table.insert(final_prefix, v)
-      table.insert(final_prefix, ' ')
-    end
+    local final_prefix = line
 
     local string_prefix = table_to_str(final_prefix)
     local hl_start = #string_prefix
-    local hl_end = #string_prefix + #value.icon
-    table.insert(lines, string_prefix .. value.icon .. ' ' .. value.name)
-    local hl_type = config.options.symbols[symbols.kinds[value.kind]].hl
-    table.insert(hl_info, { hl_start, hl_end, hl_type })
+    local hl_end = #string_prefix + #node.icon
+    table.insert(lines, string_prefix .. node.icon .. ' ' .. node.name)
+    local hl_type = config.options.symbols[symbols.kinds[node.kind]].hl
+    table.insert(hl_info, { node_line, hl_start, hl_end, hl_type })
   end
   return lines, hl_info
 end

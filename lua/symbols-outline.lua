@@ -13,8 +13,8 @@ local function setup_global_autocmd()
     vim.cmd "au CursorHold * :lua require('symbols-outline')._highlight_current_item()"
   end
 
-vim.cmd "au InsertLeave,WinEnter,BufEnter,BufWinEnter,TabEnter,BufWritePost * :lua require('symbols-outline')._refresh()"
-vim.cmd "au WinEnter * lua require'symbols-outline.preview'.close()"
+  vim.cmd "au InsertLeave,WinEnter,BufEnter,BufWinEnter,TabEnter,BufWritePost * :lua require('symbols-outline')._refresh()"
+  vim.cmd "au WinEnter * lua require'symbols-outline.preview'.close()"
 end
 
 -------------------------
@@ -177,7 +177,6 @@ local function handler(response)
   M.state.flattened_outline_items = parser.flatten(items)
 
   writer.parse_and_write(M.view.bufnr, M.state.flattened_outline_items)
-  ui.setup_highlights()
 
   M._highlight_current_item(M.state.code_win)
 end
@@ -202,6 +201,7 @@ end
 
 function M.setup(opts)
   config.setup(opts)
+  ui.setup_highlights()
 
   M.view = View:new()
   setup_global_autocmd()

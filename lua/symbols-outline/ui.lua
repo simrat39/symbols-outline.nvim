@@ -1,4 +1,3 @@
-local vim = vim
 local M = {}
 
 M.markers = {
@@ -25,11 +24,6 @@ function M.add_hover_highlight(bufnr, line, col_start)
   )
 end
 
-local function highlight_text(name, text, hl_group)
-  vim.cmd(string.format('syn match %s /%s/', name, text))
-  vim.cmd(string.format('hi def link %s %s', name, hl_group))
-end
-
 function M.setup_highlights()
   -- Setup the FocusedSymbol highlight group if it hasn't been done already by
   -- a theme or manually set
@@ -52,20 +46,6 @@ function M.setup_highlights()
       string.format('hi SymbolsOutlineConnector guifg=%s', comment_fg_gui)
     )
   end
-
-  -- markers
-  highlight_text('marker_middle', M.markers.middle, 'SymbolsOutlineConnector')
-  highlight_text(
-    'marker_vertical',
-    M.markers.vertical,
-    'SymbolsOutlineConnector'
-  )
-  highlight_text(
-    'markers_horizontal',
-    M.markers.horizontal,
-    'SymbolsOutlineConnector'
-  )
-  highlight_text('markers_bottom', M.markers.bottom, 'SymbolsOutlineConnector')
 end
 
 return M
