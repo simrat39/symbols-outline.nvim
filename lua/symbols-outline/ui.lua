@@ -28,7 +28,14 @@ function M.setup_highlights()
   -- Setup the FocusedSymbol highlight group if it hasn't been done already by
   -- a theme or manually set
   if vim.fn.hlexists 'FocusedSymbol' == 0 then
-    vim.cmd 'hi FocusedSymbol term=italic,bold cterm=italic ctermbg=yellow ctermfg=darkblue gui=bold,italic guibg=yellow guifg=darkblue'
+    local cline_hl = vim.api.nvim_get_hl_by_name('CursorLine', true)
+    local string_hl = vim.api.nvim_get_hl_by_name('String', true)
+
+    vim.api.nvim_set_hl(
+      0,
+      'FocusedSymbol',
+      { bg = cline_hl.background, fg = string_hl.foreground }
+    )
   end
 
   -- Some colorschemes do some funky things with the comment highlight, most
