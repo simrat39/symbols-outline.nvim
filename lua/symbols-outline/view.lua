@@ -26,6 +26,7 @@ function View:setup_view()
   vim.api.nvim_win_set_option(self.winnr, 'number', false)
   vim.api.nvim_win_set_option(self.winnr, 'relativenumber', false)
   vim.api.nvim_win_set_option(self.winnr, 'winfixwidth', true)
+  vim.api.nvim_win_set_option(self.winnr, 'list', false)
   -- buffer stuff
   vim.api.nvim_buf_set_name(self.bufnr, 'OUTLINE')
   vim.api.nvim_buf_set_option(self.bufnr, 'filetype', 'Outline')
