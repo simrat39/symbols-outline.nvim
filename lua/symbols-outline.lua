@@ -169,6 +169,7 @@ local function handler(response)
       wipe_state()
     end,
   })
+
   setup_keymaps(M.view.bufnr)
 
   local items = parser.parse(response)
@@ -177,6 +178,7 @@ local function handler(response)
   M.state.flattened_outline_items = parser.flatten(items)
 
   writer.parse_and_write(M.view.bufnr, M.state.flattened_outline_items)
+
 
   M._highlight_current_item(M.state.code_win)
 end

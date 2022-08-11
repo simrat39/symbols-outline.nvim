@@ -183,48 +183,73 @@ function M.get_lines(flattened_outline_items)
 
   for node_line, node in ipairs(flattened_outline_items) do
     local line = str_to_table(string.rep(' ', node.depth))
+    local running_length = 1
+
+    local function add_guide_hl(from, to)
+      table.insert(hl_info, {
+        node_line,
+        from,
+        to,
+        'SymbolsOutlineConnector',
+      })
+    end
 
     if config.options.show_guides then
       -- makes the guides
+
       for index, _ in ipairs(line) do
-        local guide_hl_type = 'SymbolsOutlineConnector'
         -- all items start with a space (or two)
         if index == 1 then
           line[index] = ' '
-          guide_hl_type = 'Normal'
-          -- if index is last, add a bottom marker if current item is last,
+          -- i f index is last, add a bottom marker if current item is last,
           -- else add a middle marker
         elseif index == #line then
           if node.isLast then
             line[index] = ui.markers.bottom
+            add_guide_hl(
+              running_length,
+              running_length + vim.fn.strlen(ui.markers.bottom) - 1
+            )
           else
             line[index] = ui.markers.middle
+            add_guide_hl(
+              running_length,
+              running_length + vim.fn.strlen(ui.markers.middle) - 1
+            )
           end
           -- else if the parent was not the last in its group, add a
           -- vertical marker because there are items under us and we need
           -- to point to those
         elseif not node.hierarchy[index] then
           line[index] = ui.markers.vertical
+          add_guide_hl(
+            running_length,
+            running_length + vim.fn.strlen(ui.markers.vertical) - 1
+          )
         end
 
         line[index] = line[index] .. ' '
 
-        local guide_hl_start = index * 2
-        local guide_hl_end = index * 2 + #line[index]
-
-        table.insert(
-          hl_info,
-          { node_line, guide_hl_start, guide_hl_end, guide_hl_type }
-        )
+        running_length = running_length + vim.fn.strlen(line[index])
       end
     end
 
     local final_prefix = line
 
     local string_prefix = table_to_str(final_prefix)
+
+    -- local guide_hl_start = 0
+    -- local guide_hl_end = #string_prefix
+
+    -- table.insert(
+    --   hl_info,
+    --   { node_line, guide_hl_start, guide_hl_end, 'SymbolsOutlineConnector' }
+    -- )
+
+    table.insert(lines, string_prefix .. node.icon .. ' ' .. node.name)
+
     local hl_start = #string_prefix
     local hl_end = #string_prefix + #node.icon
-    table.insert(lines, string_prefix .. node.icon .. ' ' .. node.name)
     local hl_type = config.options.symbols[symbols.kinds[node.kind]].hl
     table.insert(hl_info, { node_line, hl_start, hl_end, hl_type })
   end
