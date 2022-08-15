@@ -22,12 +22,11 @@ end
 -------------------------
 M.state = {
   outline_items = {},
-  flattened_outline_items = {},
   code_win = 0,
 }
 
 local function wipe_state()
-  M.state = { outline_items = {}, flattened_outline_items = {}, code_win = 0 }
+  M.state = { outline_items = {}, code_win = 0 }
 end
 
 local function __refresh()
@@ -41,9 +40,8 @@ local function __refresh()
 
       M.state.code_win = vim.api.nvim_get_current_win()
       M.state.outline_items = items
-      M.state.flattened_outline_items = parser.flatten(items)
 
-      writer.parse_and_write(M.view.bufnr, M.state.flattened_outline_items)
+      writer.parse_and_write(M.view.bufnr, M.state.outline_items)
     end
 
     providers.request_symbols(refresh_handler)
@@ -54,7 +52,7 @@ M._refresh = utils.debounce(__refresh, 100)
 
 local function goto_location(change_focus)
   local current_line = vim.api.nvim_win_get_cursor(M.view.winnr)[1]
-  local node = M.state.flattened_outline_items[current_line]
+  local node = M.state.outline_items[current_line]
   vim.api.nvim_win_set_cursor(
     M.state.code_win,
     { node.line + 1, node.character }
@@ -95,7 +93,7 @@ function M._highlight_current_item(winnr)
   local hovered_line = vim.api.nvim_win_get_cursor(win)[1] - 1
 
   local nodes = {}
-  for index, value in ipairs(M.state.flattened_outline_items) do
+  for index, value in ipairs(M.state.outline_items) do
     if
       value.line == hovered_line
       or (hovered_line > value.range_start and hovered_line < value.range_end)
@@ -175,9 +173,8 @@ local function handler(response)
   local items = parser.parse(response)
 
   M.state.outline_items = items
-  M.state.flattened_outline_items = parser.flatten(items)
 
-  writer.parse_and_write(M.view.bufnr, M.state.flattened_outline_items)
+  writer.parse_and_write(M.view.bufnr, M.state.outline_items)
 
   M._highlight_current_item(M.state.code_win)
 end

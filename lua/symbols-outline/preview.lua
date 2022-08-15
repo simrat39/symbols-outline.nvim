@@ -50,7 +50,7 @@ end
 
 local function get_hovered_node()
   local hovered_line = vim.api.nvim_win_get_cursor(main.state.outline_win)[1]
-  local node = main.state.flattened_outline_items[hovered_line]
+  local node = main.state.outline_items[hovered_line]
   return node
 end
 

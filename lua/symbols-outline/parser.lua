@@ -24,7 +24,7 @@ local function parse_result(result, depth, hierarchy)
       -- whether this node is the last in its group
       local isLast = index == #result
 
-      local children = nil
+      local children = {}
       if value.children ~= nil then
         -- copy by value because we dont want it messing with the hir table
         local child_hir = t_utils.array_copy(hir)
@@ -54,11 +54,15 @@ local function parse_result(result, depth, hierarchy)
         character = selectionRange.start.character,
         range_start = range.start.line,
         range_end = range['end'].line,
-        children = children,
+        -- children = children,
         depth = level,
         isLast = isLast,
         hierarchy = hir,
       })
+
+      for _, node in pairs(children) do
+        table.insert(ret, node)
+      end
     end
   end
   return ret
@@ -139,25 +143,11 @@ function M.parse(response)
   return parse_result(sorted, nil, nil)
 end
 
-function M.flatten(outline_items)
-  local ret = {}
-  for _, value in ipairs(outline_items) do
-    table.insert(ret, value)
-    if value.children ~= nil then
-      local inner = M.flatten(value.children)
-      for _, value_inner in ipairs(inner) do
-        table.insert(ret, value_inner)
-      end
-    end
-  end
-  return ret
-end
-
-function M.get_lines(flattened_outline_items)
+function M.get_lines(outline_items)
   local lines = {}
   local hl_info = {}
 
-  for node_line, node in ipairs(flattened_outline_items) do
+  for node_line, node in ipairs(outline_items) do
     local line = t_utils.str_to_table(string.rep(' ', node.depth))
     local running_length = 1
 
@@ -224,9 +214,9 @@ function M.get_lines(flattened_outline_items)
   return lines, hl_info
 end
 
-function M.get_details(flattened_outline_items)
+function M.get_details(outline_items)
   local lines = {}
-  for _, value in ipairs(flattened_outline_items) do
+  for _, value in ipairs(outline_items) do
     table.insert(lines, value.detail or '')
   end
   return lines
