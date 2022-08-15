@@ -1,17 +1,9 @@
 local symbols = require 'symbols-outline.symbols'
 local ui = require 'symbols-outline.ui'
 local config = require 'symbols-outline.config'
+local t_utils = require 'symbols-outline.utils.table'
 
 local M = {}
-
--- copies an array and returns it because lua usually does references
-local function array_copy(t)
-  local ret = {}
-  for _, value in ipairs(t) do
-    table.insert(ret, value)
-  end
-  return ret
-end
 
 ---Parses result from LSP into a table of symbols
 ---@param result table The result from a language server.
@@ -35,7 +27,7 @@ local function parse_result(result, depth, hierarchy)
       local children = nil
       if value.children ~= nil then
         -- copy by value because we dont want it messing with the hir table
-        local child_hir = array_copy(hir)
+        local child_hir = t_utils.array_copy(hir)
         table.insert(child_hir, isLast)
         children = parse_result(value.children, level + 1, child_hir)
       end
@@ -161,28 +153,12 @@ function M.flatten(outline_items)
   return ret
 end
 
-local function table_to_str(t)
-  local ret = ''
-  for _, value in ipairs(t) do
-    ret = ret .. tostring(value)
-  end
-  return ret
-end
-
-local function str_to_table(str)
-  local t = {}
-  for i = 1, #str do
-    t[i] = str:sub(i, i)
-  end
-  return t
-end
-
 function M.get_lines(flattened_outline_items)
   local lines = {}
   local hl_info = {}
 
   for node_line, node in ipairs(flattened_outline_items) do
-    local line = str_to_table(string.rep(' ', node.depth))
+    local line = t_utils.str_to_table(string.rep(' ', node.depth))
     local running_length = 1
 
     local function add_guide_hl(from, to)
@@ -236,7 +212,7 @@ function M.get_lines(flattened_outline_items)
 
     local final_prefix = line
 
-    local string_prefix = table_to_str(final_prefix)
+    local string_prefix = t_utils.table_to_str(final_prefix)
 
     table.insert(lines, string_prefix .. node.icon .. ' ' .. node.name)
 
