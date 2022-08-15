@@ -164,7 +164,9 @@ local function setup_keymaps(bufnr)
   map(
     config.options.keymaps.hover_symbol,
     require('symbols-outline.hover').show_hover
-  )
+  )   
+  -- preview symbol
+ map(config.options.keymaps.toggle_preview, require('symbols-outline.preview').toggle)
   -- rename symbol
   map(
     config.options.keymaps.rename_symbol,
