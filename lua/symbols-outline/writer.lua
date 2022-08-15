@@ -1,5 +1,3 @@
-local vim = vim
-
 local parser = require 'symbols-outline.parser'
 local config = require 'symbols-outline.config'
 
