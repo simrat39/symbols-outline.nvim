@@ -15,8 +15,8 @@ end
 
 ---Parses result from LSP into a table of symbols
 ---@param result table The result from a language server.
----@param depth number The current depth of the symbol in the hierarchy.
----@param hierarchy table A table of booleans which tells if a symbols parent was the last in its group.
+---@param depth number? The current depth of the symbol in the hierarchy.
+---@param hierarchy table? A table of booleans which tells if a symbols parent was the last in its group.
 ---@return table
 local function parse_result(result, depth, hierarchy)
   local ret = {}
@@ -144,7 +144,7 @@ function M.parse(response)
 
   local sorted = sort_result(all_results)
 
-  return parse_result(sorted)
+  return parse_result(sorted, nil, nil)
 end
 
 function M.flatten(outline_items)
@@ -237,14 +237,6 @@ function M.get_lines(flattened_outline_items)
     local final_prefix = line
 
     local string_prefix = table_to_str(final_prefix)
-
-    -- local guide_hl_start = 0
-    -- local guide_hl_end = #string_prefix
-
-    -- table.insert(
-    --   hl_info,
-    --   { node_line, guide_hl_start, guide_hl_end, 'SymbolsOutlineConnector' }
-    -- )
 
     table.insert(lines, string_prefix .. node.icon .. ' ' .. node.name)
 
