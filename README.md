@@ -34,7 +34,7 @@ Pass a table to the setup call above with your configuration options.
 local opts = {
   highlight_hovered_item = true,
   show_guides = true,
-  auto_preview = true,
+  auto_preview = false,
   position = 'right',
   relative_width = true,
   width = 25,
@@ -93,7 +93,7 @@ local opts = {
 | relative_width         | Whether width of window is set relative to existing windows                    | boolean            | true                     |
 | width                  | Width of window (as a % or columns based on `relative_width`)                  | int                | 25                       |
 | auto_close             | Whether to automatically close the window after selection                      | boolean            | false                    |
-| auto_preview           | Show a preview of the code on hover                                            | boolean            | true                     |
+| auto_preview           | Show a preview of the code on hover                                            | boolean            | false                    |
 | show_numbers           | Shows numbers with the outline                                                 | boolean            | false                    |
 | show_relative_numbers  | Shows relative numbers with the outline                                        | boolean            | false                    |
 | show_symbol_details    | Shows extra details with the symbols (lsp dependent)                           | boolean            | true                     |
