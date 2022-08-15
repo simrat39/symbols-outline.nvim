@@ -36,6 +36,20 @@ local function setup_global_autocmd()
   })
 end
 
+local function setup_buffer_autocmd()
+  if config.options.auto_preview then
+    vim.api.nvim_create_autocmd('CursorHold', {
+      buffer = 0,
+      callback = require('symbols-outline.preview').show,
+    })
+  else
+    vim.api.nvim_create_autocmd('CursorMoved', {
+      buffer = 0,
+      callback = require('symbols-outline.preview').close,
+    })
+  end
+end
+
 -------------------------
 -- STATE
 -------------------------
@@ -188,6 +202,7 @@ local function handler(response)
   })
 
   setup_keymaps(M.view.bufnr)
+  setup_buffer_autocmd()
 
   local items = parser.parse(response)
 
