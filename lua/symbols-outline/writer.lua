@@ -1,5 +1,3 @@
-local vim = vim
-
 local parser = require 'symbols-outline.parser'
 local config = require 'symbols-outline.config'
 
@@ -24,9 +22,16 @@ function M.write_outline(bufnr, lines)
 end
 
 function M.add_highlights(bufnr, hl_info)
-  for line, line_hl in ipairs(hl_info) do
-    hl_start, hl_end, hl_type = unpack(line_hl)
-    vim.api.nvim_buf_add_highlight(bufnr, hlns, hl_type, line - 1, hl_start, hl_end)
+  for _, line_hl in ipairs(hl_info) do
+    local line, hl_start, hl_end, hl_type = unpack(line_hl)
+    vim.api.nvim_buf_add_highlight(
+      bufnr,
+      hlns,
+      hl_type,
+      line - 1,
+      hl_start,
+      hl_end
+    )
   end
 end
 
@@ -55,12 +60,12 @@ end
 
 -- runs the whole writing routine where the text is cleared, new data is parsed
 -- and then written
-function M.parse_and_write(bufnr, flattened_outline_items)
-  local lines, hl_info = parser.get_lines(flattened_outline_items)
+function M.parse_and_write(bufnr, outline_items)
+  local lines, hl_info = parser.get_lines(outline_items)
   M.write_outline(bufnr, lines)
 
   clear_virt_text(bufnr)
-  local details = parser.get_details(flattened_outline_items)
+  local details = parser.get_details(outline_items)
   M.add_highlights(bufnr, hl_info)
   M.write_details(bufnr, details)
 end

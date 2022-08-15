@@ -1,7 +1,5 @@
-local vim = vim
-local main = require 'symbols-outline'
+local so = require 'symbols-outline'
 local config = require 'symbols-outline.config'
-local buf_request = require('symbols-outline.utils.lsp_utils').request
 
 local M = {}
 
@@ -14,21 +12,21 @@ local state = {
 
 local function is_current_win_outline()
   local curwin = vim.api.nvim_get_current_win()
-  return curwin == main.state.outline_win
+  return curwin == so.view.winnr
 end
 
 local function has_code_win()
-  local isWinValid = vim.api.nvim_win_is_valid(main.state.code_win)
+  local isWinValid = vim.api.nvim_win_is_valid(so.state.code_win)
   if not isWinValid then
     return false
   end
-  local bufnr = vim.api.nvim_win_get_buf(main.state.code_win)
+  local bufnr = vim.api.nvim_win_get_buf(so.state.code_win)
   local isBufValid = vim.api.nvim_buf_is_valid(bufnr)
   return isBufValid
 end
 
 local function get_offset()
-  local outline_winnr = main.state.outline_win
+  local outline_winnr = so.view.winnr
   local width = 53
   local height = 0
 
@@ -50,13 +48,13 @@ local function get_height()
 end
 
 local function get_hovered_node()
-  local hovered_line = vim.api.nvim_win_get_cursor(main.state.outline_win)[1]
-  local node = main.state.flattened_outline_items[hovered_line]
+  local hovered_line = vim.api.nvim_win_get_cursor(so.view.winnr)[1]
+  local node = so.state.outline_items[hovered_line]
   return node
 end
 
 local function update_preview(code_buf)
-  code_buf = code_buf or vim.api.nvim_win_get_buf(main.state.code_win)
+  code_buf = code_buf or vim.api.nvim_win_get_buf(so.state.code_win)
 
   local node = get_hovered_node()
   if not node then
@@ -66,12 +64,15 @@ local function update_preview(code_buf)
 
   if state.preview_buf ~= nil then
     vim.api.nvim_buf_set_lines(state.preview_buf, 0, -1, 0, lines)
-    vim.api.nvim_win_set_cursor(state.preview_win, { node.line + 1, node.character })
+    vim.api.nvim_win_set_cursor(
+      state.preview_win,
+      { node.line + 1, node.character }
+    )
   end
 end
 
 local function setup_preview_buf()
-  local code_buf = vim.api.nvim_win_get_buf(main.state.code_win)
+  local code_buf = vim.api.nvim_win_get_buf(so.state.code_win)
   local ft = vim.api.nvim_buf_get_option(code_buf, 'filetype')
 
   local function treesitter_attach()
@@ -111,7 +112,7 @@ local function update_hover()
   end
 
   local provider = _G._symbols_outline_current_provider
-  local params = get_hover_params(node, main.state.code_win)
+  local params = get_hover_params(node, so.state.code_win)
 
   provider.hover_info(params.bufnr, params, function(err, result)
     if err then
@@ -119,14 +120,20 @@ local function update_hover()
     end
     local markdown_lines = {}
     if result ~= nil then
-      markdown_lines = vim.lsp.util.convert_input_to_markdown_lines(result.contents)
+      markdown_lines = vim.lsp.util.convert_input_to_markdown_lines(
+        result.contents
+      )
     end
     markdown_lines = vim.lsp.util.trim_empty_lines(markdown_lines)
     if vim.tbl_isempty(markdown_lines) then
       markdown_lines = { '###No info available!' }
     end
 
-    markdown_lines = vim.lsp.util.stylize_markdown(state.hover_buf, markdown_lines, {})
+    markdown_lines = vim.lsp.util.stylize_markdown(
+      state.hover_buf,
+      markdown_lines,
+      {}
+    )
 
     if state.hover_buf ~= nil then
       vim.api.nvim_buf_set_lines(state.hover_buf, 0, -1, 0, markdown_lines)
@@ -138,7 +145,7 @@ local function setup_hover_buf()
   if not has_code_win() then
     return
   end
-  local code_buf = vim.api.nvim_win_get_buf(main.state.code_win)
+  local code_buf = vim.api.nvim_win_get_buf(so.state.code_win)
   local ft = vim.api.nvim_buf_get_option(code_buf, 'filetype')
   vim.api.nvim_buf_set_option(state.hover_buf, 'syntax', ft)
   vim.api.nvim_buf_set_option(state.hover_buf, 'bufhidden', 'delete')
@@ -219,10 +226,14 @@ end
 
 function M.close()
   if has_code_win() then
-    if state.preview_win ~= nil and vim.api.nvim_win_is_valid(state.preview_win) then
+    if
+      state.preview_win ~= nil and vim.api.nvim_win_is_valid(state.preview_win)
+    then
       vim.api.nvim_win_close(state.preview_win, true)
     end
-    if state.hover_win ~= nil and vim.api.nvim_win_is_valid(state.hover_win) then
+    if
+      state.hover_win ~= nil and vim.api.nvim_win_is_valid(state.hover_win)
+    then
       vim.api.nvim_win_close(state.hover_win, true)
     end
   end

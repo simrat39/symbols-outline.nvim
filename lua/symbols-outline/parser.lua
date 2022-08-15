@@ -1,22 +1,14 @@
 local symbols = require 'symbols-outline.symbols'
 local ui = require 'symbols-outline.ui'
 local config = require 'symbols-outline.config'
+local t_utils = require 'symbols-outline.utils.table'
 
 local M = {}
 
--- copies an array and returns it because lua usually does references
-local function array_copy(t)
-  local ret = {}
-  for _, value in ipairs(t) do
-    table.insert(ret, value)
-  end
-  return ret
-end
-
 ---Parses result from LSP into a table of symbols
 ---@param result table The result from a language server.
----@param depth number The current depth of the symbol in the hierarchy.
----@param hierarchy table A table of booleans which tells if a symbols parent was the last in its group.
+---@param depth number? The current depth of the symbol in the hierarchy.
+---@param hierarchy table? A table of booleans which tells if a symbols parent was the last in its group.
 ---@return table
 local function parse_result(result, depth, hierarchy)
   local ret = {}
@@ -32,10 +24,10 @@ local function parse_result(result, depth, hierarchy)
       -- whether this node is the last in its group
       local isLast = index == #result
 
-      local children = nil
+      local children = {}
       if value.children ~= nil then
         -- copy by value because we dont want it messing with the hir table
-        local child_hir = array_copy(hir)
+        local child_hir = t_utils.array_copy(hir)
         table.insert(child_hir, isLast)
         children = parse_result(value.children, level + 1, child_hir)
       end
@@ -62,11 +54,15 @@ local function parse_result(result, depth, hierarchy)
         character = selectionRange.start.character,
         range_start = range.start.line,
         range_end = range['end'].line,
-        children = children,
+        -- children = children,
         depth = level,
         isLast = isLast,
         hierarchy = hir,
       })
+
+      for _, node in pairs(children) do
+        table.insert(ret, node)
+      end
     end
   end
   return ret
@@ -131,7 +127,9 @@ function M.parse(response)
     end
 
     local result = client_response['result']
-    if result == nil or type(result) ~= 'table' then goto continue end
+    if result == nil or type(result) ~= 'table' then
+      goto continue
+    end
 
     for _, value in pairs(result) do
       table.insert(all_results, value)
@@ -142,88 +140,83 @@ function M.parse(response)
 
   local sorted = sort_result(all_results)
 
-  return parse_result(sorted)
+  return parse_result(sorted, nil, nil)
 end
 
-function M.flatten(outline_items)
-  local ret = {}
-  for _, value in ipairs(outline_items) do
-    table.insert(ret, value)
-    if value.children ~= nil then
-      local inner = M.flatten(value.children)
-      for _, value_inner in ipairs(inner) do
-        table.insert(ret, value_inner)
-      end
-    end
-  end
-  return ret
-end
-
-local function table_to_str(t)
-  local ret = ''
-  for _, value in ipairs(t) do
-    ret = ret .. tostring(value)
-  end
-  return ret
-end
-
-local function str_to_table(str)
-  local t = {}
-  for i = 1, #str do
-    t[i] = str:sub(i, i)
-  end
-  return t
-end
-
-function M.get_lines(flattened_outline_items)
+function M.get_lines(outline_items)
   local lines = {}
   local hl_info = {}
-  for _, value in ipairs(flattened_outline_items) do
-    local line = str_to_table(string.rep(' ', value.depth))
+
+  for node_line, node in ipairs(outline_items) do
+    local line = t_utils.str_to_table(string.rep(' ', node.depth))
+    local running_length = 1
+
+    local function add_guide_hl(from, to)
+      table.insert(hl_info, {
+        node_line,
+        from,
+        to,
+        'SymbolsOutlineConnector',
+      })
+    end
 
     if config.options.show_guides then
       -- makes the guides
+
       for index, _ in ipairs(line) do
         -- all items start with a space (or two)
         if index == 1 then
           line[index] = ' '
-          -- if index is last, add a bottom marker if current item is last,
+          -- i f index is last, add a bottom marker if current item is last,
           -- else add a middle marker
         elseif index == #line then
-          if value.isLast then
+          if node.isLast then
             line[index] = ui.markers.bottom
+            add_guide_hl(
+              running_length,
+              running_length + vim.fn.strlen(ui.markers.bottom) - 1
+            )
           else
             line[index] = ui.markers.middle
+            add_guide_hl(
+              running_length,
+              running_length + vim.fn.strlen(ui.markers.middle) - 1
+            )
           end
           -- else if the parent was not the last in its group, add a
           -- vertical marker because there are items under us and we need
           -- to point to those
-        elseif not value.hierarchy[index] then
+        elseif not node.hierarchy[index] then
           line[index] = ui.markers.vertical
+          add_guide_hl(
+            running_length,
+            running_length + vim.fn.strlen(ui.markers.vertical) - 1
+          )
         end
+
+        line[index] = line[index] .. ' '
+
+        running_length = running_length + vim.fn.strlen(line[index])
       end
     end
 
-    local final_prefix = {}
-    -- Add 1 space between the guides
-    for _, v in ipairs(line) do
-      table.insert(final_prefix, v)
-      table.insert(final_prefix, ' ')
-    end
+    local final_prefix = line
 
-    local string_prefix = table_to_str(final_prefix)
+    local string_prefix = t_utils.table_to_str(final_prefix)
+
+    table.insert(lines, string_prefix .. node.icon .. ' ' .. node.name)
+
     local hl_start = #string_prefix
-    local hl_end = #string_prefix + #value.icon
-    table.insert(lines, string_prefix .. value.icon .. ' ' .. value.name)
-    hl_type = config.options.symbols[symbols.kinds[value.kind]].hl
-    table.insert(hl_info, { hl_start, hl_end, hl_type })
+    local hl_end = #string_prefix + #node.icon
+    local hl_type = config.options.symbols[symbols.kinds[node.kind]].hl
+    table.insert(hl_info, { node_line, hl_start, hl_end, hl_type })
   end
   return lines, hl_info
 end
 
-function M.get_details(flattened_outline_items)
+function M.get_details(outline_items)
   local lines = {}
-  for _, value in ipairs(flattened_outline_items) do
+  for _, value in ipairs(outline_items) do
     table.insert(lines, value.detail or '')
   end
   return lines
