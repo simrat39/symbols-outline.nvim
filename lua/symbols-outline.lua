@@ -179,7 +179,6 @@ local function handler(response)
 
   writer.parse_and_write(M.view.bufnr, M.state.flattened_outline_items)
 
-
   M._highlight_current_item(M.state.code_win)
 end
 
