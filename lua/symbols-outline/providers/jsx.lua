@@ -1,27 +1,34 @@
 local M = {}
 
-local parsers = require 'nvim-treesitter.parsers'
-
 local SYMBOL_COMPONENT = 27
 local SYMBOL_FRAGMENT = 28
 
 function M.should_use_provider(bufnr)
   local ft = vim.api.nvim_buf_get_option(bufnr, 'ft')
+  local has_ts, parsers = pcall(require, 'nvim-treesitter.parsers')
+  local _, has_parser = pcall(function()
+    if has_ts then
+      return parsers.get_parser(bufnr) ~= nil
+    end
 
-  return string.match(ft, 'typescriptreact')
-    or string.match(ft, 'javascriptreact')
+    return false
+  end)
+
+  return has_ts
+    and has_parser
+    and (
+      string.match(ft, 'typescriptreact')
+      or string.match(ft, 'javascriptreact')
+    )
 end
 
 function M.hover_info(_, _, on_info)
-  on_info(
-    nil,
-    {
-      contents = {
-        kind = 'nvim-lsp-jsx',
-        contents = { 'No extra information availaible!' },
-      },
-    }
-  )
+  on_info(nil, {
+    contents = {
+      kind = 'nvim-lsp-jsx',
+      contents = { 'No extra information availaible!' },
+    },
+  })
 end
 
 local function get_open_tag(node)
@@ -123,6 +130,7 @@ local function parse_ts(root, children, bufnr)
 end
 
 function M.request_symbols(on_symbols)
+  local parsers = require 'nvim-treesitter.parsers'
   local bufnr = 0
 
   local parser = parsers.get_parser(bufnr)
