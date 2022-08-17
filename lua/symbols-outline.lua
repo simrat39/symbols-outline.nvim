@@ -131,16 +131,20 @@ function M._set_folded(folded, move_cursor, node_index)
 
     _update_lines()
   elseif node.parent then
-    for i, n in ipairs(M.state.flattened_outline_items) do
-      if n == node.parent then
-        M._set_folded(folded, not node.parent.folded and folded, i)
-      end
+    local parent_node =
+      M.state.flattened_outline_items[node.parent.line_in_outline]
+
+    if parent_node then
+      M._set_folded(
+        folded,
+        not parent_node.folded and folded,
+        parent_node.line_in_outline
+      )
     end
   end
 end
 
 function M._set_all_folded(folded, nodes)
-  local is_root_exec = not nodes
   nodes = nodes or M.state.outline_items
 
   for _, node in ipairs(nodes) do
