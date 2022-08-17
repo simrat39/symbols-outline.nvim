@@ -139,15 +139,12 @@ function M.parse(response)
   return parse_result(sorted, nil, nil)
 end
 
-function M.flatten(outline_items)
-  local ret = {}
+function M.flatten(outline_items, ret)
+  ret = ret or {}
   for _, value in ipairs(outline_items) do
     table.insert(ret, value)
     if value.children ~= nil then
-      local inner = M.flatten(value.children)
-      for _, value_inner in ipairs(inner) do
-        table.insert(ret, value_inner)
-      end
+      M.flatten(value.children, ret)
     end
   end
   return ret
@@ -204,9 +201,9 @@ function M.get_lines(flattened_outline_items)
         end
       end
 
-        line[index] = line[index] .. ' '
+      line[index] = line[index] .. ' '
 
-        running_length = running_length + vim.fn.strlen(line[index])
+      running_length = running_length + vim.fn.strlen(line[index])
     end
 
     local final_prefix = line
