@@ -72,9 +72,13 @@ M.add_hover_highlights = function(bufnr, nodes)
     if not node.hovered then
       goto continue
     end
-    
+
     local marker_fac = (config.options.fold_markers and 1) or 0
-    ui.add_hover_highlight(bufnr, node.line_in_outline - 1, (node.depth + marker_fac) * 2)
+    ui.add_hover_highlight(
+      bufnr,
+      node.line_in_outline - 1,
+      (node.depth + marker_fac) * 2
+    )
     ::continue::
   end
 end

@@ -25,4 +25,3 @@ M.is_folded = function(node)
 end
 
 return M
-

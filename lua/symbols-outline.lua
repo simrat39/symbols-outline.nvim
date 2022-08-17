@@ -10,7 +10,9 @@ local folding = require 'symbols-outline.folding'
 local M = {}
 
 local function setup_global_autocmd()
-  if config.options.highlight_hovered_item or config.options.auto_unfold_hover then
+  if
+    config.options.highlight_hovered_item or config.options.auto_unfold_hover
+  then
     vim.api.nvim_create_autocmd('CursorHold', {
       pattern = '*',
       callback = function()
@@ -70,7 +72,10 @@ local function _update_lines()
 end
 
 local function _merge_items(items)
-  utils.merge_items_rec({ children = items }, { children = M.state.outline_items })
+  utils.merge_items_rec(
+    { children = items },
+    { children = M.state.outline_items }
+  )
 end
 
 local function __refresh()
@@ -192,7 +197,10 @@ function M._highlight_current_item(winnr)
   local cb = function(value)
     value.hovered = nil
 
-    if value.line == hovered_line or (hovered_line > value.range_start and hovered_line < value.range_end) then
+    if
+      value.line == hovered_line
+      or (hovered_line > value.range_start and hovered_line < value.range_end)
+    then
       value.hovered = true
       leaf_node = value
     end
@@ -205,8 +213,8 @@ function M._highlight_current_item(winnr)
   if leaf_node then
     for index, node in ipairs(M.state.flattened_outline_items) do
       if node == leaf_node then
-          vim.api.nvim_win_set_cursor(M.view.winnr, { index, 1 })
-          break
+        vim.api.nvim_win_set_cursor(M.view.winnr, { index, 1 })
+        break
       end
     end
   end
@@ -228,9 +236,12 @@ local function setup_keymaps(bufnr)
   map(
     config.options.keymaps.hover_symbol,
     require('symbols-outline.hover').show_hover
-  )   
+  )
   -- preview symbol
- map(config.options.keymaps.toggle_preview, require('symbols-outline.preview').toggle)
+  map(
+    config.options.keymaps.toggle_preview,
+    require('symbols-outline.preview').toggle
+  )
   -- rename symbol
   map(
     config.options.keymaps.rename_symbol,
@@ -251,23 +262,23 @@ local function setup_keymaps(bufnr)
     M.view:close()
   end)
   -- fold selection
-  map( config.options.keymaps.fold, function ()
+  map(config.options.keymaps.fold, function()
     M._set_folded(true)
   end)
   -- unfold selection
-  map(config.options.keymaps.unfold, function ()
+  map(config.options.keymaps.unfold, function()
     M._set_folded(false)
   end)
   -- fold all
-  map(config.options.keymaps.fold_all, function ()
+  map(config.options.keymaps.fold_all, function()
     M._set_all_folded(true)
   end)
   -- unfold all
-  map(config.options.keymaps.unfold_all, function ()
+  map(config.options.keymaps.unfold_all, function()
     M._set_all_folded(false)
   end)
   -- fold reset
-  map(config.options.keymaps.fold_reset,function ()
+  map(config.options.keymaps.fold_reset, function()
     M._set_all_folded(nil)
   end)
 end

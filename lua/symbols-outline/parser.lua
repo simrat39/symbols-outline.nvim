@@ -65,7 +65,6 @@ local function parse_result(result, depth, hierarchy, parent)
       end
 
       node.children = children
-
     end
   end
   return ret
@@ -230,8 +229,11 @@ function M.get_lines(flattened_outline_items)
         elseif not node.hierarchy[index] and depth > 1 then
           line[index + marker_space] = ui.markers.vertical
           add_guide_hl(
-            running_length - 1 + 2*marker_space,
-            running_length + vim.fn.strlen(ui.markers.vertical) - 1 + 2 * marker_space
+            running_length - 1 + 2 * marker_space,
+            running_length
+              + vim.fn.strlen(ui.markers.vertical)
+              - 1
+              + 2 * marker_space
           )
         end
       end

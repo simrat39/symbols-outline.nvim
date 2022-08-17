@@ -52,7 +52,19 @@ M.merge_items_rec = function(new_node, old_node, index, parent)
     failed = true
   else
     for key, _ in pairs(new_node) do
-      if vim.tbl_contains({ 'parent', 'children', 'folded', 'hovered', 'line_in_outline', 'hierarchy' }, key) then
+      if
+        vim.tbl_contains(
+          {
+            'parent',
+            'children',
+            'folded',
+            'hovered',
+            'line_in_outline',
+            'hierarchy',
+          },
+          key
+        )
+      then
         goto continue
       end
 
