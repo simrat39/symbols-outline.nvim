@@ -157,18 +157,6 @@ function M._set_all_folded(folded, nodes)
   _update_lines()
 end
 
-local function _items_dfs(callback, children)
-  children = children or M.state.outline_items
-
-  for _, val in ipairs(children) do
-    callback(val)
-
-    if val.children then
-      _items_dfs(callback, val.children)
-    end
-  end
-end
-
 function M._highlight_current_item(winnr)
   local has_provider = providers.has_provider()
 
@@ -210,7 +198,7 @@ function M._highlight_current_item(winnr)
     end
   end
 
-  _items_dfs(cb)
+  utils.items_dfs(cb, M.state.outline_items)
 
   _update_lines()
 

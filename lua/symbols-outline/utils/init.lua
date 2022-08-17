@@ -38,6 +38,16 @@ function M.debounce(f, delay)
   end
 end
 
+function M.items_dfs(callback, children)
+  for _, val in ipairs(children) do
+    callback(val)
+
+    if val.children then
+      M.items_dfs(callback, val.children)
+    end
+  end
+end
+
 ---Merges a symbol tree recursively, only replacing nodes
 ---which have changed. This will maintain the folding
 ---status of any unchanged nodes.
@@ -53,17 +63,14 @@ M.merge_items_rec = function(new_node, old_node, index, parent)
   else
     for key, _ in pairs(new_node) do
       if
-        vim.tbl_contains(
-          {
-            'parent',
-            'children',
-            'folded',
-            'hovered',
-            'line_in_outline',
-            'hierarchy',
-          },
-          key
-        )
+        vim.tbl_contains({
+          'parent',
+          'children',
+          'folded',
+          'hovered',
+          'line_in_outline',
+          'hierarchy',
+        }, key)
       then
         goto continue
       end
