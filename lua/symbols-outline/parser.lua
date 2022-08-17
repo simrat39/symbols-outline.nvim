@@ -24,7 +24,7 @@ local function parse_result(result, depth, hierarchy)
       -- whether this node is the last in its group
       local isLast = index == #result
 
-      local children = {}
+      local children = nil
       if value.children ~= nil then
         -- copy by value because we dont want it messing with the hir table
         local child_hir = t_utils.array_copy(hir)
@@ -54,15 +54,11 @@ local function parse_result(result, depth, hierarchy)
         character = selectionRange.start.character,
         range_start = range.start.line,
         range_end = range['end'].line,
-        -- children = children,
+        children = children,
         depth = level,
         isLast = isLast,
         hierarchy = hir,
       })
-
-      for _, node in pairs(children) do
-        table.insert(ret, node)
-      end
     end
   end
   return ret
@@ -143,11 +139,22 @@ function M.parse(response)
   return parse_result(sorted, nil, nil)
 end
 
-function M.get_lines(outline_items)
+function M.flatten(outline_items, ret)
+  ret = ret or {}
+  for _, value in ipairs(outline_items) do
+    table.insert(ret, value)
+    if value.children ~= nil then
+      M.flatten(value.children, ret)
+    end
+  end
+  return ret
+end
+
+function M.get_lines(flattened_outline_items)
   local lines = {}
   local hl_info = {}
 
-  for node_line, node in ipairs(outline_items) do
+  for node_line, node in ipairs(flattened_outline_items) do
     local line = t_utils.str_to_table(string.rep(' ', node.depth))
     local running_length = 1
 
@@ -160,11 +167,10 @@ function M.get_lines(outline_items)
       })
     end
 
-    if config.options.show_guides then
-      -- makes the guides
-
-      for index, _ in ipairs(line) do
-        -- all items start with a space (or two)
+    for index, _ in ipairs(line) do
+      -- all items start with a space (or two)
+      if config.options.show_guides then
+        -- makes the guides
         if index == 1 then
           line[index] = ' '
           -- i f index is last, add a bottom marker if current item is last,
@@ -193,11 +199,11 @@ function M.get_lines(outline_items)
             running_length + vim.fn.strlen(ui.markers.vertical) - 1
           )
         end
-
-        line[index] = line[index] .. ' '
-
-        running_length = running_length + vim.fn.strlen(line[index])
       end
+
+      line[index] = line[index] .. ' '
+
+      running_length = running_length + vim.fn.strlen(line[index])
     end
 
     local final_prefix = line
@@ -214,9 +220,9 @@ function M.get_lines(outline_items)
   return lines, hl_info
 end
 
-function M.get_details(outline_items)
+function M.get_details(flattened_outline_items)
   local lines = {}
-  for _, value in ipairs(outline_items) do
+  for _, value in ipairs(flattened_outline_items) do
     table.insert(lines, value.detail or '')
   end
   return lines
