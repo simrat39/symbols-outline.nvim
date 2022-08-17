@@ -43,6 +43,9 @@ local opts = {
   show_relative_numbers = false,
   show_symbol_details = true,
   preview_bg_highlight = 'Pmenu',
+  autofold_depth = nil,
+  auto_unfold_hover = true,
+  fold_markers = { '', '' },
   keymaps = { -- These keymaps can be a string or a table for multiple keys
     close = {"<Esc>", "q"},
     goto_location = "<Cr>",
@@ -51,6 +54,11 @@ local opts = {
     toggle_preview = "K",
     rename_symbol = "r",
     code_actions = "a",
+    fold = "h",
+    unfold = "l",
+    fold_all = "W",
+    unfold_all = "E",
+    fold_reset = "R",
   },
   lsp_blacklist = {},
   symbol_blacklist = {},
@@ -103,6 +111,9 @@ local opts = {
 | symbols                | Icon and highlight config for symbol icons                                     | table (dictionary) | scroll up                |
 | lsp_blacklist          | Which lsp clients to ignore                                                    | table (array)      | {}                       |
 | symbol_blacklist       | Which symbols to ignore ([possible values](./lua/symbols-outline/symbols.lua)) | table (array)      | {}                       |
+| autofold_depth         | Depth past which nodes will be folded by default                               | int                | nil                      |
+| auto_unfold_hover      | Automatically unfold hovered symbol                                            | boolean            | true                     |
+| fold_markers           | Markers to denote foldable symbol's status                                     | table (array)      | { '', '' }         |
 
 ## Commands
 
@@ -123,6 +134,11 @@ local opts = {
 | K          | Toggles the current symbol preview                 |
 | r          | Rename symbol                                      |
 | a          | Code actions                                       |
+| h          | Unfold symbol                                      |
+| l          | Fold symbol                                        |
+| W          | Fold all symbols                                   |
+| E          | Unfold all symbols                                 |
+| R          | Reset all folding                                  |
 | ?          | Show help message                                  |
 
 ## Highlights
