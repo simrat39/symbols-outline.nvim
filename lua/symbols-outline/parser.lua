@@ -253,6 +253,8 @@ function M.get_lines(flattened_outline_items)
     local hl_end = #string_prefix + #node.icon
     local hl_type = config.options.symbols[symbols.kinds[node.kind]].hl
     table.insert(hl_info, { node_line, hl_start, hl_end, hl_type })
+
+    node.prefix_length = #string_prefix + #node.icon + 1
   end
   return lines, hl_info
 end
