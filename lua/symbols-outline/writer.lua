@@ -60,12 +60,12 @@ end
 
 -- runs the whole writing routine where the text is cleared, new data is parsed
 -- and then written
-function M.parse_and_write(bufnr, outline_items)
-  local lines, hl_info = parser.get_lines(outline_items)
+function M.parse_and_write(bufnr, flattened_outline_items)
+  local lines, hl_info = parser.get_lines(flattened_outline_items)
   M.write_outline(bufnr, lines)
 
   clear_virt_text(bufnr)
-  local details = parser.get_details(outline_items)
+  local details = parser.get_details(flattened_outline_items)
   M.add_highlights(bufnr, hl_info)
   M.write_details(bufnr, details)
 end
