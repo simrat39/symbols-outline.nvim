@@ -160,11 +160,10 @@ function M.get_lines(outline_items)
       })
     end
 
-    if config.options.show_guides then
-      -- makes the guides
-
-      for index, _ in ipairs(line) do
-        -- all items start with a space (or two)
+    for index, _ in ipairs(line) do
+      -- all items start with a space (or two)
+      if config.options.show_guides then
+        -- makes the guides
         if index == 1 then
           line[index] = ' '
           -- i f index is last, add a bottom marker if current item is last,
@@ -193,11 +192,11 @@ function M.get_lines(outline_items)
             running_length + vim.fn.strlen(ui.markers.vertical) - 1
           )
         end
+      end
 
         line[index] = line[index] .. ' '
 
         running_length = running_length + vim.fn.strlen(line[index])
-      end
     end
 
     local final_prefix = line
