@@ -25,7 +25,7 @@ function M.show_hover()
     hover_params.bufnr,
     'textDocument/hover',
     hover_params,
----@diagnostic disable-next-line: param-type-mismatch
+    ---@diagnostic disable-next-line: param-type-mismatch
     function(_, result, _, config)
       if not (result and result.contents) then
         -- return { 'No information available' }

@@ -23,15 +23,12 @@ function M.hover_info(bufnr, params, on_info)
   end
 
   if not used_client then
-    on_info(
-      nil,
-      {
-        contents = {
-          kind = 'markdown',
-          content = { 'No extra information availaible!' },
-        },
-      }
-    )
+    on_info(nil, {
+      contents = {
+        kind = 'markdown',
+        content = { 'No extra information availaible!' },
+      },
+    })
   end
 
   used_client.request('textDocument/hover', params, on_info, bufnr)
