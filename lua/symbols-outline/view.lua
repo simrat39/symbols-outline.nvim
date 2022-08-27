@@ -27,6 +27,14 @@ function View:setup_view()
   vim.api.nvim_win_set_option(self.winnr, 'relativenumber', false)
   vim.api.nvim_win_set_option(self.winnr, 'winfixwidth', true)
   vim.api.nvim_win_set_option(self.winnr, 'list', false)
+  vim.api.nvim_win_set_option(self.winnr, 'wrap', config.options.wrap)
+  vim.api.nvim_win_set_option(self.winnr, 'linebreak', true) -- only has effect when wrap=true
+  vim.api.nvim_win_set_option(self.winnr, 'breakindent', true) -- only has effect when wrap=true
+  --  Would be nice to use ui.markers.vertical as part of showbreak to keep
+  --  continuity of the tree UI, but there's currently no way to style the
+  --  color, apart from globally overriding hl-NonText, which will potentially
+  --  mess with other theme/user settings. So just use empty spaces for now.
+  vim.api.nvim_win_set_option(self.winnr, 'showbreak', '      ') -- only has effect when wrap=true.
   -- buffer stuff
   vim.api.nvim_buf_set_name(self.bufnr, 'OUTLINE')
   vim.api.nvim_buf_set_option(self.bufnr, 'filetype', 'Outline')
