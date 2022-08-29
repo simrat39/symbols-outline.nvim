@@ -46,6 +46,7 @@ local opts = {
   autofold_depth = nil,
   auto_unfold_hover = true,
   fold_markers = { '', '' },
+  wrap = false,
   keymaps = { -- These keymaps can be a string or a table for multiple keys
     close = {"<Esc>", "q"},
     goto_location = "<Cr>",
@@ -113,7 +114,8 @@ local opts = {
 | symbol_blacklist       | Which symbols to ignore ([possible values](./lua/symbols-outline/symbols.lua)) | table (array)      | {}                       |
 | autofold_depth         | Depth past which nodes will be folded by default                               | int                | nil                      |
 | auto_unfold_hover      | Automatically unfold hovered symbol                                            | boolean            | true                     |
-| fold_markers           | Markers to denote foldable symbol's status                                     | table (array)      | { '', '' }         |
+| fold_markers           | Markers to denote foldable symbol's status                                     | table (array)      | { '', '' }             |
+| wrap                   | Whether to wrap long lines, or let them flow off the window                    | boolean            | false                    |
 
 ## Commands
 
