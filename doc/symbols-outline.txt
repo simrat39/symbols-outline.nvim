@@ -1,4 +1,4 @@
-*symbols-outline.txt*        For NVIM v0.5.0       Last change: 2022 August 18
+*symbols-outline.txt*        For NVIM v0.5.0       Last change: 2022 August 29
 
 ==============================================================================
 Table of Contents                          *symbols-outline-table-of-contents*
@@ -68,6 +68,7 @@ Pass a table to the setup call above with your configuration options.
       autofold_depth = nil,
       auto_unfold_hover = true,
       fold_markers = { '', '' },
+      wrap = false,
       keymaps = { -- These keymaps can be a string or a table for multiple keys
         close = {"<Esc>", "q"},
         goto_location = "<Cr>",
@@ -136,6 +137,7 @@ Pass a table to the setup call above with your configuration options.
 │autofold_depth        │Depth past which nodes will be folded by default                             │int               │nil                   │
 │auto_unfold_hover     │Automatically unfold hovered symbol                                          │boolean           │true                  │
 │fold_markers          │Markers to denote foldable symbol’s status                                 │table (array)     │{ '', '' }      │
+│wrap                  │Whether to wrap long lines, or let them flow off the window                  │boolean           │false                 │
 
 
 COMMANDS                                            *symbols-outline-commands*
