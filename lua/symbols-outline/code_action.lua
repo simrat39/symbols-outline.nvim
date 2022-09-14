@@ -1,34 +1,14 @@
-local vim = vim
-
 local main = require 'symbols-outline'
 
 local M = {}
 
-local function get_action_params(node, winnr)
-  local bufnr = vim.api.nvim_win_get_buf(winnr)
-  local fn = 'file://' .. vim.api.nvim_buf_get_name(bufnr)
-
-  local pos = { line = node.line, character = node.character }
-  local diagnostics = vim.lsp.diagnostic.get_line_diagnostics(bufnr, node.line)
-  return {
-    textDocument = { uri = fn },
-    range = { start = pos, ['end'] = pos },
-    context = { diagnostics = diagnostics },
-    bufnr = bufnr,
-  }
-end
-
 function M.show_code_actions()
-  local current_line = vim.api.nvim_win_get_cursor(main.state.outline_win)[1]
-  local node = main.state.flattened_outline_items[current_line]
-
-  local params = get_action_params(node, main.state.code_win)
-  vim.lsp.buf_request(
-    params.bufnr,
-    'textDocument/codeAction',
-    params,
-    vim.lsp.handlers['textDocument/codeAction']
-  )
+  -- keep the cursor info in outline and jump back (or not jump back?)
+  local winnr, pos = vim.api.nvim_get_current_win(), vim.api.nvim_win_get_cursor(0)
+  main._goto_location(true)
+  vim.lsp.buf.code_action()
+  vim.fn.win_gotoid(winnr)
+  vim.api.nvim_win_set_cursor(winnr, pos)
 end
 
 return M
