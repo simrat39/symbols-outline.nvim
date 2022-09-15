@@ -28,7 +28,7 @@ function M.request_symbols(on_symbols)
   vim.fn.call('CocActionAsync', {
     'documentSymbols',
     function(_, symbols)
-      on_symbols { [1000000] = { result = symbols } }
+      on_symbols(symbols)
     end,
   })
 end

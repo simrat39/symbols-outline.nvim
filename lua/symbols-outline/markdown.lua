@@ -62,7 +62,7 @@ function M.handle_markdown()
     end
   end
 
-  return { [1000000] = { result = level_symbols[1].children } }
+  return level_symbols[1].children
 end
 
 return M
