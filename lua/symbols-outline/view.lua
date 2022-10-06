@@ -23,6 +23,7 @@ function View:setup_view()
   vim.api.nvim_win_set_buf(self.winnr, self.bufnr)
 
   -- window stuff
+  vim.api.nvim_win_set_option(self.winnr, 'spell', false)
   vim.api.nvim_win_set_option(self.winnr, 'signcolumn', 'no')
   vim.api.nvim_win_set_option(self.winnr, 'number', false)
   vim.api.nvim_win_set_option(self.winnr, 'relativenumber', false)
