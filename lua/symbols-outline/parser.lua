@@ -42,7 +42,7 @@ local function parse_result(result, depth, hierarchy, parent)
         range = value.location.range
       end
 
-      local kind = starts_with(value.name, 'defp ') and 6 or value.kind
+      local kind = starts_with(value.name or '', 'defp ') and 6 or value.kind
 
       local node = {
         deprecated = value.deprecated,
