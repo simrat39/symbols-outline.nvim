@@ -138,8 +138,8 @@ local opts = {
 | K          | Toggles the current symbol preview                 |
 | r          | Rename symbol                                      |
 | a          | Code actions                                       |
-| h          | Unfold symbol                                      |
-| l          | Fold symbol                                        |
+| h          | fold symbol                                      |
+| l          | Unfold symbol                                        |
 | W          | Fold all symbols                                   |
 | E          | Unfold all symbols                                 |
 | R          | Reset all folding                                  |
