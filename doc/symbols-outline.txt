@@ -1,4 +1,4 @@
-*symbols-outline.txt*      For NVIM v0.5.0      Last change: 2022 September 15
+*symbols-outline.txt*       For NVIM v0.8.0       Last change: 2023 January 25
 
 ==============================================================================
 Table of Contents                          *symbols-outline-table-of-contents*
@@ -160,8 +160,8 @@ DEFAULT KEYMAPS                              *symbols-outline-default-keymaps*
 │K         │Toggles the current symbol preview                │
 │r         │Rename symbol                                     │
 │a         │Code actions                                      │
-│h         │Unfold symbol                                     │
-│l         │Fold symbol                                       │
+│h         │fold symbol                                       │
+│l         │Unfold symbol                                     │
 │W         │Fold all symbols                                  │
 │E         │Unfold all symbols                                │
 │R         │Reset all folding                                 │
