@@ -1,4 +1,6 @@
 local config = require 'symbols-outline.config'
+local lsp_utils = require 'symbols-outline.utils.lsp_utils'
+local jsx = require 'symbols-outline.utils.jsx'
 
 local M = {}
 
@@ -54,13 +56,27 @@ function M.should_use_provider(bufnr)
   return ret
 end
 
+function M.postprocess_symbols(response)
+  local symbols = lsp_utils.flatten_response(response)
+
+  local jsx_symbols = jsx.get_symbols()
+
+  if #jsx_symbols > 0 then
+    return lsp_utils.merge_symbols(symbols, jsx_symbols)
+  else
+    return symbols
+  end
+end
+
 ---@param on_symbols function
 function M.request_symbols(on_symbols)
   vim.lsp.buf_request_all(
     0,
     'textDocument/documentSymbol',
     getParams(),
-    on_symbols
+    function (response)
+      on_symbols(M.postprocess_symbols(response))
+    end
   )
 end
 

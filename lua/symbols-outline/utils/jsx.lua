@@ -3,34 +3,6 @@ local M = {}
 local SYMBOL_COMPONENT = 27
 local SYMBOL_FRAGMENT = 28
 
-function M.should_use_provider(bufnr)
-  local ft = vim.api.nvim_buf_get_option(bufnr, 'ft')
-  local has_ts, parsers = pcall(require, 'nvim-treesitter.parsers')
-  local _, has_parser = pcall(function()
-    if has_ts then
-      return parsers.get_parser(bufnr) ~= nil
-    end
-
-    return false
-  end)
-
-  return has_ts
-    and has_parser
-    and (
-      string.match(ft, 'typescriptreact')
-      or string.match(ft, 'javascriptreact')
-    )
-end
-
-function M.hover_info(_, _, on_info)
-  on_info(nil, {
-    contents = {
-      kind = 'nvim-lsp-jsx',
-      contents = { 'No extra information availaible!' },
-    },
-  })
-end
-
 local function get_open_tag(node)
   if node:type() == 'jsx_element' then
     for _, outer in ipairs(node:field 'open_tag') do
@@ -106,7 +78,7 @@ local function convert_ts(child, children, bufnr)
   return converted
 end
 
-local function parse_ts(root, children, bufnr)
+function M.parse_ts(root, children, bufnr)
   children = children or {}
 
   for child in root:iter_children() do
@@ -118,27 +90,39 @@ local function parse_ts(root, children, bufnr)
     then
       local new_children = {}
 
-      parse_ts(child, new_children, bufnr)
+      M.parse_ts(child, new_children, bufnr)
 
       table.insert(children, convert_ts(child, new_children, bufnr))
     else
-      parse_ts(child, children, bufnr)
+      M.parse_ts(child, children, bufnr)
     end
   end
 
   return children
 end
 
-function M.request_symbols(on_symbols)
-  local parsers = require 'nvim-treesitter.parsers'
+function M.get_symbols()
+  local status, parsers = pcall(require, 'nvim-treesitter.parsers')
+
+  if not status then
+    return {}
+  end
+
   local bufnr = 0
 
   local parser = parsers.get_parser(bufnr)
+
+  if parser == nil then
+    return {}
+  end
+
   local root = parser:parse()[1]:root()
 
-  local symbols = parse_ts(root, nil, bufnr)
-  -- local symbols = convert_ts(ctree)
-  on_symbols { [1000000] = { result = symbols } }
+  if root == nil then
+    return {}
+  end
+
+  return M.parse_ts(root, nil, bufnr)
 end
 
 return M

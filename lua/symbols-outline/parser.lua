@@ -2,6 +2,7 @@ local symbols = require 'symbols-outline.symbols'
 local ui = require 'symbols-outline.ui'
 local config = require 'symbols-outline.config'
 local t_utils = require 'symbols-outline.utils.table'
+local lsp_utils = require 'symbols-outline.utils.lsp_utils'
 local folding = require 'symbols-outline.folding'
 
 local M = {}
@@ -26,17 +27,8 @@ local function parse_result(result, depth, hierarchy, parent)
       -- whether this node is the last in its group
       local isLast = index == #result
 
-      -- support SymbolInformation[]
-      -- https://microsoft.github.io/language-server-protocol/specification#textDocument_documentSymbol
-      local selectionRange = value.selectionRange
-      if value.selectionRange == nil then
-        selectionRange = value.location.range
-      end
-
-      local range = value.range
-      if value.range == nil then
-        range = value.location.range
-      end
+      local selectionRange = lsp_utils.get_selection_range(value)
+      local range = lsp_utils.get_range(value)
 
       local node = {
         deprecated = value.deprecated,
@@ -70,77 +62,11 @@ local function parse_result(result, depth, hierarchy, parent)
   return ret
 end
 
----Sorts the result from LSP by where the symbols start.
----@param result table Result containing symbols returned from textDocument/documentSymbol
----@return table
-local function sort_result(result)
-  ---Returns the start location for a symbol, or nil if not found.
-  ---@param item table The symbol.
-  ---@return table|nil
-  local function get_range_start(item)
-    if item.location ~= nil then
-      return item.location.range.start
-    elseif item.range ~= nil then
-      return item.range.start
-    else
-      return nil
-    end
-  end
-
-  table.sort(result, function(a, b)
-    local a_start = get_range_start(a)
-    local b_start = get_range_start(b)
-
-    -- if they both are equal, a should be before b
-    if a_start == nil and b_start == nil then
-      return false
-    end
-
-    -- those with no start go first
-    if a_start == nil then
-      return true
-    end
-    if b_start == nil then
-      return false
-    end
-
-    -- first try to sort by line. If lines are equal, sort by character instead
-    if a_start.line ~= b_start.line then
-      return a_start.line < b_start.line
-    else
-      return a_start.character < b_start.character
-    end
-  end)
-
-  return result
-end
-
 ---Parses the response from lsp request 'textDocument/documentSymbol' using buf_request_all
 ---@param response table The result from buf_request_all
 ---@return table outline items
 function M.parse(response)
-  local all_results = {}
-
-  -- flatten results to one giant table of symbols
-  for client_id, client_response in pairs(response) do
-    if config.is_client_blacklisted(client_id) then
-      print('skipping client ' .. client_id)
-      goto continue
-    end
-
-    local result = client_response['result']
-    if result == nil or type(result) ~= 'table' then
-      goto continue
-    end
-
-    for _, value in pairs(result) do
-      table.insert(all_results, value)
-    end
-
-    ::continue::
-  end
-
-  local sorted = sort_result(all_results)
+  local sorted = lsp_utils.sort_symbols(response)
 
   return parse_result(sorted, nil, nil)
 end
