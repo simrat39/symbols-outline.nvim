@@ -21,10 +21,10 @@ function M.handle_markdown()
 
     local header, title = string.match(value, '^(#+)%s+(.*)$')
     if not header and next_value and not is_emtpy_line then
-      if string.match(next_value, '^===+%s*$') then
+      if string.match(next_value, '^=+%s*$') then
         header = '#'
         title = value
-      elseif string.match(next_value, '^---+%s*$') then
+      elseif string.match(next_value, '^-+%s*$') then
         header = '##'
         title = value
       end
