@@ -145,12 +145,15 @@ function M._set_folded(folded, move_cursor, node_index)
 end
 
 function M._set_all_folded(folded, nodes)
-  nodes = nodes or M.state.outline_items
+  local stack = { nodes or M.state.outline_items }
 
-  for _, node in ipairs(nodes) do
-    node.folded = folded
-    if node.children then
-      M._set_all_folded(folded, node.children)
+  while #stack > 0 do
+    local current_nodes = table.remove(stack, #stack)
+    for _, node in ipairs(current_nodes) do
+      node.folded = folded
+      if node.children then
+        stack[#stack + 1] = node.children
+      end
     end
   end
 
