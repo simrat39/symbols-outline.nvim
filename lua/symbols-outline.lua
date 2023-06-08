@@ -39,20 +39,6 @@ local function setup_global_autocmd()
   })
 end
 
-local function setup_buffer_autocmd()
-  if config.options.auto_preview then
-    vim.api.nvim_create_autocmd('CursorHold', {
-      buffer = 0,
-      callback = require('symbols-outline.preview').show,
-    })
-  else
-    vim.api.nvim_create_autocmd('CursorMoved', {
-      buffer = 0,
-      callback = require('symbols-outline.preview').close,
-    })
-  end
-end
-
 -------------------------
 -- STATE
 -------------------------
@@ -115,6 +101,25 @@ local function goto_location(change_focus)
   end
   if config.options.auto_close then
     M.close_outline()
+  end
+end
+
+local function setup_buffer_autocmd()
+  if config.options.auto_preview then
+    vim.api.nvim_create_autocmd('CursorHold', {
+      buffer = 0,
+      callback = require('symbols-outline.preview').show,
+    })
+  else
+    vim.api.nvim_create_autocmd('CursorMoved', {
+      buffer = 0,
+      callback = function()
+        require('symbols-outline.preview').close()
+        if config.options.auto_jump then
+          goto_location(false)
+        end
+      end,
+    })
   end
 end
 
