@@ -276,7 +276,7 @@ local function setup_keymaps(bufnr)
 end
 
 local function handler(response)
-  if response == nil or type(response) ~= 'table' then
+  if response == nil or type(response) ~= 'table' or M.view:is_open() then
     return
   end
 
