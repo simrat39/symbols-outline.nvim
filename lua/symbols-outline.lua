@@ -110,6 +110,9 @@ local function goto_location(change_focus)
     M.state.code_win,
     { node.line + 1, node.character }
   )
+  vim.api.nvim_win_call(M.state.code_win, function ()
+      vim.cmd("normal! zz")
+  end)
   if change_focus then
     vim.fn.win_gotoid(M.state.code_win)
   end
