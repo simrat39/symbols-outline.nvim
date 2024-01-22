@@ -50,9 +50,11 @@ function View:setup_view()
 end
 
 function View:close()
-  vim.api.nvim_win_close(self.winnr, true)
-  self.winnr = nil
-  self.bufnr = nil
+  if self.winnr then
+    vim.api.nvim_win_close(self.winnr, true)
+    self.winnr = nil
+    self.bufnr = nil
+  end
 end
 
 function View:is_open()
