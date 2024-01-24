@@ -10,6 +10,7 @@ M.defaults = {
   relative_width = true,
   width = 25,
   auto_close = false,
+  auto_jump = false,
   auto_preview = false,
   show_numbers = false,
   show_relative_numbers = false,
