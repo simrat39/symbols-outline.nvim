@@ -7,6 +7,10 @@ local folding = require 'symbols-outline.folding'
 
 local M = {}
 
+local function starts_with(str, start)
+  return str:sub(1, #start) == start
+end
+
 ---Parses result from LSP into a table of symbols
 ---@param result table The result from a language server.
 ---@param depth number? The current depth of the symbol in the hierarchy.
@@ -30,10 +34,12 @@ local function parse_result(result, depth, hierarchy, parent)
       local selectionRange = lsp_utils.get_selection_range(value)
       local range = lsp_utils.get_range(value)
 
+      local kind = starts_with(value.name or '', 'defp ') and 6 or value.kind
+
       local node = {
         deprecated = value.deprecated,
-        kind = value.kind,
-        icon = symbols.icon_from_kind(value.kind),
+        kind = kind,
+        icon = symbols.icon_from_kind(kind),
         name = value.name or value.text,
         detail = value.detail,
         line = selectionRange.start.line,
