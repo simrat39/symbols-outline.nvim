@@ -104,7 +104,7 @@ function M._current_node()
   return M.state.flattened_outline_items[current_line]
 end
 
-local function goto_location(change_focus)
+function M._goto_location(change_focus)
   local node = M._current_node()
   vim.api.nvim_win_set_cursor(
     M.state.code_win,
@@ -218,11 +218,11 @@ local function setup_keymaps(bufnr)
   end
   -- goto_location of symbol and focus that window
   map(config.options.keymaps.goto_location, function()
-    goto_location(true)
+    M._goto_location(true)
   end)
   -- goto_location of symbol but stay in outline
   map(config.options.keymaps.focus_location, function()
-    goto_location(false)
+    M._goto_location(false)
   end)
   -- hover symbol
   map(
