@@ -318,7 +318,9 @@ function M.open_outline()
 end
 
 function M.close_outline()
-  M.view:close()
+  if M.view:is_open() then
+    M.view:close()
+  end
 end
 
 function M.setup(opts)
