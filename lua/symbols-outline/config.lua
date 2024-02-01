@@ -66,6 +66,12 @@ M.defaults = {
     TypeParameter = { icon = '𝙏', hl = '@parameter' },
     Component = { icon = '', hl = '@function' },
     Fragment = { icon = '', hl = '@constant' },
+
+    -- ccls
+    TypeAlias =  { icon = ' ', hl = '@type' },
+    Parameter = { icon = ' ', hl = '@parameter' },
+    StaticMethod = { icon = ' ', hl = '@function' },
+    Macro = { icon = ' ', hl = '@macro' },
   },
 }
 

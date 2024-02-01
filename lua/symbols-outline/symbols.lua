@@ -3,34 +3,40 @@ local config = require 'symbols-outline.config'
 local M = {}
 
 M.kinds = {
-  'File',
-  'Module',
-  'Namespace',
-  'Package',
-  'Class',
-  'Method',
-  'Property',
-  'Field',
-  'Constructor',
-  'Enum',
-  'Interface',
-  'Function',
-  'Variable',
-  'Constant',
-  'String',
-  'Number',
-  'Boolean',
-  'Array',
-  'Object',
-  'Key',
-  'Null',
-  'EnumMember',
-  'Struct',
-  'Event',
-  'Operator',
-  'TypeParameter',
-  'Component',
-  'Fragment',
+  [1] = 'File',
+  [2] = 'Module',
+  [3] = 'Namespace',
+  [4] = 'Package',
+  [5] = 'Class',
+  [6] = 'Method',
+  [7] = 'Property',
+  [8] = 'Field',
+  [9] = 'Constructor',
+  [10] = 'Enum',
+  [11] = 'Interface',
+  [12] = 'Function',
+  [13] = 'Variable',
+  [14] = 'Constant',
+  [15] = 'String',
+  [16] = 'Number',
+  [17] = 'Boolean',
+  [18] = 'Array',
+  [19] = 'Object',
+  [20] = 'Key',
+  [21] = 'Null',
+  [22] = 'EnumMember',
+  [23] = 'Struct',
+  [24] = 'Event',
+  [25] = 'Operator',
+  [26] = 'TypeParameter',
+  [27] = 'Component',
+  [28] = 'Fragment',
+
+  -- ccls
+  [252] = 'TypeAlias',
+  [253] = 'Parameter',
+  [254] = 'StaticMethod',
+  [255] = 'Macro',
 }
 
 function M.icon_from_kind(kind)
@@ -40,8 +46,8 @@ function M.icon_from_kind(kind)
     return symbols[kind].icon
   end
 
-  -- If the kind is higher than the available ones then default to 'Object'
-  if kind > #M.kinds then
+  -- If the kind index is not available then default to 'Object'
+  if M.kinds[kind] == nil then
     kind = 19
   end
   return symbols[M.kinds[kind]].icon
