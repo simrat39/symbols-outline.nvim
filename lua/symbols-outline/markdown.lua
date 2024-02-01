@@ -16,10 +16,24 @@ function M.handle_markdown()
       is_inside_code_block = not is_inside_code_block
     end
 
-    header, title = string.match(value, '^(#+)%s+(.*)$')
-    if header and not is_inside_code_block then
-      depth = #header + 1
+    local next_value = lines[line+1]
+    local is_emtpy_line = #value:gsub("^%s*(.-)%s*$", "%1") == 0
 
+    local header, title = string.match(value, '^(#+)%s+(.*)$')
+    if not header and next_value and not is_emtpy_line then
+      if string.match(next_value, '^=+%s*$') then
+        header = '#'
+        title = value
+      elseif string.match(next_value, '^-+%s*$') then
+        header = '##'
+        title = value
+      end
+    end
+
+    if header and not is_inside_code_block then
+      local depth = #header + 1
+
+      local parent
       for i = depth - 1, 1, -1 do
         if level_symbols[i] ~= nil then
           parent = level_symbols[i].children
@@ -36,7 +50,7 @@ function M.handle_markdown()
       end
       max_level = depth
 
-      entry = {
+      local entry = {
         kind = 13,
         name = title,
         selectionRange = {
