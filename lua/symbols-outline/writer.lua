@@ -6,9 +6,12 @@ local M = {}
 
 local function is_buffer_outline(bufnr)
   local isValid = vim.api.nvim_buf_is_valid(bufnr)
+  if not isValid then
+    return
+  end
   local name = vim.api.nvim_buf_get_name(bufnr)
   local ft = vim.api.nvim_buf_get_option(bufnr, 'filetype')
-  return string.match(name, 'OUTLINE') ~= nil and ft == 'Outline' and isValid
+  return string.match(name, 'OUTLINE') ~= nil and ft == 'Outline'
 end
 
 local hlns = vim.api.nvim_create_namespace 'symbols-outline-icon-highlight'
