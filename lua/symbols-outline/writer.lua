@@ -17,6 +17,12 @@ function M.write_outline(bufnr, lines)
   if not is_buffer_outline(bufnr) then
     return
   end
+
+  lines = vim.tbl_map(function(line)
+    lines, _ = string.gsub(line, "\n", " ")
+    return lines
+  end, lines)
+
   vim.api.nvim_buf_set_option(bufnr, 'modifiable', true)
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
   vim.api.nvim_buf_set_option(bufnr, 'modifiable', false)
